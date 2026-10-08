@@ -1,8 +1,35 @@
 name: docker
 services:
+  autoshield-api:
+    build:
+      context: /Users/alishar/Desktop/autoshield/infrastructure/docker/api
+      dockerfile: Dockerfile
+    container_name: autoshield-api
+    depends_on:
+      postgres:
+        condition: service_started
+        required: true
+      redis:
+        condition: service_started
+        required: true
+    environment:
+      POSTGRES_DB: autoshield
+      POSTGRES_HOST: postgres
+      POSTGRES_PASSWORD: autoshield_dev_password
+      POSTGRES_USER: autoshield
+      REDIS_HOST: redis
+    networks:
+      autoshield_net: null
   juice-shop:
     container_name: autoshield-juice-shop
     image: bkimminich/juice-shop:v19.0.0
+    networks:
+      autoshield_net: null
+  linux-admin:
+    build:
+      context: /Users/alishar/Desktop/autoshield/infrastructure/docker/linux-admin
+      dockerfile: Dockerfile
+    container_name: autoshield-linux-admin
     networks:
       autoshield_net: null
   nginx:
@@ -29,6 +56,34 @@ services:
         source: nginx_logs
         target: /var/log/nginx
         volume: {}
+  postgres:
+    container_name: autoshield-postgres
+    environment:
+      POSTGRES_DB: autoshield
+      POSTGRES_PASSWORD: autoshield_dev_password
+      POSTGRES_USER: autoshield
+    image: postgres:16-alpine
+    networks:
+      autoshield_net: null
+    volumes:
+      - type: volume
+        source: postgres_data
+        target: /var/lib/postgresql/data
+        volume: {}
+  redis:
+    command:
+      - redis-server
+      - --appendonly
+      - 'yes'
+    container_name: autoshield-redis
+    image: redis:7-alpine
+    networks:
+      autoshield_net: null
+    volumes:
+      - type: volume
+        source: redis_data
+        target: /data
+        volume: {}
 networks:
   autoshield_net:
     name: autoshield_net
@@ -36,3 +91,7 @@ networks:
 volumes:
   nginx_logs:
     name: docker_nginx_logs
+  postgres_data:
+    name: docker_postgres_data
+  redis_data:
+    name: docker_redis_data

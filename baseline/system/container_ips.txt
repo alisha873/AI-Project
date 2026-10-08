@@ -1,3 +1,7 @@
 container|ip_address
+autoshield-linux-admin|172.19.0.7
+autoshield-api|172.19.0.6
+autoshield-postgres|172.19.0.4
+autoshield-redis|172.19.0.5
 autoshield-nginx|172.19.0.3
 autoshield-juice-shop|172.19.0.2

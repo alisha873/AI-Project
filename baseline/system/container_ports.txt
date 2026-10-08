@@ -1,2 +1,6 @@
+autoshield-linux-admin|22/tcp
+autoshield-api|8000/tcp
+autoshield-postgres|5432/tcp
+autoshield-redis|6379/tcp
 autoshield-nginx|0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
 autoshield-juice-shop|3000/tcp

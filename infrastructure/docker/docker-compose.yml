@@ -26,6 +26,64 @@ services:
     networks:
       - autoshield_net
 
+  autoshield-api:
+    build:
+      context: ./api
+    container_name: autoshield-api
+
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: autoshield
+      POSTGRES_USER: autoshield
+      POSTGRES_PASSWORD: autoshield_dev_password
+      REDIS_HOST: redis
+
+    depends_on:
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+
+    networks:
+      - autoshield_net
+
+  linux-admin:
+    build:
+      context: ./linux-admin
+    container_name: autoshield-linux-admin
+
+    networks:
+      - autoshield_net
+
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: autoshield-postgres
+
+    environment:
+      POSTGRES_DB: autoshield
+      POSTGRES_USER: autoshield
+      POSTGRES_PASSWORD: autoshield_dev_password
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    networks:
+      - autoshield_net
+
+
+  redis:
+    image: redis:7-alpine
+    container_name: autoshield-redis
+
+    command: redis-server --appendonly yes
+
+    volumes:
+      - redis_data:/data
+
+    networks:
+      - autoshield_net
+
 
 networks:
 
@@ -37,3 +95,5 @@ networks:
 volumes:
 
   nginx_logs:
+  postgres_data:
+  redis_data:

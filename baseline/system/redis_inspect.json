@@ -1,12 +1,12 @@
 [
     {
-        "Id": "73e6ea46960410d4629975a1d728999a2c39f02335ab1ea2c0ced359fffe3b80",
-        "Created": "2026-10-08T21:11:43.040418761Z",
-        "Path": "/docker-entrypoint.sh",
+        "Id": "d2202e0b992dfa7e730eeca86f35b20c94dc2895235c6693091bc7f6196304d7",
+        "Created": "2026-10-08T22:03:15.821056552Z",
+        "Path": "docker-entrypoint.sh",
         "Args": [
-            "nginx",
-            "-g",
-            "daemon off;"
+            "redis-server",
+            "--appendonly",
+            "yes"
         ],
         "State": {
             "Status": "running",
@@ -15,18 +15,18 @@
             "Restarting": false,
             "OOMKilled": false,
             "Dead": false,
-            "Pid": 2281,
+            "Pid": 1737,
             "ExitCode": 0,
             "Error": "",
-            "StartedAt": "2026-10-08T22:10:01.106492504Z",
-            "FinishedAt": "2026-10-08T22:10:00.957582212Z"
+            "StartedAt": "2026-10-08T22:03:16.93022822Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
         },
-        "Image": "sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10",
-        "ResolvConfPath": "/var/lib/docker/containers/73e6ea46960410d4629975a1d728999a2c39f02335ab1ea2c0ced359fffe3b80/resolv.conf",
-        "HostnamePath": "/var/lib/docker/containers/73e6ea46960410d4629975a1d728999a2c39f02335ab1ea2c0ced359fffe3b80/hostname",
-        "HostsPath": "/var/lib/docker/containers/73e6ea46960410d4629975a1d728999a2c39f02335ab1ea2c0ced359fffe3b80/hosts",
-        "LogPath": "/var/lib/docker/containers/73e6ea46960410d4629975a1d728999a2c39f02335ab1ea2c0ced359fffe3b80/73e6ea46960410d4629975a1d728999a2c39f02335ab1ea2c0ced359fffe3b80-json.log",
-        "Name": "/autoshield-nginx",
+        "Image": "sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf",
+        "ResolvConfPath": "/var/lib/docker/containers/d2202e0b992dfa7e730eeca86f35b20c94dc2895235c6693091bc7f6196304d7/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/d2202e0b992dfa7e730eeca86f35b20c94dc2895235c6693091bc7f6196304d7/hostname",
+        "HostsPath": "/var/lib/docker/containers/d2202e0b992dfa7e730eeca86f35b20c94dc2895235c6693091bc7f6196304d7/hosts",
+        "LogPath": "/var/lib/docker/containers/d2202e0b992dfa7e730eeca86f35b20c94dc2895235c6693091bc7f6196304d7/d2202e0b992dfa7e730eeca86f35b20c94dc2895235c6693091bc7f6196304d7-json.log",
+        "Name": "/autoshield-redis",
         "RestartCount": 0,
         "Driver": "overlayfs",
         "Platform": "linux",
@@ -36,8 +36,7 @@
         "ExecIDs": null,
         "HostConfig": {
             "Binds": [
-                "/Users/alishar/Desktop/autoshield/infrastructure/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro",
-                "docker_nginx_logs:/var/log/nginx:rw"
+                "docker_redis_data:/data:rw"
             ],
             "ContainerIDFile": "",
             "LogConfig": {
@@ -45,14 +44,7 @@
                 "Config": {}
             },
             "NetworkMode": "autoshield_net",
-            "PortBindings": {
-                "80/tcp": [
-                    {
-                        "HostIp": "",
-                        "HostPort": "8080"
-                    }
-                ]
-            },
+            "PortBindings": {},
             "RestartPolicy": {
                 "Name": "no",
                 "MaximumRetryCount": 0
@@ -146,18 +138,10 @@
         },
         "Mounts": [
             {
-                "Type": "bind",
-                "Source": "/Users/alishar/Desktop/autoshield/infrastructure/docker/nginx/nginx.conf",
-                "Destination": "/etc/nginx/nginx.conf",
-                "Mode": "ro",
-                "RW": false,
-                "Propagation": "rprivate"
-            },
-            {
                 "Type": "volume",
-                "Name": "docker_nginx_logs",
-                "Source": "/var/lib/docker/volumes/docker_nginx_logs/_data",
-                "Destination": "/var/log/nginx",
+                "Name": "docker_redis_data",
+                "Source": "/var/lib/docker/volumes/docker_redis_data/_data",
+                "Destination": "/data",
                 "Driver": "local",
                 "Mode": "rw",
                 "RW": true,
@@ -165,107 +149,94 @@
             }
         ],
         "Config": {
-            "Hostname": "73e6ea469604",
+            "Hostname": "d2202e0b992d",
             "Domainname": "",
             "User": "",
             "AttachStdin": false,
             "AttachStdout": true,
             "AttachStderr": true,
             "ExposedPorts": {
-                "80/tcp": {}
+                "6379/tcp": {}
             },
             "Tty": false,
             "OpenStdin": false,
             "StdinOnce": false,
             "Env": [
                 "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-                "NGINX_VERSION=1.27.5",
-                "PKG_RELEASE=1",
-                "DYNPKG_RELEASE=1",
-                "NJS_VERSION=0.8.10",
-                "NJS_RELEASE=1"
+                "REDIS_VERSION=7.4.11"
             ],
             "Cmd": [
-                "nginx",
-                "-g",
-                "daemon off;"
+                "redis-server",
+                "--appendonly",
+                "yes"
             ],
-            "Image": "nginx:1.27-alpine",
-            "Volumes": null,
-            "WorkingDir": "/",
+            "Image": "redis:7-alpine",
+            "Volumes": {
+                "/data": {}
+            },
+            "WorkingDir": "/data",
             "Entrypoint": [
-                "/docker-entrypoint.sh"
+                "docker-entrypoint.sh"
             ],
             "Labels": {
-                "com.docker.compose.config-hash": "30b315c07f63346ec1dd911a876cb1289cd22b73cc31b7a0f16a8df3e3445d88",
+                "com.docker.compose.config-hash": "421dfadfe640efae138b02f2b4d7d55e2bfd7befcee7640268b40e705b085807",
                 "com.docker.compose.container-number": "1",
-                "com.docker.compose.depends_on": "juice-shop:service_started:false",
-                "com.docker.compose.image": "sha256:63ffc0d1f14e4082b832c6a42e606e9a0384a526f16ddd720af7c1f018f2f7c4",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:f8d15882ba108587477ce13c00ab0551933a84138427b7cc9abadfbe45ffd973",
                 "com.docker.compose.oneoff": "False",
                 "com.docker.compose.project": "docker",
                 "com.docker.compose.project.config_files": "/Users/alishar/Desktop/autoshield/infrastructure/docker/docker-compose.yml",
                 "com.docker.compose.project.working_dir": "/Users/alishar/Desktop/autoshield/infrastructure/docker",
-                "com.docker.compose.service": "nginx",
-                "com.docker.compose.version": "5.5.0",
-                "maintainer": "NGINX Docker Maintainers \u003cdocker-maint@nginx.com\u003e"
-            },
-            "StopSignal": "SIGQUIT"
+                "com.docker.compose.service": "redis",
+                "com.docker.compose.version": "5.5.0"
+            }
         },
         "NetworkSettings": {
-            "SandboxID": "d52d43775fc44e7f221c9349c8b643c655f47e3de1b105c9637f1dc92d273c28",
-            "SandboxKey": "/var/run/docker/netns/d52d43775fc4",
+            "SandboxID": "440f063793ee503fbd96fbed1378041797be2d0c68f8988a7188c0a3359059ca",
+            "SandboxKey": "/var/run/docker/netns/440f063793ee",
             "Ports": {
-                "80/tcp": [
-                    {
-                        "HostIp": "0.0.0.0",
-                        "HostPort": "8080"
-                    },
-                    {
-                        "HostIp": "::",
-                        "HostPort": "8080"
-                    }
-                ]
+                "6379/tcp": null
             },
             "Networks": {
                 "autoshield_net": {
                     "IPAMConfig": null,
                     "Links": null,
                     "Aliases": [
-                        "autoshield-nginx",
-                        "nginx"
+                        "autoshield-redis",
+                        "redis"
                     ],
                     "DriverOpts": null,
                     "GwPriority": 0,
                     "NetworkID": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
-                    "EndpointID": "cbd0dc16f808b1b39101e45ce3a6696a517ff5bfaa9a6c8e16627d7193f2d649",
+                    "EndpointID": "17bc6d639c146228251d62dcb878d74cdba041f3ac6d2aba19324d6124ae8750",
                     "Gateway": "172.19.0.1",
-                    "IPAddress": "172.19.0.3",
-                    "MacAddress": "fe:88:10:c4:30:16",
+                    "IPAddress": "172.19.0.5",
+                    "MacAddress": "b6:71:be:21:47:e7",
                     "IPPrefixLen": 16,
                     "IPv6Gateway": "",
                     "GlobalIPv6Address": "",
                     "GlobalIPv6PrefixLen": 0,
                     "DNSNames": [
-                        "autoshield-nginx",
-                        "nginx",
-                        "73e6ea469604"
+                        "autoshield-redis",
+                        "redis",
+                        "d2202e0b992d"
                     ]
                 }
             }
         },
         "ImageManifestDescriptor": {
             "mediaType": "application/vnd.oci.image.manifest.v1+json",
-            "digest": "sha256:63ffc0d1f14e4082b832c6a42e606e9a0384a526f16ddd720af7c1f018f2f7c4",
-            "size": 2497,
+            "digest": "sha256:f8d15882ba108587477ce13c00ab0551933a84138427b7cc9abadfbe45ffd973",
+            "size": 2289,
             "annotations": {
                 "com.docker.official-images.bashbrew.arch": "arm64v8",
-                "org.opencontainers.image.base.digest": "sha256:81c453ddf0370ef54dc7ee207c334df7efa3c452138212eebfe3717f494adc4e",
-                "org.opencontainers.image.base.name": "nginx:1.27.5-alpine-slim",
-                "org.opencontainers.image.created": "2025-04-16T17:07:57Z",
-                "org.opencontainers.image.revision": "eaf8875a1967d24cea6ed8b37109075e39ed9e43",
-                "org.opencontainers.image.source": "https://github.com/nginx/docker-nginx.git#eaf8875a1967d24cea6ed8b37109075e39ed9e43:mainline/alpine",
-                "org.opencontainers.image.url": "https://hub.docker.com/_/nginx",
-                "org.opencontainers.image.version": "1.27.5-alpine"
+                "org.opencontainers.image.base.digest": "sha256:1832327faf048390adc33852575d37c7ba155e064a339e78b9bd81983a8c7a00",
+                "org.opencontainers.image.base.name": "alpine:3.21",
+                "org.opencontainers.image.created": "2026-08-18T16:55:56Z",
+                "org.opencontainers.image.revision": "74654c612ee06275377d483dc4e134e57b463e9e",
+                "org.opencontainers.image.source": "https://github.com/redis/docker-library-redis.git#74654c612ee06275377d483dc4e134e57b463e9e:alpine",
+                "org.opencontainers.image.url": "https://hub.docker.com/_/redis",
+                "org.opencontainers.image.version": "7.4.11-alpine"
             },
             "platform": {
                 "architecture": "arm64",
