@@ -1,0 +1,17 @@
+python-dotenv
+pydantic
+pydantic-settings
+
+numpy
+pandas
+
+networkx
+
+fastapi
+uvicorn
+
+pytest
+pytest-cov
+
+pyyaml
+orjson

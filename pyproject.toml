@@ -1,0 +1,26 @@
+[project]
+name = "autoshield"
+version = "0.1.0"
+description = "Closed-loop AI framework for forensic attack reconstruction, autonomous remediation, and adversarial security validation."
+requires-python = ">=3.11"
+dependencies = [
+    "python-dotenv",
+    "pydantic",
+    "pydantic-settings",
+    "numpy",
+    "pandas",
+    "networkx",
+    "fastapi",
+    "uvicorn",
+    "pytest",
+    "pytest-cov",
+    "pyyaml",
+    "orjson",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100

@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Generated incident data
+incidents/
+incident_data/
+
+# ML / vector databases
+*.pt
+*.pth
+*.pkl
+*.pickle
+vector_store/
+embeddings/
+
+# PCAP
+*.pcap
+*.pcapng
+
+# Generated reports
+reports/generated/
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Temporary
+tmp/
+temp/
