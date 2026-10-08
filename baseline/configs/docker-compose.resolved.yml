@@ -1,0 +1,38 @@
+name: docker
+services:
+  juice-shop:
+    container_name: autoshield-juice-shop
+    image: bkimminich/juice-shop:v19.0.0
+    networks:
+      autoshield_net: null
+  nginx:
+    container_name: autoshield-nginx
+    depends_on:
+      juice-shop:
+        condition: service_started
+        required: true
+    image: nginx:1.27-alpine
+    networks:
+      autoshield_net: null
+    ports:
+      - mode: ingress
+        target: 80
+        published: "8080"
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: /Users/alishar/Desktop/autoshield/infrastructure/docker/nginx/nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+        bind: {}
+      - type: volume
+        source: nginx_logs
+        target: /var/log/nginx
+        volume: {}
+networks:
+  autoshield_net:
+    name: autoshield_net
+    driver: bridge
+volumes:
+  nginx_logs:
+    name: docker_nginx_logs

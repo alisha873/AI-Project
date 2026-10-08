@@ -1,0 +1,8 @@
+===== autoshield-nginx =====
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+root                790                 766                 0                   21:11               ?                   00:00:00            nginx: master process nginx -g daemon off;
+statd               844                 790                 0                   21:11               ?                   00:00:00            nginx: worker process
+
+===== autoshield-juice-shop =====
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+65532               724                 700                 1                   21:11               ?                   00:00:31            /nodejs/bin/node /juice-shop/build/app.js

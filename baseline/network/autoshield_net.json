@@ -1,0 +1,64 @@
+[
+    {
+        "Name": "autoshield_net",
+        "Id": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
+        "Created": "2026-10-08T21:11:42.266902094Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.19.0.0/16",
+                    "Gateway": "172.19.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {
+            "com.docker.network.enable_ipv4": "true",
+            "com.docker.network.enable_ipv6": "false"
+        },
+        "Labels": {
+            "com.docker.compose.config-hash": "d924faea63425875f4f3051cf4667f9b154634a2fe6c9bedaa730cb950988cee",
+            "com.docker.compose.network": "autoshield_net",
+            "com.docker.compose.project": "docker",
+            "com.docker.compose.version": "5.5.0"
+        },
+        "Containers": {
+            "0bfdf5a27f30f462a889e5787993d8f17aa8d7dd08fce1776918b76e2f247b1d": {
+                "Name": "autoshield-juice-shop",
+                "EndpointID": "2e8c92f8d942a70d59d246510ed365bd4ad68337e2a4c9b3ef7f7627f2bcd286",
+                "MacAddress": "56:e2:82:dd:9c:ec",
+                "IPv4Address": "172.19.0.2/16",
+                "IPv6Address": ""
+            },
+            "73e6ea46960410d4629975a1d728999a2c39f02335ab1ea2c0ced359fffe3b80": {
+                "Name": "autoshield-nginx",
+                "EndpointID": "cecb6e19966f238a1ec1bdb8e589bd4c832352a13153326b911f33bb83bb504d",
+                "MacAddress": "7e:ed:e4:1a:dc:00",
+                "IPv4Address": "172.19.0.3/16",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "172.19.0.0/16": {
+                        "IPsInUse": 5,
+                        "DynamicIPsAvailable": 65531
+                    }
+                }
+            }
+        }
+    }
+]

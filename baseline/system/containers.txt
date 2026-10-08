@@ -1,0 +1,2 @@
+autoshield-nginx|nginx:1.27-alpine|Up 39 minutes|0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+autoshield-juice-shop|bkimminich/juice-shop:v19.0.0|Up 39 minutes|3000/tcp

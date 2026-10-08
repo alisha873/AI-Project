@@ -1,0 +1,6 @@
+NETWORK ID     NAME                         DRIVER    SCOPE
+b98918785012   autoshield_net               bridge    local
+31be96d70f1d   battlecode-backend_default   bridge    local
+2fca84694c08   bridge                       bridge    local
+5299a74c29af   host                         host      local
+754022c545d2   none                         null      local

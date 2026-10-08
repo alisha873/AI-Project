@@ -1,0 +1,3 @@
+container|ip_address
+autoshield-nginx|172.19.0.3
+autoshield-juice-shop|172.19.0.2

@@ -1,0 +1,2 @@
+autoshield-nginx|0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+autoshield-juice-shop|3000/tcp

@@ -1,0 +1,230 @@
+[
+    {
+        "Id": "0bfdf5a27f30f462a889e5787993d8f17aa8d7dd08fce1776918b76e2f247b1d",
+        "Created": "2026-10-08T21:11:42.345983344Z",
+        "Path": "/nodejs/bin/node",
+        "Args": [
+            "/juice-shop/build/app.js"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 724,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-08T21:11:43.133781886Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:2765a26de7647609099a338d5b7f61085d95903c8703bb70f03fcc4b12f0818d",
+        "ResolvConfPath": "/var/lib/docker/containers/0bfdf5a27f30f462a889e5787993d8f17aa8d7dd08fce1776918b76e2f247b1d/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/0bfdf5a27f30f462a889e5787993d8f17aa8d7dd08fce1776918b76e2f247b1d/hostname",
+        "HostsPath": "/var/lib/docker/containers/0bfdf5a27f30f462a889e5787993d8f17aa8d7dd08fce1776918b76e2f247b1d/hosts",
+        "LogPath": "/var/lib/docker/containers/0bfdf5a27f30f462a889e5787993d8f17aa8d7dd08fce1776918b76e2f247b1d/0bfdf5a27f30f462a889e5787993d8f17aa8d7dd08fce1776918b76e2f247b1d-json.log",
+        "Name": "/autoshield-juice-shop",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "autoshield_net",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "0bfdf5a27f30",
+            "Domainname": "",
+            "User": "65532",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "ExposedPorts": {
+                "3000/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"
+            ],
+            "Cmd": [
+                "/juice-shop/build/app.js"
+            ],
+            "Image": "bkimminich/juice-shop:v19.0.0",
+            "Volumes": null,
+            "WorkingDir": "/juice-shop",
+            "Entrypoint": [
+                "/nodejs/bin/node"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "6ea408ad7bd167f6f97f3ee2acc35925f3ffa9972795164fb7532ca8b9045c18",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:772d62349859e4fe00737a68e3b3c80b1cb0cd1d2c9dc8ca3cbdcc50dcbff3a5",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "docker",
+                "com.docker.compose.project.config_files": "/Users/alishar/Desktop/autoshield/infrastructure/docker/docker-compose.yml",
+                "com.docker.compose.project.working_dir": "/Users/alishar/Desktop/autoshield/infrastructure/docker",
+                "com.docker.compose.service": "juice-shop",
+                "com.docker.compose.version": "5.5.0",
+                "maintainer": "Bjoern Kimminich \u003cbjoern.kimminich@owasp.org\u003e",
+                "org.opencontainers.image.authors": "Bjoern Kimminich \u003cbjoern.kimminich@owasp.org\u003e",
+                "org.opencontainers.image.created": "”2025-09-04T05:38:11Z”",
+                "org.opencontainers.image.description": "Probably the most modern and sophisticated insecure web application",
+                "org.opencontainers.image.documentation": "https://help.owasp-juice.shop",
+                "org.opencontainers.image.licenses": "MIT",
+                "org.opencontainers.image.revision": "36870cb",
+                "org.opencontainers.image.source": "https://github.com/juice-shop/juice-shop",
+                "org.opencontainers.image.title": "OWASP Juice Shop",
+                "org.opencontainers.image.url": "https://owasp-juice.shop",
+                "org.opencontainers.image.vendor": "Open Worldwide Application Security Project",
+                "org.opencontainers.image.version": "19.0.0"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "8ae5e14ae41563e9541ebc1ba733849eaf5c9ee8b67f0c5d8ca56459d6b8ca38",
+            "SandboxKey": "/var/run/docker/netns/8ae5e14ae415",
+            "Ports": {
+                "3000/tcp": null
+            },
+            "Networks": {
+                "autoshield_net": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "autoshield-juice-shop",
+                        "juice-shop"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
+                    "EndpointID": "2e8c92f8d942a70d59d246510ed365bd4ad68337e2a4c9b3ef7f7627f2bcd286",
+                    "Gateway": "172.19.0.1",
+                    "IPAddress": "172.19.0.2",
+                    "MacAddress": "56:e2:82:dd:9c:ec",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "autoshield-juice-shop",
+                        "juice-shop",
+                        "0bfdf5a27f30"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:772d62349859e4fe00737a68e3b3c80b1cb0cd1d2c9dc8ca3cbdcc50dcbff3a5",
+            "size": 4276,
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux"
+            }
+        }
+    }
+]
