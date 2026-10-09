@@ -1,7 +1,7 @@
 [
     {
-        "Id": "d2202e0b992dfa7e730eeca86f35b20c94dc2895235c6693091bc7f6196304d7",
-        "Created": "2026-10-08T22:03:15.821056552Z",
+        "Id": "2923269430ba33230b5cb8a8f7b6f9db2b33b4ce3fbf6c1eaf2a50fd5865b94e",
+        "Created": "2026-10-09T10:29:17.25762672Z",
         "Path": "docker-entrypoint.sh",
         "Args": [
             "redis-server",
@@ -15,17 +15,17 @@
             "Restarting": false,
             "OOMKilled": false,
             "Dead": false,
-            "Pid": 1737,
+            "Pid": 8938,
             "ExitCode": 0,
             "Error": "",
-            "StartedAt": "2026-10-08T22:03:16.93022822Z",
+            "StartedAt": "2026-10-09T10:29:17.538470429Z",
             "FinishedAt": "0001-01-01T00:00:00Z"
         },
         "Image": "sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf",
-        "ResolvConfPath": "/var/lib/docker/containers/d2202e0b992dfa7e730eeca86f35b20c94dc2895235c6693091bc7f6196304d7/resolv.conf",
-        "HostnamePath": "/var/lib/docker/containers/d2202e0b992dfa7e730eeca86f35b20c94dc2895235c6693091bc7f6196304d7/hostname",
-        "HostsPath": "/var/lib/docker/containers/d2202e0b992dfa7e730eeca86f35b20c94dc2895235c6693091bc7f6196304d7/hosts",
-        "LogPath": "/var/lib/docker/containers/d2202e0b992dfa7e730eeca86f35b20c94dc2895235c6693091bc7f6196304d7/d2202e0b992dfa7e730eeca86f35b20c94dc2895235c6693091bc7f6196304d7-json.log",
+        "ResolvConfPath": "/var/lib/docker/containers/2923269430ba33230b5cb8a8f7b6f9db2b33b4ce3fbf6c1eaf2a50fd5865b94e/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/2923269430ba33230b5cb8a8f7b6f9db2b33b4ce3fbf6c1eaf2a50fd5865b94e/hostname",
+        "HostsPath": "/var/lib/docker/containers/2923269430ba33230b5cb8a8f7b6f9db2b33b4ce3fbf6c1eaf2a50fd5865b94e/hosts",
+        "LogPath": "/var/lib/docker/containers/2923269430ba33230b5cb8a8f7b6f9db2b33b4ce3fbf6c1eaf2a50fd5865b94e/2923269430ba33230b5cb8a8f7b6f9db2b33b4ce3fbf6c1eaf2a50fd5865b94e-json.log",
         "Name": "/autoshield-redis",
         "RestartCount": 0,
         "Driver": "overlayfs",
@@ -149,7 +149,7 @@
             }
         ],
         "Config": {
-            "Hostname": "d2202e0b992d",
+            "Hostname": "2923269430ba",
             "Domainname": "",
             "User": "",
             "AttachStdin": false,
@@ -192,8 +192,8 @@
             }
         },
         "NetworkSettings": {
-            "SandboxID": "440f063793ee503fbd96fbed1378041797be2d0c68f8988a7188c0a3359059ca",
-            "SandboxKey": "/var/run/docker/netns/440f063793ee",
+            "SandboxID": "a9c908fc9468dbbda49dde43150cfb91a13425d1679a6198c1eddb8e9592e5a0",
+            "SandboxKey": "/var/run/docker/netns/a9c908fc9468",
             "Ports": {
                 "6379/tcp": null
             },
@@ -207,11 +207,11 @@
                     ],
                     "DriverOpts": null,
                     "GwPriority": 0,
-                    "NetworkID": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
-                    "EndpointID": "17bc6d639c146228251d62dcb878d74cdba041f3ac6d2aba19324d6124ae8750",
+                    "NetworkID": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+                    "EndpointID": "ef911e8d563a5966c9560a6e945f42ff7688d3d035f3c0a52dce6263b74c6805",
                     "Gateway": "172.19.0.1",
-                    "IPAddress": "172.19.0.5",
-                    "MacAddress": "b6:71:be:21:47:e7",
+                    "IPAddress": "172.19.0.4",
+                    "MacAddress": "ca:aa:88:9b:c1:57",
                     "IPPrefixLen": 16,
                     "IPv6Gateway": "",
                     "GlobalIPv6Address": "",
@@ -219,7 +219,7 @@
                     "DNSNames": [
                         "autoshield-redis",
                         "redis",
-                        "d2202e0b992d"
+                        "2923269430ba"
                     ]
                 }
             }

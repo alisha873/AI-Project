@@ -1,7 +1,7 @@
 [
     {
-        "Id": "090beed6a78a985bfa58c7f5b8b055783cfc2235e8208f64ebe8ce7b9ddc1ac7",
-        "Created": "2026-10-08T22:21:43.759920718Z",
+        "Id": "9efbf0c1081781fbe43e269f50830ff92528192cc52bf9204d1621286d306ba0",
+        "Created": "2026-10-09T10:29:17.252755178Z",
         "Path": "/start.sh",
         "Args": [],
         "State": {
@@ -11,17 +11,17 @@
             "Restarting": false,
             "OOMKilled": false,
             "Dead": false,
-            "Pid": 6865,
+            "Pid": 8931,
             "ExitCode": 0,
             "Error": "",
-            "StartedAt": "2026-10-08T22:21:44.073920051Z",
+            "StartedAt": "2026-10-09T10:29:17.53970247Z",
             "FinishedAt": "0001-01-01T00:00:00Z"
         },
-        "Image": "sha256:acd95f2abdf9bcbdabc4cba9893324a9d34e062cef3e80bfe4feb663663373ae",
-        "ResolvConfPath": "/var/lib/docker/containers/090beed6a78a985bfa58c7f5b8b055783cfc2235e8208f64ebe8ce7b9ddc1ac7/resolv.conf",
-        "HostnamePath": "/var/lib/docker/containers/090beed6a78a985bfa58c7f5b8b055783cfc2235e8208f64ebe8ce7b9ddc1ac7/hostname",
-        "HostsPath": "/var/lib/docker/containers/090beed6a78a985bfa58c7f5b8b055783cfc2235e8208f64ebe8ce7b9ddc1ac7/hosts",
-        "LogPath": "/var/lib/docker/containers/090beed6a78a985bfa58c7f5b8b055783cfc2235e8208f64ebe8ce7b9ddc1ac7/090beed6a78a985bfa58c7f5b8b055783cfc2235e8208f64ebe8ce7b9ddc1ac7-json.log",
+        "Image": "sha256:9dc20406b235474ecd836dcdd3b6e3552fd1e7b8dbc7d4a1f5b5e1ad7b45f6c4",
+        "ResolvConfPath": "/var/lib/docker/containers/9efbf0c1081781fbe43e269f50830ff92528192cc52bf9204d1621286d306ba0/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/9efbf0c1081781fbe43e269f50830ff92528192cc52bf9204d1621286d306ba0/hostname",
+        "HostsPath": "/var/lib/docker/containers/9efbf0c1081781fbe43e269f50830ff92528192cc52bf9204d1621286d306ba0/hosts",
+        "LogPath": "/var/lib/docker/containers/9efbf0c1081781fbe43e269f50830ff92528192cc52bf9204d1621286d306ba0/9efbf0c1081781fbe43e269f50830ff92528192cc52bf9204d1621286d306ba0-json.log",
         "Name": "/autoshield-linux-admin",
         "RestartCount": 0,
         "Driver": "overlayfs",
@@ -132,7 +132,7 @@
         },
         "Mounts": [],
         "Config": {
-            "Hostname": "090beed6a78a",
+            "Hostname": "9efbf0c10817",
             "Domainname": "",
             "User": "",
             "AttachStdin": false,
@@ -163,15 +163,14 @@
                 "com.docker.compose.project": "docker",
                 "com.docker.compose.project.config_files": "/Users/alishar/Desktop/autoshield/infrastructure/docker/docker-compose.yml",
                 "com.docker.compose.project.working_dir": "/Users/alishar/Desktop/autoshield/infrastructure/docker",
-                "com.docker.compose.replace": "autoshield-linux-admin",
                 "com.docker.compose.service": "linux-admin",
                 "com.docker.compose.version": "5.5.0",
                 "org.opencontainers.image.version": "24.04"
             }
         },
         "NetworkSettings": {
-            "SandboxID": "acc52be4730bcb14aebec27a87c0c34b84ec88f2f5c43646ac48c163504c3c08",
-            "SandboxKey": "/var/run/docker/netns/acc52be4730b",
+            "SandboxID": "385ceac44a25c0d4f85c4ccf7b32dcd6eb403c32f62398401c98635f3f88f430",
+            "SandboxKey": "/var/run/docker/netns/385ceac44a25",
             "Ports": {
                 "22/tcp": null
             },
@@ -185,11 +184,11 @@
                     ],
                     "DriverOpts": null,
                     "GwPriority": 0,
-                    "NetworkID": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
-                    "EndpointID": "ee999a531b5250263d9ae52a0d6c079c42747bc0bd5683f05b1fff90ed85d63b",
+                    "NetworkID": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+                    "EndpointID": "c7e4aa21fa571fa1a5c0746fd27da8819d173ab39e9455f40784719a9a9c682c",
                     "Gateway": "172.19.0.1",
-                    "IPAddress": "172.19.0.7",
-                    "MacAddress": "da:26:7d:8d:f8:ba",
+                    "IPAddress": "172.19.0.5",
+                    "MacAddress": "aa:57:15:3f:c1:8e",
                     "IPPrefixLen": 16,
                     "IPv6Gateway": "",
                     "GlobalIPv6Address": "",
@@ -197,7 +196,7 @@
                     "DNSNames": [
                         "autoshield-linux-admin",
                         "linux-admin",
-                        "090beed6a78a"
+                        "9efbf0c10817"
                     ]
                 }
             }

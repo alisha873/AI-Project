@@ -1,13 +1,13 @@
 container|network|ip_address
-autoshield-linux-admin|autoshield_net|172.19.0.7
-
 autoshield-api|autoshield_net|172.19.0.6
 
-autoshield-postgres|autoshield_net|172.19.0.4
+autoshield-nginx|autoshield_net|172.19.0.7
 
-autoshield-redis|autoshield_net|172.19.0.5
-
-autoshield-nginx|autoshield_net|172.19.0.3
+autoshield-postgres|autoshield_net|172.19.0.3
 
 autoshield-juice-shop|autoshield_net|172.19.0.2
+
+autoshield-redis|autoshield_net|172.19.0.4
+
+autoshield-linux-admin|autoshield_net|172.19.0.5
 

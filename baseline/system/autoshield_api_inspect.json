@@ -1,7 +1,7 @@
 [
     {
-        "Id": "b541b4c6d46a34da93c1edd00310ba457030f215b91a7a5129e219ee606c5c96",
-        "Created": "2026-10-08T22:07:28.591849377Z",
+        "Id": "b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47",
+        "Created": "2026-10-09T11:05:07.657501882Z",
         "Path": "uvicorn",
         "Args": [
             "app.main:app",
@@ -17,17 +17,17 @@
             "Restarting": false,
             "OOMKilled": false,
             "Dead": false,
-            "Pid": 2093,
+            "Pid": 9992,
             "ExitCode": 0,
             "Error": "",
-            "StartedAt": "2026-10-08T22:07:29.782516211Z",
+            "StartedAt": "2026-10-09T11:05:08.329528924Z",
             "FinishedAt": "0001-01-01T00:00:00Z"
         },
-        "Image": "sha256:718ce2b87d3bf3c579e808ad1741870f27a3acfa882c006ef6c64f4245e2b6dc",
-        "ResolvConfPath": "/var/lib/docker/containers/b541b4c6d46a34da93c1edd00310ba457030f215b91a7a5129e219ee606c5c96/resolv.conf",
-        "HostnamePath": "/var/lib/docker/containers/b541b4c6d46a34da93c1edd00310ba457030f215b91a7a5129e219ee606c5c96/hostname",
-        "HostsPath": "/var/lib/docker/containers/b541b4c6d46a34da93c1edd00310ba457030f215b91a7a5129e219ee606c5c96/hosts",
-        "LogPath": "/var/lib/docker/containers/b541b4c6d46a34da93c1edd00310ba457030f215b91a7a5129e219ee606c5c96/b541b4c6d46a34da93c1edd00310ba457030f215b91a7a5129e219ee606c5c96-json.log",
+        "Image": "sha256:80abdd01522bda8f3685779aa592df8c41e4bfda4a540658a4514363bbb50b4a",
+        "ResolvConfPath": "/var/lib/docker/containers/b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47/hostname",
+        "HostsPath": "/var/lib/docker/containers/b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47/hosts",
+        "LogPath": "/var/lib/docker/containers/b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47/b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47-json.log",
         "Name": "/autoshield-api",
         "RestartCount": 0,
         "Driver": "overlayfs",
@@ -138,7 +138,7 @@
         },
         "Mounts": [],
         "Config": {
-            "Hostname": "b541b4c6d46a",
+            "Hostname": "b71b5355ee7e",
             "Domainname": "",
             "User": "",
             "AttachStdin": false,
@@ -151,11 +151,11 @@
             "OpenStdin": false,
             "StdinOnce": false,
             "Env": [
+                "POSTGRES_HOST=postgres",
                 "POSTGRES_DB=autoshield",
                 "POSTGRES_USER=autoshield",
                 "POSTGRES_PASSWORD=autoshield_dev_password",
                 "REDIS_HOST=redis",
-                "POSTGRES_HOST=postgres",
                 "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
                 "LANG=C.UTF-8",
                 "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305",
@@ -177,19 +177,20 @@
             "Labels": {
                 "com.docker.compose.config-hash": "f4ecbbbd36e59ba4549cd556516bd43bb5fecccec9ba1245f629d3e9fca8c294",
                 "com.docker.compose.container-number": "1",
-                "com.docker.compose.depends_on": "postgres:service_started:false,redis:service_started:false",
-                "com.docker.compose.image": "sha256:573491b542b4caefd2656ef199ebfdcf202f88f1a1b9d7640cdd838aa6a5b688",
+                "com.docker.compose.depends_on": "redis:service_started:false,postgres:service_started:false",
+                "com.docker.compose.image": "sha256:09664645b633dc662d0783982c33e0be8ef753aa539f752e95cf0b985a61dbbe",
                 "com.docker.compose.oneoff": "False",
                 "com.docker.compose.project": "docker",
                 "com.docker.compose.project.config_files": "/Users/alishar/Desktop/autoshield/infrastructure/docker/docker-compose.yml",
                 "com.docker.compose.project.working_dir": "/Users/alishar/Desktop/autoshield/infrastructure/docker",
+                "com.docker.compose.replace": "autoshield-api",
                 "com.docker.compose.service": "autoshield-api",
                 "com.docker.compose.version": "5.5.0"
             }
         },
         "NetworkSettings": {
-            "SandboxID": "2e353b67d9743eea98f41a6d76c22d109caf52232e99f13e4596eea3811f198d",
-            "SandboxKey": "/var/run/docker/netns/2e353b67d974",
+            "SandboxID": "2d3ceab536bde8c9617156fc5a701b9b9f99a96738e7eb4d33d8f9e9d51d6202",
+            "SandboxKey": "/var/run/docker/netns/2d3ceab536bd",
             "Ports": {
                 "8000/tcp": null
             },
@@ -203,26 +204,26 @@
                     ],
                     "DriverOpts": null,
                     "GwPriority": 0,
-                    "NetworkID": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
-                    "EndpointID": "c0298af5f6c92729fcf8b10055834ae9265bb60e003c55a923672dfe3c461467",
+                    "NetworkID": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+                    "EndpointID": "d1c753b14e25a5b1f672da1e9e7326848ad216e63a6c064ed591e316fe35c62e",
                     "Gateway": "172.19.0.1",
                     "IPAddress": "172.19.0.6",
-                    "MacAddress": "b6:68:44:75:bb:51",
+                    "MacAddress": "7a:1f:40:88:ed:fc",
                     "IPPrefixLen": 16,
                     "IPv6Gateway": "",
                     "GlobalIPv6Address": "",
                     "GlobalIPv6PrefixLen": 0,
                     "DNSNames": [
                         "autoshield-api",
-                        "b541b4c6d46a"
+                        "b71b5355ee7e"
                     ]
                 }
             }
         },
         "ImageManifestDescriptor": {
             "mediaType": "application/vnd.oci.image.manifest.v1+json",
-            "digest": "sha256:573491b542b4caefd2656ef199ebfdcf202f88f1a1b9d7640cdd838aa6a5b688",
-            "size": 1811,
+            "digest": "sha256:09664645b633dc662d0783982c33e0be8ef753aa539f752e95cf0b985a61dbbe",
+            "size": 1812,
             "platform": {
                 "architecture": "arm64",
                 "os": "linux"

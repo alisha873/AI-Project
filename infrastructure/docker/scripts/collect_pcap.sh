@@ -3,28 +3,48 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-BASELINE_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)/baseline"
-PCAP_DIR="$BASELINE_DIR/network"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+if (( $# > 1 )); then
+    echo "Usage: $0 [output_root]" >&2
+    exit 2
+fi
+OUTPUT_ROOT="${1:-$PROJECT_ROOT/baseline}"
+if [[ "$OUTPUT_ROOT" != /* ]]; then
+    OUTPUT_ROOT="$PROJECT_ROOT/$OUTPUT_ROOT"
+fi
+PCAP_DIR="$OUTPUT_ROOT/network"
 NETWORK_NAME="autoshield_net"
 CAPTURE_SECONDS=12
-CURL_BIN="$(command -v curl || true)"
-
-if [[ -z "$CURL_BIN" ]]; then
-    for candidate in /usr/bin/curl /usr/local/bin/curl; do
-        if [[ -x "$candidate" ]]; then
-            CURL_BIN="$candidate"
-            break
-        fi
-    done
-fi
-if [[ -z "$CURL_BIN" ]]; then
-    echo "curl is required to generate controlled normal baseline requests." >&2
-    exit 1
+INCIDENT_MODE=0
+(( $# == 0 )) || INCIDENT_MODE=1
+if (( INCIDENT_MODE == 0 )); then
+    CURL_BIN="$(command -v curl || true)"
+    if [[ -z "$CURL_BIN" ]]; then
+        for candidate in /usr/bin/curl /usr/local/bin/curl; do
+            if [[ -x "$candidate" ]]; then
+                CURL_BIN="$candidate"
+                break
+            fi
+        done
+    fi
+    if [[ -z "$CURL_BIN" ]]; then
+        echo "curl is required to generate controlled normal baseline requests." >&2
+        exit 1
+    fi
 fi
 
 mkdir -p "$PCAP_DIR"
 
-CAPTURE_INTERFACE="br-$(docker network inspect "$NETWORK_NAME" --format '{{.Id}}' | cut -c1-12)"
+if (( INCIDENT_MODE )) && [[ "$(uname -s)" == "Darwin" ]]; then
+    CAPTURE_TARGET="--network container:autoshield-nginx --cap-add NET_RAW --cap-add NET_ADMIN"
+    CAPTURE_INTERFACE="eth0"
+elif (( INCIDENT_MODE )); then
+    CAPTURE_TARGET="--network host --privileged"
+    CAPTURE_INTERFACE="br-$(docker network inspect "$NETWORK_NAME" --format '{{.Id}}' | cut -c1-12)"
+else
+    CAPTURE_TARGET="--network host --privileged"
+    CAPTURE_INTERFACE="br-$(docker network inspect "$NETWORK_NAME" --format '{{.Id}}' | cut -c1-12)"
+fi
 CAPTURE_LOG="$(mktemp)"
 REQUEST_RESULTS="$(mktemp)"
 CAPTURE_PID=""
@@ -40,10 +60,16 @@ trap cleanup EXIT
 echo "Network: $NETWORK_NAME"
 echo "Capture interface: $CAPTURE_INTERFACE"
 echo "Output: $PCAP_DIR/traffic.pcap"
-echo "Starting a $CAPTURE_SECONDS-second capture for controlled normal requests."
+if (( INCIDENT_MODE )); then
+    CAPTURE_MODE="passive_incident_collection_window"
+    echo "Starting a passive $CAPTURE_SECONDS-second incident capture; no requests will be generated."
+else
+    CAPTURE_MODE="baseline_collector_generated_normal_requests"
+    echo "Starting a $CAPTURE_SECONDS-second capture for controlled normal requests."
+fi
 
-docker run --rm --privileged \
-    --network host \
+docker run --rm \
+    $CAPTURE_TARGET \
     -v "$PCAP_DIR:/captures" \
     alpine:3.20 \
     sh -c "
@@ -87,12 +113,14 @@ record_request() {
     }
 }
 
-echo "Generating ordinary GET requests through Nginx..."
-record_request "/"
-record_request "/api/health"
-record_request "/api/data"
-record_request "/api/data"
-record_request "/"
+if (( INCIDENT_MODE == 0 )); then
+    echo "Generating ordinary GET requests through Nginx..."
+    record_request "/"
+    record_request "/api/health"
+    record_request "/api/data"
+    record_request "/api/data"
+    record_request "/"
+fi
 
 capture_status=0
 wait "$CAPTURE_PID" || capture_status=$?
@@ -108,10 +136,13 @@ if [[ ! -s "$PCAP_DIR/traffic.pcap" ]]; then
     exit 1
 fi
 
+SUMMARY_FILENAME="normal_traffic_summary.json"
+(( INCIDENT_MODE == 0 )) || SUMMARY_FILENAME="traffic_summary.json"
 python3 "$SCRIPT_DIR/summarize_pcap.py" \
     "$PCAP_DIR/traffic.pcap" \
-    "$PCAP_DIR/normal_traffic_summary.json" \
-    "$BASELINE_DIR/network/autoshield_net.json" \
-    "$REQUEST_RESULTS"
+    "$PCAP_DIR/$SUMMARY_FILENAME" \
+    "$OUTPUT_ROOT/network/autoshield_net.json" \
+    "$REQUEST_RESULTS" \
+    "$CAPTURE_MODE"
 
 echo "PCAP and evidence-derived normal traffic summary collected."

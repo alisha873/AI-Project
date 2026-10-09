@@ -1,7 +1,7 @@
 [
     {
-        "Id": "0bfdf5a27f30f462a889e5787993d8f17aa8d7dd08fce1776918b76e2f247b1d",
-        "Created": "2026-10-08T21:11:42.345983344Z",
+        "Id": "2c62cd8ebd4c98757e82558bbc8f901637d760febc1e837bee89cfee89c2465b",
+        "Created": "2026-10-09T10:29:17.262138303Z",
         "Path": "/nodejs/bin/node",
         "Args": [
             "/juice-shop/build/app.js"
@@ -13,17 +13,17 @@
             "Restarting": false,
             "OOMKilled": false,
             "Dead": false,
-            "Pid": 724,
+            "Pid": 8955,
             "ExitCode": 0,
             "Error": "",
-            "StartedAt": "2026-10-08T21:11:43.133781886Z",
+            "StartedAt": "2026-10-09T10:29:17.53249047Z",
             "FinishedAt": "0001-01-01T00:00:00Z"
         },
         "Image": "sha256:2765a26de7647609099a338d5b7f61085d95903c8703bb70f03fcc4b12f0818d",
-        "ResolvConfPath": "/var/lib/docker/containers/0bfdf5a27f30f462a889e5787993d8f17aa8d7dd08fce1776918b76e2f247b1d/resolv.conf",
-        "HostnamePath": "/var/lib/docker/containers/0bfdf5a27f30f462a889e5787993d8f17aa8d7dd08fce1776918b76e2f247b1d/hostname",
-        "HostsPath": "/var/lib/docker/containers/0bfdf5a27f30f462a889e5787993d8f17aa8d7dd08fce1776918b76e2f247b1d/hosts",
-        "LogPath": "/var/lib/docker/containers/0bfdf5a27f30f462a889e5787993d8f17aa8d7dd08fce1776918b76e2f247b1d/0bfdf5a27f30f462a889e5787993d8f17aa8d7dd08fce1776918b76e2f247b1d-json.log",
+        "ResolvConfPath": "/var/lib/docker/containers/2c62cd8ebd4c98757e82558bbc8f901637d760febc1e837bee89cfee89c2465b/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/2c62cd8ebd4c98757e82558bbc8f901637d760febc1e837bee89cfee89c2465b/hostname",
+        "HostsPath": "/var/lib/docker/containers/2c62cd8ebd4c98757e82558bbc8f901637d760febc1e837bee89cfee89c2465b/hosts",
+        "LogPath": "/var/lib/docker/containers/2c62cd8ebd4c98757e82558bbc8f901637d760febc1e837bee89cfee89c2465b/2c62cd8ebd4c98757e82558bbc8f901637d760febc1e837bee89cfee89c2465b-json.log",
         "Name": "/autoshield-juice-shop",
         "RestartCount": 0,
         "Driver": "overlayfs",
@@ -134,7 +134,7 @@
         },
         "Mounts": [],
         "Config": {
-            "Hostname": "0bfdf5a27f30",
+            "Hostname": "2c62cd8ebd4c",
             "Domainname": "",
             "User": "65532",
             "AttachStdin": false,
@@ -185,8 +185,8 @@
             }
         },
         "NetworkSettings": {
-            "SandboxID": "8ae5e14ae41563e9541ebc1ba733849eaf5c9ee8b67f0c5d8ca56459d6b8ca38",
-            "SandboxKey": "/var/run/docker/netns/8ae5e14ae415",
+            "SandboxID": "7fc1ff7610501598bca6cb9cc7d7595fb43d27fdf85a4eb297640827c6ba9cd9",
+            "SandboxKey": "/var/run/docker/netns/7fc1ff761050",
             "Ports": {
                 "3000/tcp": null
             },
@@ -200,11 +200,11 @@
                     ],
                     "DriverOpts": null,
                     "GwPriority": 0,
-                    "NetworkID": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
-                    "EndpointID": "2e8c92f8d942a70d59d246510ed365bd4ad68337e2a4c9b3ef7f7627f2bcd286",
+                    "NetworkID": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+                    "EndpointID": "668966344cb97622ebe4252a7258da24360b4e79b3a8809d82b8ad047f2981d4",
                     "Gateway": "172.19.0.1",
                     "IPAddress": "172.19.0.2",
-                    "MacAddress": "56:e2:82:dd:9c:ec",
+                    "MacAddress": "32:07:1e:99:98:10",
                     "IPPrefixLen": 16,
                     "IPv6Gateway": "",
                     "GlobalIPv6Address": "",
@@ -212,7 +212,7 @@
                     "DNSNames": [
                         "autoshield-juice-shop",
                         "juice-shop",
-                        "0bfdf5a27f30"
+                        "2c62cd8ebd4c"
                     ]
                 }
             }

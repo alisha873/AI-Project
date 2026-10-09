@@ -2,8 +2,18 @@
 
 set -euo pipefail
 
-BASELINE_DIR="$(cd "$(dirname "$0")/../../.." && pwd)/baseline"
-SYSTEM_DIR="$BASELINE_DIR/system"
+PROJECT_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+if (( $# > 1 )); then
+    echo "Usage: $0 [output_root]" >&2
+    exit 2
+fi
+OUTPUT_ROOT="${1:-$PROJECT_ROOT/baseline}"
+if [[ "$OUTPUT_ROOT" != /* ]]; then
+    OUTPUT_ROOT="$PROJECT_ROOT/$OUTPUT_ROOT"
+fi
+mkdir -p "$OUTPUT_ROOT"
+OUTPUT_ROOT="$(cd "$OUTPUT_ROOT" && pwd)"
+SYSTEM_DIR="$OUTPUT_ROOT/system"
 
 mkdir -p "$SYSTEM_DIR"
 
@@ -42,7 +52,7 @@ docker ps \
     > "$SYSTEM_DIR/container_ports.txt"
 
 echo "Collecting consolidated Docker and runtime state..."
-python3 - "$BASELINE_DIR" <<'PY'
+python3 - "$OUTPUT_ROOT" "$([[ $# -eq 0 ]] && echo baseline || echo incident)" <<'PY'
 import json
 import os
 import platform
@@ -52,7 +62,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-baseline_dir = Path(sys.argv[1])
+output_root = Path(sys.argv[1])
+output_mode = sys.argv[2]
 docker = os.environ.get("DOCKER_BIN") or shutil.which("docker") or "/usr/local/bin/docker"
 expected_components = [
     "autoshield-nginx",
@@ -145,7 +156,9 @@ state = {
 }
 
 output = json.dumps(state, indent=2) + "\n"
-(baseline_dir / "system_state.json").write_text(output, encoding="utf-8")
+(output_root / ("system_state.json" if output_mode == "baseline" else "system/system_state.json")).write_text(
+    output, encoding="utf-8"
+)
 print(f"Wrote system_state.json for {len(running)} running container(s).")
 PY
 

@@ -118,11 +118,12 @@ def load_request_results(path: Path) -> list[dict[str, str]]:
 
 
 def main() -> int:
-    if len(sys.argv) != 5:
-        print("Usage: summarize_pcap.py PCAP SUMMARY_JSON NETWORK_JSON REQUEST_RESULTS", file=sys.stderr)
+    if len(sys.argv) not in (5, 6):
+        print("Usage: summarize_pcap.py PCAP SUMMARY_JSON NETWORK_JSON REQUEST_RESULTS [CAPTURE_MODE]", file=sys.stderr)
         return 2
 
-    pcap_path, summary_path, network_path, request_path = map(Path, sys.argv[1:])
+    pcap_path, summary_path, network_path, request_path = map(Path, sys.argv[1:5])
+    capture_mode = sys.argv[5] if len(sys.argv) == 6 else "unspecified"
     data = pcap_path.read_bytes()
     if len(data) < 24:
         raise ValueError(f"PCAP is shorter than its global header: {pcap_path}")
@@ -172,9 +173,6 @@ def main() -> int:
             flow_counts[key] += 1
             flow_times.setdefault(key, []).append(timestamp)
 
-    if packet_count == 0:
-        raise ValueError("PCAP contains no captured packets")
-
     labels = read_network_labels(network_path)
     flows = []
     application_flows = []
@@ -202,6 +200,7 @@ def main() -> int:
         "schema_version": 1,
         "collection_timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "pcap_file": pcap_path.name,
+        "capture_mode": capture_mode,
         "packet_count": packet_count,
         "protocol_counts": dict(sorted(protocol_counts.items())),
         "source_addresses": [
@@ -214,9 +213,13 @@ def main() -> int:
         ],
         "duration_seconds": round(max(timestamps) - min(timestamps), 6) if timestamps else None,
         "flows": flows,
-        "normal_application_flows": application_flows,
-        "normal_requests": load_request_results(request_path),
     }
+    if capture_mode == "baseline_collector_generated_normal_requests":
+        summary["normal_application_flows"] = application_flows
+        summary["normal_requests"] = load_request_results(request_path)
+    else:
+        summary["observed_application_flows"] = application_flows
+        summary["collector_generated_requests"] = []
     summary_path.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(f"Summarized {packet_count} observed packet(s) into {summary_path}.")
     return 0

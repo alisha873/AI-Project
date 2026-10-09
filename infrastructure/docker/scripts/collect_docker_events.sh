@@ -1,10 +1,23 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
-BASELINE_DIR="$(cd "$(dirname "$0")/../../.." && pwd)/baseline"
+PROJECT_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+if (( $# > 1 )); then
+    echo "Usage: $0 [output_root]" >&2
+    exit 2
+fi
+OUTPUT_ROOT="${1:-$PROJECT_ROOT/baseline}"
+if [[ "$OUTPUT_ROOT" != /* ]]; then
+    OUTPUT_ROOT="$PROJECT_ROOT/$OUTPUT_ROOT"
+fi
+if (( $# == 0 )); then
+    EVENT_DIR="$OUTPUT_ROOT/events"
+else
+    EVENT_DIR="$OUTPUT_ROOT/logs"
+fi
 
-mkdir -p "$BASELINE_DIR/events"
+mkdir -p "$EVENT_DIR"
 
 echo "Collecting Docker lifecycle and network events..."
 
@@ -21,8 +34,8 @@ docker events \
     --filter event=oom \
     --filter event=connect \
     --filter event=disconnect \
-    > "$BASELINE_DIR/events/docker_events.log"
+    > "$EVENT_DIR/docker_events.log"
 
 echo ""
 echo "Docker event collection complete."
-echo "Output: $BASELINE_DIR/events/docker_events.log"
+echo "Output: $EVENT_DIR/docker_events.log"

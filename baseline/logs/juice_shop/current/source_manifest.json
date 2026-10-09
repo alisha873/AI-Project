@@ -1,0 +1,20 @@
+{
+  "source_container": "autoshield-juice-shop",
+  "source_directory": "/juice-shop/logs",
+  "collection_status": "copied",
+  "collection_timestamp_utc": "2026-10-09T13:31:12.783653+00:00",
+  "files": [
+    {
+      "path": "access.log.2026-10-09",
+      "source": "autoshield-juice-shop:/juice-shop/logs/access.log.2026-10-09",
+      "category": "access_log",
+      "size_bytes": 0
+    },
+    {
+      "path": "audit.json",
+      "source": "autoshield-juice-shop:/juice-shop/logs/audit.json",
+      "category": "audit_manifest",
+      "size_bytes": 348
+    }
+  ]
+}

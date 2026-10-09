@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "collection_timestamp_utc": "2026-10-09T10:22:02.987701+00:00",
+  "collection_timestamp_utc": "2026-10-09T13:30:57.683755+00:00",
   "environment": {
     "hostname": "Alishas-MacBook-Air.local",
     "operating_system": "macOS-14.0-arm64-arm-64bit",
@@ -19,42 +19,20 @@
   "missing_expected_components": [],
   "running_containers": [
     {
-      "container_id": "090beed6a78a985bfa58c7f5b8b055783cfc2235e8208f64ebe8ce7b9ddc1ac7",
-      "name": "autoshield-linux-admin",
-      "image": "docker-linux-admin",
-      "state": "running",
-      "running": true,
-      "started_at": "2026-10-08T22:21:44.073920051Z",
-      "health": null,
-      "network_membership": {
-        "autoshield_net": {
-          "network_id": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
-          "ip_address": "172.19.0.7",
-          "global_ipv6_address": "",
-          "gateway": "172.19.0.1",
-          "mac_address": "da:26:7d:8d:f8:ba"
-        }
-      },
-      "published_ports": [],
-      "exposed_ports": [
-        "22/tcp"
-      ]
-    },
-    {
-      "container_id": "b541b4c6d46a34da93c1edd00310ba457030f215b91a7a5129e219ee606c5c96",
+      "container_id": "b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47",
       "name": "autoshield-api",
       "image": "docker-autoshield-api",
       "state": "running",
       "running": true,
-      "started_at": "2026-10-08T22:07:29.782516211Z",
+      "started_at": "2026-10-09T11:05:08.329528924Z",
       "health": null,
       "network_membership": {
         "autoshield_net": {
-          "network_id": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
+          "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
           "ip_address": "172.19.0.6",
           "global_ipv6_address": "",
           "gateway": "172.19.0.1",
-          "mac_address": "b6:68:44:75:bb:51"
+          "mac_address": "7a:1f:40:88:ed:fc"
         }
       },
       "published_ports": [],
@@ -63,64 +41,20 @@
       ]
     },
     {
-      "container_id": "13f9c5660fd2371dc34153a4a32cd3f22e46d56e20c0d1cb85aecb0ea3c3394d",
-      "name": "autoshield-postgres",
-      "image": "postgres:16-alpine",
-      "state": "running",
-      "running": true,
-      "started_at": "2026-10-08T22:03:16.929769636Z",
-      "health": null,
-      "network_membership": {
-        "autoshield_net": {
-          "network_id": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
-          "ip_address": "172.19.0.4",
-          "global_ipv6_address": "",
-          "gateway": "172.19.0.1",
-          "mac_address": "7a:ea:33:3b:48:68"
-        }
-      },
-      "published_ports": [],
-      "exposed_ports": [
-        "5432/tcp"
-      ]
-    },
-    {
-      "container_id": "d2202e0b992dfa7e730eeca86f35b20c94dc2895235c6693091bc7f6196304d7",
-      "name": "autoshield-redis",
-      "image": "redis:7-alpine",
-      "state": "running",
-      "running": true,
-      "started_at": "2026-10-08T22:03:16.93022822Z",
-      "health": null,
-      "network_membership": {
-        "autoshield_net": {
-          "network_id": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
-          "ip_address": "172.19.0.5",
-          "global_ipv6_address": "",
-          "gateway": "172.19.0.1",
-          "mac_address": "b6:71:be:21:47:e7"
-        }
-      },
-      "published_ports": [],
-      "exposed_ports": [
-        "6379/tcp"
-      ]
-    },
-    {
-      "container_id": "73e6ea46960410d4629975a1d728999a2c39f02335ab1ea2c0ced359fffe3b80",
+      "container_id": "dd5d114ba50111cf6b93a6e80e67511d819e29006dbf7c002b1d5d35859a0b64",
       "name": "autoshield-nginx",
       "image": "nginx:1.27-alpine",
       "state": "running",
       "running": true,
-      "started_at": "2026-10-08T22:10:01.106492504Z",
+      "started_at": "2026-10-09T10:29:17.774199804Z",
       "health": null,
       "network_membership": {
         "autoshield_net": {
-          "network_id": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
-          "ip_address": "172.19.0.3",
+          "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+          "ip_address": "172.19.0.7",
           "global_ipv6_address": "",
           "gateway": "172.19.0.1",
-          "mac_address": "fe:88:10:c4:30:16"
+          "mac_address": "16:1c:23:be:6e:60"
         }
       },
       "published_ports": [
@@ -140,31 +74,97 @@
       ]
     },
     {
-      "container_id": "0bfdf5a27f30f462a889e5787993d8f17aa8d7dd08fce1776918b76e2f247b1d",
+      "container_id": "774375e97fe92c49ad9670826c737fc660da6e8c00fe8888e96357b28712579e",
+      "name": "autoshield-postgres",
+      "image": "postgres:16-alpine",
+      "state": "running",
+      "running": true,
+      "started_at": "2026-10-09T10:29:17.538095554Z",
+      "health": null,
+      "network_membership": {
+        "autoshield_net": {
+          "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+          "ip_address": "172.19.0.3",
+          "global_ipv6_address": "",
+          "gateway": "172.19.0.1",
+          "mac_address": "a6:8f:dd:bd:4a:c5"
+        }
+      },
+      "published_ports": [],
+      "exposed_ports": [
+        "5432/tcp"
+      ]
+    },
+    {
+      "container_id": "2c62cd8ebd4c98757e82558bbc8f901637d760febc1e837bee89cfee89c2465b",
       "name": "autoshield-juice-shop",
       "image": "bkimminich/juice-shop:v19.0.0",
       "state": "running",
       "running": true,
-      "started_at": "2026-10-08T21:11:43.133781886Z",
+      "started_at": "2026-10-09T10:29:17.53249047Z",
       "health": null,
       "network_membership": {
         "autoshield_net": {
-          "network_id": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
+          "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
           "ip_address": "172.19.0.2",
           "global_ipv6_address": "",
           "gateway": "172.19.0.1",
-          "mac_address": "56:e2:82:dd:9c:ec"
+          "mac_address": "32:07:1e:99:98:10"
         }
       },
       "published_ports": [],
       "exposed_ports": [
         "3000/tcp"
       ]
+    },
+    {
+      "container_id": "2923269430ba33230b5cb8a8f7b6f9db2b33b4ce3fbf6c1eaf2a50fd5865b94e",
+      "name": "autoshield-redis",
+      "image": "redis:7-alpine",
+      "state": "running",
+      "running": true,
+      "started_at": "2026-10-09T10:29:17.538470429Z",
+      "health": null,
+      "network_membership": {
+        "autoshield_net": {
+          "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+          "ip_address": "172.19.0.4",
+          "global_ipv6_address": "",
+          "gateway": "172.19.0.1",
+          "mac_address": "ca:aa:88:9b:c1:57"
+        }
+      },
+      "published_ports": [],
+      "exposed_ports": [
+        "6379/tcp"
+      ]
+    },
+    {
+      "container_id": "9efbf0c1081781fbe43e269f50830ff92528192cc52bf9204d1621286d306ba0",
+      "name": "autoshield-linux-admin",
+      "image": "docker-linux-admin",
+      "state": "running",
+      "running": true,
+      "started_at": "2026-10-09T10:29:17.53970247Z",
+      "health": null,
+      "network_membership": {
+        "autoshield_net": {
+          "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+          "ip_address": "172.19.0.5",
+          "global_ipv6_address": "",
+          "gateway": "172.19.0.1",
+          "mac_address": "aa:57:15:3f:c1:8e"
+        }
+      },
+      "published_ports": [],
+      "exposed_ports": [
+        "22/tcp"
+      ]
     }
   ],
   "docker_networks": [
     {
-      "network_id": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
+      "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
       "name": "autoshield_net",
       "driver": "bridge",
       "scope": "local",
@@ -177,34 +177,34 @@
         }
       ],
       "containers": {
-        "autoshield-linux-admin": {
-          "endpoint_id": "ee999a531b5250263d9ae52a0d6c079c42747bc0bd5683f05b1fff90ed85d63b",
-          "ipv4_address": "172.19.0.7/16",
+        "autoshield-redis": {
+          "endpoint_id": "ef911e8d563a5966c9560a6e945f42ff7688d3d035f3c0a52dce6263b74c6805",
+          "ipv4_address": "172.19.0.4/16",
           "ipv6_address": ""
         },
         "autoshield-juice-shop": {
-          "endpoint_id": "2e8c92f8d942a70d59d246510ed365bd4ad68337e2a4c9b3ef7f7627f2bcd286",
+          "endpoint_id": "668966344cb97622ebe4252a7258da24360b4e79b3a8809d82b8ad047f2981d4",
           "ipv4_address": "172.19.0.2/16",
           "ipv6_address": ""
         },
         "autoshield-postgres": {
-          "endpoint_id": "32470b643ebe7d4bd3d2c38f4fcdce76e49b7b0d046e6bf8d296ab9e54fd2fbd",
-          "ipv4_address": "172.19.0.4/16",
-          "ipv6_address": ""
-        },
-        "autoshield-nginx": {
-          "endpoint_id": "cbd0dc16f808b1b39101e45ce3a6696a517ff5bfaa9a6c8e16627d7193f2d649",
+          "endpoint_id": "aa0111d323dc6ba0d353fdf62472081cb3fe212b19fe2d8feb2e2442faebaea8",
           "ipv4_address": "172.19.0.3/16",
           "ipv6_address": ""
         },
+        "autoshield-linux-admin": {
+          "endpoint_id": "c7e4aa21fa571fa1a5c0746fd27da8819d173ab39e9455f40784719a9a9c682c",
+          "ipv4_address": "172.19.0.5/16",
+          "ipv6_address": ""
+        },
         "autoshield-api": {
-          "endpoint_id": "c0298af5f6c92729fcf8b10055834ae9265bb60e003c55a923672dfe3c461467",
+          "endpoint_id": "d1c753b14e25a5b1f672da1e9e7326848ad216e63a6c064ed591e316fe35c62e",
           "ipv4_address": "172.19.0.6/16",
           "ipv6_address": ""
         },
-        "autoshield-redis": {
-          "endpoint_id": "17bc6d639c146228251d62dcb878d74cdba041f3ac6d2aba19324d6124ae8750",
-          "ipv4_address": "172.19.0.5/16",
+        "autoshield-nginx": {
+          "endpoint_id": "8ac8f412b896d6357fb476afccb91a9cebcc6817e46f5e7ad50837b3abd5ff1e",
+          "ipv4_address": "172.19.0.7/16",
           "ipv6_address": ""
         }
       }

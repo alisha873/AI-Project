@@ -1,7 +1,7 @@
 [
     {
-        "Id": "73e6ea46960410d4629975a1d728999a2c39f02335ab1ea2c0ced359fffe3b80",
-        "Created": "2026-10-08T21:11:43.040418761Z",
+        "Id": "dd5d114ba50111cf6b93a6e80e67511d819e29006dbf7c002b1d5d35859a0b64",
+        "Created": "2026-10-09T10:29:17.374905137Z",
         "Path": "/docker-entrypoint.sh",
         "Args": [
             "nginx",
@@ -15,17 +15,17 @@
             "Restarting": false,
             "OOMKilled": false,
             "Dead": false,
-            "Pid": 2281,
+            "Pid": 9153,
             "ExitCode": 0,
             "Error": "",
-            "StartedAt": "2026-10-08T22:10:01.106492504Z",
-            "FinishedAt": "2026-10-08T22:10:00.957582212Z"
+            "StartedAt": "2026-10-09T10:29:17.774199804Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
         },
         "Image": "sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10",
-        "ResolvConfPath": "/var/lib/docker/containers/73e6ea46960410d4629975a1d728999a2c39f02335ab1ea2c0ced359fffe3b80/resolv.conf",
-        "HostnamePath": "/var/lib/docker/containers/73e6ea46960410d4629975a1d728999a2c39f02335ab1ea2c0ced359fffe3b80/hostname",
-        "HostsPath": "/var/lib/docker/containers/73e6ea46960410d4629975a1d728999a2c39f02335ab1ea2c0ced359fffe3b80/hosts",
-        "LogPath": "/var/lib/docker/containers/73e6ea46960410d4629975a1d728999a2c39f02335ab1ea2c0ced359fffe3b80/73e6ea46960410d4629975a1d728999a2c39f02335ab1ea2c0ced359fffe3b80-json.log",
+        "ResolvConfPath": "/var/lib/docker/containers/dd5d114ba50111cf6b93a6e80e67511d819e29006dbf7c002b1d5d35859a0b64/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/dd5d114ba50111cf6b93a6e80e67511d819e29006dbf7c002b1d5d35859a0b64/hostname",
+        "HostsPath": "/var/lib/docker/containers/dd5d114ba50111cf6b93a6e80e67511d819e29006dbf7c002b1d5d35859a0b64/hosts",
+        "LogPath": "/var/lib/docker/containers/dd5d114ba50111cf6b93a6e80e67511d819e29006dbf7c002b1d5d35859a0b64/dd5d114ba50111cf6b93a6e80e67511d819e29006dbf7c002b1d5d35859a0b64-json.log",
         "Name": "/autoshield-nginx",
         "RestartCount": 0,
         "Driver": "overlayfs",
@@ -33,13 +33,11 @@
         "MountLabel": "",
         "ProcessLabel": "",
         "AppArmorProfile": "",
-        "ExecIDs": [
-            "3ea7d40c310584fafd0fc1c255a0a55a463bb5d3fdec4c2dc8bcb8789b960639"
-        ],
+        "ExecIDs": null,
         "HostConfig": {
             "Binds": [
-                "/Users/alishar/Desktop/autoshield/infrastructure/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro",
-                "docker_nginx_logs:/var/log/nginx:rw"
+                "docker_nginx_logs:/var/log/nginx:rw",
+                "/host_mnt/Users/alishar/Desktop/autoshield/infrastructure/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
             ],
             "ContainerIDFile": "",
             "LogConfig": {
@@ -148,14 +146,6 @@
         },
         "Mounts": [
             {
-                "Type": "bind",
-                "Source": "/Users/alishar/Desktop/autoshield/infrastructure/docker/nginx/nginx.conf",
-                "Destination": "/etc/nginx/nginx.conf",
-                "Mode": "ro",
-                "RW": false,
-                "Propagation": "rprivate"
-            },
-            {
                 "Type": "volume",
                 "Name": "docker_nginx_logs",
                 "Source": "/var/lib/docker/volumes/docker_nginx_logs/_data",
@@ -164,10 +154,18 @@
                 "Mode": "rw",
                 "RW": true,
                 "Propagation": ""
+            },
+            {
+                "Type": "bind",
+                "Source": "/host_mnt/Users/alishar/Desktop/autoshield/infrastructure/docker/nginx/nginx.conf",
+                "Destination": "/etc/nginx/nginx.conf",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
             }
         ],
         "Config": {
-            "Hostname": "73e6ea469604",
+            "Hostname": "dd5d114ba501",
             "Domainname": "",
             "User": "",
             "AttachStdin": false,
@@ -214,8 +212,8 @@
             "StopSignal": "SIGQUIT"
         },
         "NetworkSettings": {
-            "SandboxID": "d52d43775fc44e7f221c9349c8b643c655f47e3de1b105c9637f1dc92d273c28",
-            "SandboxKey": "/var/run/docker/netns/d52d43775fc4",
+            "SandboxID": "1e97be5cd14a7843c7981d4e5cfbfd9b467dbb8ce13ece53f90c200bd884e7a8",
+            "SandboxKey": "/var/run/docker/netns/1e97be5cd14a",
             "Ports": {
                 "80/tcp": [
                     {
@@ -238,11 +236,11 @@
                     ],
                     "DriverOpts": null,
                     "GwPriority": 0,
-                    "NetworkID": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
-                    "EndpointID": "cbd0dc16f808b1b39101e45ce3a6696a517ff5bfaa9a6c8e16627d7193f2d649",
+                    "NetworkID": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+                    "EndpointID": "8ac8f412b896d6357fb476afccb91a9cebcc6817e46f5e7ad50837b3abd5ff1e",
                     "Gateway": "172.19.0.1",
-                    "IPAddress": "172.19.0.3",
-                    "MacAddress": "fe:88:10:c4:30:16",
+                    "IPAddress": "172.19.0.7",
+                    "MacAddress": "16:1c:23:be:6e:60",
                     "IPPrefixLen": 16,
                     "IPv6Gateway": "",
                     "GlobalIPv6Address": "",
@@ -250,7 +248,7 @@
                     "DNSNames": [
                         "autoshield-nginx",
                         "nginx",
-                        "73e6ea469604"
+                        "dd5d114ba501"
                     ]
                 }
             }

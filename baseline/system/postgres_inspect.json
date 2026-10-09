@@ -1,7 +1,7 @@
 [
     {
-        "Id": "13f9c5660fd2371dc34153a4a32cd3f22e46d56e20c0d1cb85aecb0ea3c3394d",
-        "Created": "2026-10-08T22:03:15.825595386Z",
+        "Id": "774375e97fe92c49ad9670826c737fc660da6e8c00fe8888e96357b28712579e",
+        "Created": "2026-10-09T10:29:17.26482147Z",
         "Path": "docker-entrypoint.sh",
         "Args": [
             "postgres"
@@ -13,17 +13,17 @@
             "Restarting": false,
             "OOMKilled": false,
             "Dead": false,
-            "Pid": 1736,
+            "Pid": 8934,
             "ExitCode": 0,
             "Error": "",
-            "StartedAt": "2026-10-08T22:03:16.929769636Z",
+            "StartedAt": "2026-10-09T10:29:17.538095554Z",
             "FinishedAt": "0001-01-01T00:00:00Z"
         },
         "Image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
-        "ResolvConfPath": "/var/lib/docker/containers/13f9c5660fd2371dc34153a4a32cd3f22e46d56e20c0d1cb85aecb0ea3c3394d/resolv.conf",
-        "HostnamePath": "/var/lib/docker/containers/13f9c5660fd2371dc34153a4a32cd3f22e46d56e20c0d1cb85aecb0ea3c3394d/hostname",
-        "HostsPath": "/var/lib/docker/containers/13f9c5660fd2371dc34153a4a32cd3f22e46d56e20c0d1cb85aecb0ea3c3394d/hosts",
-        "LogPath": "/var/lib/docker/containers/13f9c5660fd2371dc34153a4a32cd3f22e46d56e20c0d1cb85aecb0ea3c3394d/13f9c5660fd2371dc34153a4a32cd3f22e46d56e20c0d1cb85aecb0ea3c3394d-json.log",
+        "ResolvConfPath": "/var/lib/docker/containers/774375e97fe92c49ad9670826c737fc660da6e8c00fe8888e96357b28712579e/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/774375e97fe92c49ad9670826c737fc660da6e8c00fe8888e96357b28712579e/hostname",
+        "HostsPath": "/var/lib/docker/containers/774375e97fe92c49ad9670826c737fc660da6e8c00fe8888e96357b28712579e/hosts",
+        "LogPath": "/var/lib/docker/containers/774375e97fe92c49ad9670826c737fc660da6e8c00fe8888e96357b28712579e/774375e97fe92c49ad9670826c737fc660da6e8c00fe8888e96357b28712579e-json.log",
         "Name": "/autoshield-postgres",
         "RestartCount": 0,
         "Driver": "overlayfs",
@@ -147,7 +147,7 @@
             }
         ],
         "Config": {
-            "Hostname": "13f9c5660fd2",
+            "Hostname": "774375e97fe9",
             "Domainname": "",
             "User": "",
             "AttachStdin": false,
@@ -160,9 +160,9 @@
             "OpenStdin": false,
             "StdinOnce": false,
             "Env": [
+                "POSTGRES_PASSWORD=autoshield_dev_password",
                 "POSTGRES_DB=autoshield",
                 "POSTGRES_USER=autoshield",
-                "POSTGRES_PASSWORD=autoshield_dev_password",
                 "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
                 "GOSU_VERSION=1.19",
                 "LANG=en_US.utf8",
@@ -198,8 +198,8 @@
             "StopSignal": "SIGINT"
         },
         "NetworkSettings": {
-            "SandboxID": "6bdfb8626761ed79820c0f74e03fed9f357a9fad66be05effcbd1cb6536d34d0",
-            "SandboxKey": "/var/run/docker/netns/6bdfb8626761",
+            "SandboxID": "ca895ab96bdd5fb0658e57a5b8e315ac6856d8e239cef04100c770bb4ad5beb3",
+            "SandboxKey": "/var/run/docker/netns/ca895ab96bdd",
             "Ports": {
                 "5432/tcp": null
             },
@@ -213,11 +213,11 @@
                     ],
                     "DriverOpts": null,
                     "GwPriority": 0,
-                    "NetworkID": "b98918785012c0844034a5784472088c5f9f13a77948c93f2259dc427fc68c40",
-                    "EndpointID": "32470b643ebe7d4bd3d2c38f4fcdce76e49b7b0d046e6bf8d296ab9e54fd2fbd",
+                    "NetworkID": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+                    "EndpointID": "aa0111d323dc6ba0d353fdf62472081cb3fe212b19fe2d8feb2e2442faebaea8",
                     "Gateway": "172.19.0.1",
-                    "IPAddress": "172.19.0.4",
-                    "MacAddress": "7a:ea:33:3b:48:68",
+                    "IPAddress": "172.19.0.3",
+                    "MacAddress": "a6:8f:dd:bd:4a:c5",
                     "IPPrefixLen": 16,
                     "IPv6Gateway": "",
                     "GlobalIPv6Address": "",
@@ -225,7 +225,7 @@
                     "DNSNames": [
                         "autoshield-postgres",
                         "postgres",
-                        "13f9c5660fd2"
+                        "774375e97fe9"
                     ]
                 }
             }
