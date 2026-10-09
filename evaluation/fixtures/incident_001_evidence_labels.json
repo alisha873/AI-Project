@@ -1,0 +1,43 @@
+
+{
+  "incident_id": "incident_001",
+  "annotation_version": 1,
+  "annotation_policy": "direct_and_contextual_evidence",
+  "relevant_event_ids": [
+    "nginx-17",
+    "nginx-18",
+    "nginx-19",
+    "application-2",
+    "application-3",
+    "application-4"
+  ],
+  "direct_event_ids": [
+    "nginx-19",
+    "application-4"
+  ],
+  "relevant_network_event_ids": [
+    "nginx-17",
+    "nginx-18",
+    "nginx-19"
+  ],
+  "relevant_configuration_paths": [
+    "docker/containers_after_attack.json",
+    "docker/network_after_attack.json"
+  ],
+  "relevant_network_artifact_paths": [
+    "network/attack.pcap"
+  ],
+  "relevant_supporting_artifact_paths": [
+    "logs/api.log",
+    "logs/nginx.log",
+    "database/application_data_after_attack.txt",
+    "metadata/attack_request.txt"
+  ],
+  "annotation_notes": [
+    "nginx-19 and application-4 directly capture the incident request.",
+    "nginx-17, nginx-18, application-2, and application-3 provide contextual requests to the same endpoint.",
+    "Relevant network events are defined as proxy-level HTTP access events for this fixture.",
+    "Both Docker configuration snapshots and the incident PCAP are included as relevant evidence.",
+    "Supporting artifact labels should be reviewed against the complete artifacts before being treated as finalized ground truth."
+    ]
+}

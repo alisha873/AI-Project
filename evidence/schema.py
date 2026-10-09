@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # ============================================================
@@ -92,6 +92,47 @@ class GraphEdge(BaseModel):
 
     attributes: dict[str, Any] = Field(default_factory=dict)
 
+class EvidenceExtraction(BaseModel):
+    """
+    Structured output produced by the Evidence Extraction Agent.
+
+    The agent identifies evidence relevant to the incident but does
+    not diagnose the attack, determine root cause, or propose
+    remediation.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    incident_id: str
+
+    relevant_events: list[str] = Field(default_factory=list)
+
+    relevant_configuration: list[str] = Field(default_factory=list)
+
+    relevant_network_events: list[str] = Field(default_factory=list)
+
+    relevant_network_artifacts: list[str] = Field(default_factory=list)
+
+    evidence_summary: str = ""
+
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+
+class IncidentEvidenceContext(BaseModel):
+    """
+    Controlled, agent-safe representation of an incident's evidence.
+
+    Ground-truth evaluation artifacts are intentionally excluded.
+    """
+
+    incident_id: str
+
+    events: list[EvidenceEvent] = Field(default_factory=list)
+
+    configuration_artifacts: list[str] = Field(default_factory=list)
+
+    network_artifacts: list[str] = Field(default_factory=list)
+
+    evidence_artifacts: list[str] = Field(default_factory=list)
 
 class AttackGraph(BaseModel):
     """

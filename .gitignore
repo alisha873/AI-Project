@@ -8,6 +8,10 @@ env/
 
 # Environment
 .env
+.env.*
+!.env.example
+.credentials
+credentials.json
 
 # IDE
 .vscode/
@@ -39,6 +43,8 @@ embeddings/
 
 # Generated reports
 reports/generated/
+evaluation/results/*.json
+evaluation/results/**/*.json
 
 # Test artifacts
 .pytest_cache/

@@ -15,3 +15,6 @@ pytest-cov
 
 pyyaml
 orjson
+
+requests
+groq
