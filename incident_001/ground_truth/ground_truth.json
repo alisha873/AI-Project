@@ -1,0 +1,103 @@
+{
+  "incident_id": "incident_001",
+  "scenario": {
+    "name": "SQL Injection against AutoShield API",
+    "type": "controlled_web_application_attack",
+    "attack_type": "SQL Injection",
+    "cwe": "CWE-89"
+  },
+
+  "timeline": {
+    "environment_reset": "2026-10-09T10:37:49Z",
+    "attack_observed": "2026-10-09T11:07:46Z"
+  },
+
+  "entry_point": {
+    "protocol": "HTTP",
+    "host": "localhost",
+    "port": 8080,
+    "component": "autoshield-nginx",
+    "endpoint": "/api/search"
+  },
+
+  "attack": {
+    "method": "GET",
+    "endpoint": "/api/search",
+    "parameter": "message",
+    "payload": "' OR '1'='1",
+    "expected_effect": "Alter the SQL predicate so that records outside the legitimate search match are returned.",
+    "observed_effect": "All three records in application_data were returned."
+  },
+
+  "target": {
+    "application": "autoshield-api",
+    "database": "autoshield-postgres",
+    "database_table": "application_data"
+  },
+
+  "expected_attack_path": [
+    "attacker",
+    "autoshield-nginx",
+    "autoshield-api",
+    "autoshield-postgres"
+  ],
+
+  "root_cause": {
+    "category": "SQL Injection",
+    "description": "User-controlled input from the message parameter was directly interpolated into a SQL query string.",
+    "vulnerable_pattern": "String interpolation of untrusted input into a SQL WHERE clause."
+  },
+
+  "impact": {
+    "confidentiality": "Unauthorized retrieval of database records.",
+    "integrity": "No database rows were modified or deleted.",
+    "availability": "No availability impact observed."
+  },
+
+  "expected_remediation": {
+    "primary": "Replace direct SQL string interpolation with a parameterized SQL query.",
+    "secondary": [
+      "Validate and constrain the search input.",
+      "Add a regression test demonstrating that SQL metacharacters cannot alter query semantics."
+    ]
+  },
+
+  "validation_expectation": {
+    "benign_request": {
+      "endpoint": "/api/search",
+      "input": "security",
+      "expected_result": [
+        {
+          "id": 2,
+          "message": "security test"
+        }
+      ]
+    },
+    "malicious_request": {
+      "endpoint": "/api/search",
+      "input": "' OR '1'='1",
+      "expected_result_after_remediation": "The input must not cause records outside the legitimate search semantics to be returned."
+    }
+  },
+
+  "evidence": {
+    "logs": [
+      "logs/nginx.log",
+      "logs/api.log",
+      "logs/postgres.log"
+    ],
+    "network": [
+      "network/attack.pcap"
+    ],
+    "database": [
+      "database/application_data_after_attack.txt"
+    ],
+    "docker": [
+      "docker/network_after_attack.json",
+      "docker/containers_after_attack.json"
+    ],
+    "metadata": [
+      "metadata/attack_request.txt"
+    ]
+  }
+}

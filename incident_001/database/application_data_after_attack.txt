@@ -1,0 +1,7 @@
+ id |       message       
+----+---------------------
+  1 | hello
+  2 | security test
+  3 | autoshield baseline
+(3 rows)
+

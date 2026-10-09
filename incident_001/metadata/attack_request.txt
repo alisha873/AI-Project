@@ -1,0 +1,11 @@
+Incident: incident_001
+Attack: SQL Injection
+CWE: CWE-89
+Method: GET
+Endpoint: /api/search
+Parameter: message
+Payload: ' OR '1'='1
+Entry point: http://localhost:8080
+Target: autoshield-api
+Database: autoshield-postgres
+Expected effect: alter SQL predicate and return records beyond the legitimate search match

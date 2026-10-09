@@ -3,7 +3,7 @@ import os
 
 import psycopg2
 import redis
-from fastapi import FastAPI
+from fastapi import FastAPI,Query
 
 
 app = FastAPI(title="AutoShield API")
@@ -80,6 +80,7 @@ def get_data():
             )
 
             rows = cursor.fetchall()
+            connection.commit()
 
     finally:
         connection.close()
@@ -101,4 +102,33 @@ def get_data():
     return {
         "source": "postgres",
         "data": data,
+    }
+
+@app.get("/search")
+def search_data(message: str = Query(default="")):
+    connection = get_postgres_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            query = (
+                "SELECT id, message "
+                "FROM application_data "
+                f"WHERE message LIKE '%{message}%' "
+                "ORDER BY id"
+            )
+
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+    finally:
+        connection.close()
+
+    return {
+        "data": [
+            {
+                "id": row[0],
+                "message": row[1],
+            }
+            for row in rows
+        ]
     }

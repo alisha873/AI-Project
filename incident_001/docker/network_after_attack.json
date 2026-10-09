@@ -1,0 +1,92 @@
+[
+    {
+        "Name": "autoshield_net",
+        "Id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+        "Created": "2026-10-09T10:29:17.181716678Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.19.0.0/16",
+                    "Gateway": "172.19.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {
+            "com.docker.network.enable_ipv4": "true",
+            "com.docker.network.enable_ipv6": "false"
+        },
+        "Labels": {
+            "com.docker.compose.config-hash": "d924faea63425875f4f3051cf4667f9b154634a2fe6c9bedaa730cb950988cee",
+            "com.docker.compose.network": "autoshield_net",
+            "com.docker.compose.project": "docker",
+            "com.docker.compose.version": "5.5.0"
+        },
+        "Containers": {
+            "2923269430ba33230b5cb8a8f7b6f9db2b33b4ce3fbf6c1eaf2a50fd5865b94e": {
+                "Name": "autoshield-redis",
+                "EndpointID": "ef911e8d563a5966c9560a6e945f42ff7688d3d035f3c0a52dce6263b74c6805",
+                "MacAddress": "ca:aa:88:9b:c1:57",
+                "IPv4Address": "172.19.0.4/16",
+                "IPv6Address": ""
+            },
+            "2c62cd8ebd4c98757e82558bbc8f901637d760febc1e837bee89cfee89c2465b": {
+                "Name": "autoshield-juice-shop",
+                "EndpointID": "668966344cb97622ebe4252a7258da24360b4e79b3a8809d82b8ad047f2981d4",
+                "MacAddress": "32:07:1e:99:98:10",
+                "IPv4Address": "172.19.0.2/16",
+                "IPv6Address": ""
+            },
+            "774375e97fe92c49ad9670826c737fc660da6e8c00fe8888e96357b28712579e": {
+                "Name": "autoshield-postgres",
+                "EndpointID": "aa0111d323dc6ba0d353fdf62472081cb3fe212b19fe2d8feb2e2442faebaea8",
+                "MacAddress": "a6:8f:dd:bd:4a:c5",
+                "IPv4Address": "172.19.0.3/16",
+                "IPv6Address": ""
+            },
+            "9efbf0c1081781fbe43e269f50830ff92528192cc52bf9204d1621286d306ba0": {
+                "Name": "autoshield-linux-admin",
+                "EndpointID": "c7e4aa21fa571fa1a5c0746fd27da8819d173ab39e9455f40784719a9a9c682c",
+                "MacAddress": "aa:57:15:3f:c1:8e",
+                "IPv4Address": "172.19.0.5/16",
+                "IPv6Address": ""
+            },
+            "b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47": {
+                "Name": "autoshield-api",
+                "EndpointID": "d1c753b14e25a5b1f672da1e9e7326848ad216e63a6c064ed591e316fe35c62e",
+                "MacAddress": "7a:1f:40:88:ed:fc",
+                "IPv4Address": "172.19.0.6/16",
+                "IPv6Address": ""
+            },
+            "dd5d114ba50111cf6b93a6e80e67511d819e29006dbf7c002b1d5d35859a0b64": {
+                "Name": "autoshield-nginx",
+                "EndpointID": "8ac8f412b896d6357fb476afccb91a9cebcc6817e46f5e7ad50837b3abd5ff1e",
+                "MacAddress": "16:1c:23:be:6e:60",
+                "IPv4Address": "172.19.0.7/16",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "172.19.0.0/16": {
+                        "IPsInUse": 9,
+                        "DynamicIPsAvailable": 65527
+                    }
+                }
+            }
+        }
+    }
+]
