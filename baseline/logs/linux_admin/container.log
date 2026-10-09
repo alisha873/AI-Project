@@ -1,0 +1,6 @@
+2026-10-08T22:21:44.411612510Z rsyslogd: imklog: cannot open kernel log (/proc/kmsg): Operation not permitted.
+2026-10-08T22:21:44.411689260Z rsyslogd: activation of module imklog failed [v8.2312.0 try https://www.rsyslog.com/e/2145 ]
+2026-10-08T22:21:44.438658843Z Server listening on 0.0.0.0 port 22.
+2026-10-08T22:21:44.438678468Z Server listening on :: port 22.
+2026-10-08T22:24:37.781751298Z Failed password for analyst from 172.19.0.6 port 53676 ssh2
+2026-10-08T22:24:39.029101257Z Connection closed by authenticating user analyst 172.19.0.6 port 53676 [preauth]

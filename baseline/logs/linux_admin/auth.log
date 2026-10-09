@@ -1,0 +1,2 @@
+2026-10-08T22:24:35.024817+00:00 090beed6a78a sshd: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=172.19.0.6  user=analyst
+2026-10-08T22:24:35.024817+00:00 090beed6a78a sshd: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=172.19.0.6  user=analyst

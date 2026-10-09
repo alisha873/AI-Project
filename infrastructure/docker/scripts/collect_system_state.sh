@@ -1,59 +1,152 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 BASELINE_DIR="$(cd "$(dirname "$0")/../../.." && pwd)/baseline"
+SYSTEM_DIR="$BASELINE_DIR/system"
 
-mkdir -p "$BASELINE_DIR/system"
+mkdir -p "$SYSTEM_DIR"
 
-echo "[1/5] Collecting running containers..."
-
+echo "[1/5] Collecting all running containers..."
 docker ps \
     --format '{{.Names}}|{{.Image}}|{{.Status}}|{{.Ports}}' \
-    > "$BASELINE_DIR/system/containers.txt"
-
+    > "$SYSTEM_DIR/containers.txt"
 
 echo "[2/5] Collecting container IP addresses..."
-
 {
-    echo "container|ip_address"
+    echo "container|network|ip_address"
 
-    for container in $(docker ps --format '{{.Names}}'); do
-        ip=$(docker inspect -f \
-            '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
-            "$container")
-
-        echo "$container|$ip"
-    done
-
-} > "$BASELINE_DIR/system/container_ips.txt"
-
+    while IFS= read -r container; do
+        docker inspect --format \
+            '{{.Name}}{{range $network, $settings := .NetworkSettings.Networks}}{{printf "|%s|%s\n" $network $settings.IPAddress}}{{end}}' \
+            "$container" | sed 's#^/##'
+    done < <(docker ps --format '{{.Names}}')
+} > "$SYSTEM_DIR/container_ips.txt"
 
 echo "[3/5] Collecting Docker networks..."
+docker network ls > "$SYSTEM_DIR/docker_networks.txt"
 
-docker network ls \
-    > "$BASELINE_DIR/system/docker_networks.txt"
-
-
-echo "[4/5] Collecting container processes..."
-
+echo "[4/5] Collecting processes for all running containers..."
 {
-    echo "===== autoshield-nginx ====="
-    docker top autoshield-nginx
-
-    echo ""
-    echo "===== autoshield-juice-shop ====="
-    docker top autoshield-juice-shop
-
-} > "$BASELINE_DIR/system/container_processes.txt"
-
+    while IFS= read -r container; do
+        [[ -n "$container" ]] || continue
+        printf '===== %s =====\n' "$container"
+        docker top "$container"
+        printf '\n'
+    done < <(docker ps --format '{{.Names}}')
+} > "$SYSTEM_DIR/container_processes.txt"
 
 echo "[5/5] Collecting published ports..."
-
 docker ps \
     --format '{{.Names}}|{{.Ports}}' \
-    > "$BASELINE_DIR/system/container_ports.txt"
+    > "$SYSTEM_DIR/container_ports.txt"
+
+echo "Collecting consolidated Docker and runtime state..."
+python3 - "$BASELINE_DIR" <<'PY'
+import json
+import os
+import platform
+import shutil
+import subprocess
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+baseline_dir = Path(sys.argv[1])
+docker = os.environ.get("DOCKER_BIN") or shutil.which("docker") or "/usr/local/bin/docker"
+expected_components = [
+    "autoshield-nginx",
+    "autoshield-juice-shop",
+    "autoshield-api",
+    "autoshield-postgres",
+    "autoshield-redis",
+    "autoshield-linux-admin",
+]
 
 
-echo ""
+def command(*args):
+    return subprocess.check_output([docker, *args], text=True).strip()
+
+
+container_ids = command("ps", "-q", "--no-trunc").splitlines()
+containers = json.loads(command("inspect", *container_ids)) if container_ids else []
+network_ids = command("network", "ls", "-q", "--no-trunc").splitlines()
+networks = json.loads(command("network", "inspect", *network_ids)) if network_ids else []
+
+running = []
+for container in containers:
+    state = container.get("State", {})
+    network_membership = {}
+    for name, details in container.get("NetworkSettings", {}).get("Networks", {}).items():
+        network_membership[name] = {
+            "network_id": details.get("NetworkID"),
+            "ip_address": details.get("IPAddress"),
+            "global_ipv6_address": details.get("GlobalIPv6Address"),
+            "gateway": details.get("Gateway"),
+            "mac_address": details.get("MacAddress"),
+        }
+
+    published_ports = []
+    for container_port, bindings in container.get("NetworkSettings", {}).get("Ports", {}).items():
+        for binding in bindings or []:
+            published_ports.append({
+                "container_port": container_port,
+                "host_ip": binding.get("HostIp"),
+                "host_port": binding.get("HostPort"),
+            })
+
+    running.append({
+        "container_id": container.get("Id"),
+        "name": container.get("Name", "").lstrip("/"),
+        "image": container.get("Config", {}).get("Image"),
+        "state": state.get("Status"),
+        "running": state.get("Running", False),
+        "started_at": state.get("StartedAt"),
+        "health": state.get("Health", {}).get("Status"),
+        "network_membership": network_membership,
+        "published_ports": published_ports,
+        "exposed_ports": sorted(container.get("Config", {}).get("ExposedPorts", {}).keys()),
+    })
+
+present = {container["name"] for container in running}
+state = {
+    "schema_version": 1,
+    "collection_timestamp_utc": datetime.now(timezone.utc).isoformat(),
+    "environment": {
+        "hostname": platform.node(),
+        "operating_system": platform.platform(),
+        "python_version": platform.python_version(),
+        "docker_server_version": command("version", "--format", "{{.Server.Version}}"),
+        "docker_compose_version": command("compose", "version", "--short"),
+    },
+    "expected_components": expected_components,
+    "missing_expected_components": sorted(set(expected_components) - present),
+    "running_containers": running,
+    "docker_networks": [
+        {
+            "network_id": network.get("Id"),
+            "name": network.get("Name"),
+            "driver": network.get("Driver"),
+            "scope": network.get("Scope"),
+            "internal": network.get("Internal"),
+            "attachable": network.get("Attachable"),
+            "ipam": network.get("IPAM", {}).get("Config", []),
+            "containers": {
+                entry.get("Name"): {
+                    "endpoint_id": entry.get("EndpointID"),
+                    "ipv4_address": entry.get("IPv4Address"),
+                    "ipv6_address": entry.get("IPv6Address"),
+                }
+                for entry in network.get("Containers", {}).values()
+            },
+        }
+        for network in networks
+    ],
+}
+
+output = json.dumps(state, indent=2) + "\n"
+(baseline_dir / "system_state.json").write_text(output, encoding="utf-8")
+print(f"Wrote system_state.json for {len(running)} running container(s).")
+PY
+
 echo "System state collection complete."

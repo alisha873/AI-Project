@@ -33,7 +33,9 @@
         "MountLabel": "",
         "ProcessLabel": "",
         "AppArmorProfile": "",
-        "ExecIDs": null,
+        "ExecIDs": [
+            "3ea7d40c310584fafd0fc1c255a0a55a463bb5d3fdec4c2dc8bcb8789b960639"
+        ],
         "HostConfig": {
             "Binds": [
                 "/Users/alishar/Desktop/autoshield/infrastructure/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro",

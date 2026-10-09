@@ -1,6 +1,6 @@
-autoshield-linux-admin|docker-linux-admin|Up 6 minutes|22/tcp
-autoshield-api|docker-autoshield-api|Up 21 minutes|8000/tcp
-autoshield-postgres|postgres:16-alpine|Up 25 minutes|5432/tcp
-autoshield-redis|redis:7-alpine|Up 25 minutes|6379/tcp
-autoshield-nginx|nginx:1.27-alpine|Up 18 minutes|0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
-autoshield-juice-shop|bkimminich/juice-shop:v19.0.0|Up About an hour|3000/tcp
+autoshield-linux-admin|docker-linux-admin|Up 12 hours|22/tcp
+autoshield-api|docker-autoshield-api|Up 12 hours|8000/tcp
+autoshield-postgres|postgres:16-alpine|Up 12 hours|5432/tcp
+autoshield-redis|redis:7-alpine|Up 12 hours|6379/tcp
+autoshield-nginx|nginx:1.27-alpine|Up 12 hours|0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+autoshield-juice-shop|bkimminich/juice-shop:v19.0.0|Up 13 hours|3000/tcp

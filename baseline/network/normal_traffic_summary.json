@@ -1,0 +1,860 @@
+{
+  "schema_version": 1,
+  "collection_timestamp_utc": "2026-10-09T10:22:18.854463+00:00",
+  "pcap_file": "traffic.pcap",
+  "packet_count": 257,
+  "protocol_counts": {
+    "ARP": 20,
+    "TCP": 237
+  },
+  "source_addresses": [
+    {
+      "address": "172.19.0.1",
+      "container": null,
+      "packet_count": 2
+    },
+    {
+      "address": "172.19.0.2",
+      "container": "autoshield-juice-shop",
+      "packet_count": 22
+    },
+    {
+      "address": "172.19.0.3",
+      "container": "autoshield-nginx",
+      "packet_count": 84
+    },
+    {
+      "address": "172.19.0.4",
+      "container": "autoshield-postgres",
+      "packet_count": 12
+    },
+    {
+      "address": "172.19.0.5",
+      "container": "autoshield-redis",
+      "packet_count": 15
+    },
+    {
+      "address": "172.19.0.6",
+      "container": "autoshield-api",
+      "packet_count": 52
+    },
+    {
+      "address": "192.168.65.1",
+      "container": null,
+      "packet_count": 70
+    }
+  ],
+  "destination_addresses": [
+    {
+      "address": "172.19.0.1",
+      "container": null,
+      "packet_count": 2
+    },
+    {
+      "address": "172.19.0.2",
+      "container": "autoshield-juice-shop",
+      "packet_count": 25
+    },
+    {
+      "address": "172.19.0.3",
+      "container": "autoshield-nginx",
+      "packet_count": 112
+    },
+    {
+      "address": "172.19.0.4",
+      "container": "autoshield-postgres",
+      "packet_count": 15
+    },
+    {
+      "address": "172.19.0.5",
+      "container": "autoshield-redis",
+      "packet_count": 19
+    },
+    {
+      "address": "172.19.0.6",
+      "container": "autoshield-api",
+      "packet_count": 49
+    },
+    {
+      "address": "192.168.65.1",
+      "container": null,
+      "packet_count": 35
+    }
+  ],
+  "duration_seconds": 5.43965,
+  "flows": [
+    {
+      "source_ip": "192.168.65.1",
+      "source_component": null,
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 20908,
+      "destination_port": 80,
+      "packet_count": 28,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.655555+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.678015+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "192.168.65.1",
+      "destination_component": null,
+      "protocol": "TCP",
+      "source_port": 80,
+      "destination_port": 20908,
+      "packet_count": 12,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.656756+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.677899+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.2",
+      "destination_component": "autoshield-juice-shop",
+      "protocol": "TCP",
+      "source_port": 47708,
+      "destination_port": 3000,
+      "packet_count": 11,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.660927+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.677159+00:00"
+    },
+    {
+      "source_ip": "172.19.0.2",
+      "source_component": "autoshield-juice-shop",
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 3000,
+      "destination_port": 47708,
+      "packet_count": 10,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.661017+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.677124+00:00"
+    },
+    {
+      "source_ip": "192.168.65.1",
+      "source_component": null,
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 19558,
+      "destination_port": 80,
+      "packet_count": 6,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.687549+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.711454+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "192.168.65.1",
+      "destination_component": null,
+      "protocol": "TCP",
+      "source_port": 80,
+      "destination_port": 19558,
+      "packet_count": 4,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.687587+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.711289+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.6",
+      "destination_component": "autoshield-api",
+      "protocol": "TCP",
+      "source_port": 33608,
+      "destination_port": 8000,
+      "packet_count": 7,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.688293+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.711054+00:00"
+    },
+    {
+      "source_ip": "172.19.0.6",
+      "source_component": "autoshield-api",
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 8000,
+      "destination_port": 33608,
+      "packet_count": 5,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.688565+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.711040+00:00"
+    },
+    {
+      "source_ip": "192.168.65.1",
+      "source_component": null,
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 37769,
+      "destination_port": 80,
+      "packet_count": 6,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.725308+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.771459+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "192.168.65.1",
+      "destination_component": null,
+      "protocol": "TCP",
+      "source_port": 80,
+      "destination_port": 37769,
+      "packet_count": 4,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.725359+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.771182+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.6",
+      "destination_component": "autoshield-api",
+      "protocol": "TCP",
+      "source_port": 33612,
+      "destination_port": 8000,
+      "packet_count": 7,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.725851+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.770400+00:00"
+    },
+    {
+      "source_ip": "172.19.0.6",
+      "source_component": "autoshield-api",
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 8000,
+      "destination_port": 33612,
+      "packet_count": 5,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.725872+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.770378+00:00"
+    },
+    {
+      "source_ip": "172.19.0.6",
+      "source_component": "autoshield-api",
+      "destination_ip": "172.19.0.5",
+      "destination_component": "autoshield-redis",
+      "protocol": "TCP",
+      "source_port": 35508,
+      "destination_port": 6379,
+      "packet_count": 9,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.732327+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.769862+00:00"
+    },
+    {
+      "source_ip": "172.19.0.5",
+      "source_component": "autoshield-redis",
+      "destination_ip": "172.19.0.6",
+      "destination_component": "autoshield-api",
+      "protocol": "TCP",
+      "source_port": 6379,
+      "destination_port": 35508,
+      "packet_count": 7,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.732366+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.769823+00:00"
+    },
+    {
+      "source_ip": "172.19.0.6",
+      "source_component": "autoshield-api",
+      "destination_ip": "172.19.0.4",
+      "destination_component": "autoshield-postgres",
+      "protocol": "TCP",
+      "source_port": 35632,
+      "destination_port": 5432,
+      "packet_count": 13,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.736594+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.775405+00:00"
+    },
+    {
+      "source_ip": "172.19.0.4",
+      "source_component": "autoshield-postgres",
+      "destination_ip": "172.19.0.6",
+      "destination_component": "autoshield-api",
+      "protocol": "TCP",
+      "source_port": 5432,
+      "destination_port": 35632,
+      "packet_count": 10,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.736622+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.775152+00:00"
+    },
+    {
+      "source_ip": "192.168.65.1",
+      "source_component": null,
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 17306,
+      "destination_port": 80,
+      "packet_count": 6,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.780424+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.783837+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "192.168.65.1",
+      "destination_component": null,
+      "protocol": "TCP",
+      "source_port": 80,
+      "destination_port": 17306,
+      "packet_count": 4,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.780461+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.783723+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.6",
+      "destination_component": "autoshield-api",
+      "protocol": "TCP",
+      "source_port": 33614,
+      "destination_port": 8000,
+      "packet_count": 6,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.781230+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.783264+00:00"
+    },
+    {
+      "source_ip": "172.19.0.6",
+      "source_component": "autoshield-api",
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 8000,
+      "destination_port": 33614,
+      "packet_count": 6,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.781248+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.783286+00:00"
+    },
+    {
+      "source_ip": "172.19.0.6",
+      "source_component": "autoshield-api",
+      "destination_ip": "172.19.0.5",
+      "destination_component": "autoshield-redis",
+      "protocol": "TCP",
+      "source_port": 35520,
+      "destination_port": 6379,
+      "packet_count": 8,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.782518+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.782984+00:00"
+    },
+    {
+      "source_ip": "172.19.0.5",
+      "source_component": "autoshield-redis",
+      "destination_ip": "172.19.0.6",
+      "destination_component": "autoshield-api",
+      "protocol": "TCP",
+      "source_port": 6379,
+      "destination_port": 35520,
+      "packet_count": 6,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.782541+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.782974+00:00"
+    },
+    {
+      "source_ip": "192.168.65.1",
+      "source_component": null,
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 35163,
+      "destination_port": 80,
+      "packet_count": 24,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.793619+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.797896+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "192.168.65.1",
+      "destination_component": null,
+      "protocol": "TCP",
+      "source_port": 80,
+      "destination_port": 35163,
+      "packet_count": 11,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.793640+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.797623+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.2",
+      "destination_component": "autoshield-juice-shop",
+      "protocol": "TCP",
+      "source_port": 47712,
+      "destination_port": 3000,
+      "packet_count": 12,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.793938+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.796144+00:00"
+    },
+    {
+      "source_ip": "172.19.0.2",
+      "source_component": "autoshield-juice-shop",
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 3000,
+      "destination_port": 47712,
+      "packet_count": 10,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.793955+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.796135+00:00"
+    },
+    {
+      "source_ip": "172.19.0.1",
+      "source_component": null,
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 2,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:12.094183+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:12.094912+00:00"
+    },
+    {
+      "source_ip": "172.19.0.6",
+      "source_component": "autoshield-api",
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 2,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:12.094673+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:12.095195+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.6",
+      "destination_component": "autoshield-api",
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 2,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:12.094713+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:12.095193+00:00"
+    },
+    {
+      "source_ip": "172.19.0.2",
+      "source_component": "autoshield-juice-shop",
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 2,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:12.094725+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:12.095199+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.2",
+      "destination_component": "autoshield-juice-shop",
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 2,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:12.094762+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:12.095197+00:00"
+    },
+    {
+      "source_ip": "172.19.0.4",
+      "source_component": "autoshield-postgres",
+      "destination_ip": "172.19.0.6",
+      "destination_component": "autoshield-api",
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 2,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:12.094790+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:12.095202+00:00"
+    },
+    {
+      "source_ip": "172.19.0.6",
+      "source_component": "autoshield-api",
+      "destination_ip": "172.19.0.4",
+      "destination_component": "autoshield-postgres",
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 2,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:12.094818+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:12.095201+00:00"
+    },
+    {
+      "source_ip": "172.19.0.5",
+      "source_component": "autoshield-redis",
+      "destination_ip": "172.19.0.6",
+      "destination_component": "autoshield-api",
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 2,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:12.094828+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:12.095205+00:00"
+    },
+    {
+      "source_ip": "172.19.0.6",
+      "source_component": "autoshield-api",
+      "destination_ip": "172.19.0.5",
+      "destination_component": "autoshield-redis",
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 2,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:12.094848+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:12.095204+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.1",
+      "destination_component": null,
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 2,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:12.094858+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:12.095185+00:00"
+    }
+  ],
+  "normal_application_flows": [
+    {
+      "source_ip": "192.168.65.1",
+      "source_component": null,
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 20908,
+      "destination_port": 80,
+      "packet_count": 28,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.655555+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.678015+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "192.168.65.1",
+      "destination_component": null,
+      "protocol": "TCP",
+      "source_port": 80,
+      "destination_port": 20908,
+      "packet_count": 12,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.656756+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.677899+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.2",
+      "destination_component": "autoshield-juice-shop",
+      "protocol": "TCP",
+      "source_port": 47708,
+      "destination_port": 3000,
+      "packet_count": 11,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.660927+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.677159+00:00"
+    },
+    {
+      "source_ip": "172.19.0.2",
+      "source_component": "autoshield-juice-shop",
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 3000,
+      "destination_port": 47708,
+      "packet_count": 10,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.661017+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.677124+00:00"
+    },
+    {
+      "source_ip": "192.168.65.1",
+      "source_component": null,
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 19558,
+      "destination_port": 80,
+      "packet_count": 6,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.687549+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.711454+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "192.168.65.1",
+      "destination_component": null,
+      "protocol": "TCP",
+      "source_port": 80,
+      "destination_port": 19558,
+      "packet_count": 4,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.687587+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.711289+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.6",
+      "destination_component": "autoshield-api",
+      "protocol": "TCP",
+      "source_port": 33608,
+      "destination_port": 8000,
+      "packet_count": 7,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.688293+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.711054+00:00"
+    },
+    {
+      "source_ip": "172.19.0.6",
+      "source_component": "autoshield-api",
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 8000,
+      "destination_port": 33608,
+      "packet_count": 5,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.688565+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.711040+00:00"
+    },
+    {
+      "source_ip": "192.168.65.1",
+      "source_component": null,
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 37769,
+      "destination_port": 80,
+      "packet_count": 6,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.725308+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.771459+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "192.168.65.1",
+      "destination_component": null,
+      "protocol": "TCP",
+      "source_port": 80,
+      "destination_port": 37769,
+      "packet_count": 4,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.725359+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.771182+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.6",
+      "destination_component": "autoshield-api",
+      "protocol": "TCP",
+      "source_port": 33612,
+      "destination_port": 8000,
+      "packet_count": 7,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.725851+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.770400+00:00"
+    },
+    {
+      "source_ip": "172.19.0.6",
+      "source_component": "autoshield-api",
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 8000,
+      "destination_port": 33612,
+      "packet_count": 5,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.725872+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.770378+00:00"
+    },
+    {
+      "source_ip": "172.19.0.6",
+      "source_component": "autoshield-api",
+      "destination_ip": "172.19.0.5",
+      "destination_component": "autoshield-redis",
+      "protocol": "TCP",
+      "source_port": 35508,
+      "destination_port": 6379,
+      "packet_count": 9,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.732327+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.769862+00:00"
+    },
+    {
+      "source_ip": "172.19.0.5",
+      "source_component": "autoshield-redis",
+      "destination_ip": "172.19.0.6",
+      "destination_component": "autoshield-api",
+      "protocol": "TCP",
+      "source_port": 6379,
+      "destination_port": 35508,
+      "packet_count": 7,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.732366+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.769823+00:00"
+    },
+    {
+      "source_ip": "172.19.0.6",
+      "source_component": "autoshield-api",
+      "destination_ip": "172.19.0.4",
+      "destination_component": "autoshield-postgres",
+      "protocol": "TCP",
+      "source_port": 35632,
+      "destination_port": 5432,
+      "packet_count": 13,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.736594+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.775405+00:00"
+    },
+    {
+      "source_ip": "172.19.0.4",
+      "source_component": "autoshield-postgres",
+      "destination_ip": "172.19.0.6",
+      "destination_component": "autoshield-api",
+      "protocol": "TCP",
+      "source_port": 5432,
+      "destination_port": 35632,
+      "packet_count": 10,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.736622+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.775152+00:00"
+    },
+    {
+      "source_ip": "192.168.65.1",
+      "source_component": null,
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 17306,
+      "destination_port": 80,
+      "packet_count": 6,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.780424+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.783837+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "192.168.65.1",
+      "destination_component": null,
+      "protocol": "TCP",
+      "source_port": 80,
+      "destination_port": 17306,
+      "packet_count": 4,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.780461+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.783723+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.6",
+      "destination_component": "autoshield-api",
+      "protocol": "TCP",
+      "source_port": 33614,
+      "destination_port": 8000,
+      "packet_count": 6,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.781230+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.783264+00:00"
+    },
+    {
+      "source_ip": "172.19.0.6",
+      "source_component": "autoshield-api",
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 8000,
+      "destination_port": 33614,
+      "packet_count": 6,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.781248+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.783286+00:00"
+    },
+    {
+      "source_ip": "172.19.0.6",
+      "source_component": "autoshield-api",
+      "destination_ip": "172.19.0.5",
+      "destination_component": "autoshield-redis",
+      "protocol": "TCP",
+      "source_port": 35520,
+      "destination_port": 6379,
+      "packet_count": 8,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.782518+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.782984+00:00"
+    },
+    {
+      "source_ip": "172.19.0.5",
+      "source_component": "autoshield-redis",
+      "destination_ip": "172.19.0.6",
+      "destination_component": "autoshield-api",
+      "protocol": "TCP",
+      "source_port": 6379,
+      "destination_port": 35520,
+      "packet_count": 6,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.782541+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.782974+00:00"
+    },
+    {
+      "source_ip": "192.168.65.1",
+      "source_component": null,
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 35163,
+      "destination_port": 80,
+      "packet_count": 24,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.793619+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.797896+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "192.168.65.1",
+      "destination_component": null,
+      "protocol": "TCP",
+      "source_port": 80,
+      "destination_port": 35163,
+      "packet_count": 11,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.793640+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.797623+00:00"
+    },
+    {
+      "source_ip": "172.19.0.3",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.2",
+      "destination_component": "autoshield-juice-shop",
+      "protocol": "TCP",
+      "source_port": 47712,
+      "destination_port": 3000,
+      "packet_count": 12,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.793938+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.796144+00:00"
+    },
+    {
+      "source_ip": "172.19.0.2",
+      "source_component": "autoshield-juice-shop",
+      "destination_ip": "172.19.0.3",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 3000,
+      "destination_port": 47712,
+      "packet_count": 10,
+      "first_packet_timestamp_utc": "2026-10-09T10:22:06.793955+00:00",
+      "last_packet_timestamp_utc": "2026-10-09T10:22:06.796135+00:00"
+    }
+  ],
+  "normal_requests": [
+    {
+      "method": "GET",
+      "path": "/",
+      "http_status": "200"
+    },
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "http_status": "200"
+    },
+    {
+      "method": "GET",
+      "path": "/api/data",
+      "http_status": "200"
+    },
+    {
+      "method": "GET",
+      "path": "/api/data",
+      "http_status": "200"
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "http_status": "200"
+    }
+  ]
+}
