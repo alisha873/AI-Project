@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -75,10 +75,13 @@ class GraphNode(BaseModel):
     """
 
     node_id: str
-    node_type: str
+    node_type: Literal["container", "service", "ip", "port", "process", "user"]
     name: str
 
     attributes: dict[str, Any] = Field(default_factory=dict)
+    evidence_ids: list[str] = Field(default_factory=list)
+    source_artifacts: list[str] = Field(default_factory=list)
+    basis: Literal["observed", "configured"] = "observed"
 
 
 class GraphEdge(BaseModel):
@@ -88,9 +91,18 @@ class GraphEdge(BaseModel):
 
     source: str
     target: str
-    edge_type: str
+    edge_type: Literal[
+        "communicates_with",
+        "connects_to",
+        "accesses",
+        "executes",
+        "authenticates_to",
+    ]
 
     attributes: dict[str, Any] = Field(default_factory=dict)
+    evidence_ids: list[str] = Field(default_factory=list)
+    source_artifacts: list[str] = Field(default_factory=list)
+    basis: Literal["observed", "configured"] = "observed"
 
 class EvidenceExtraction(BaseModel):
     """
