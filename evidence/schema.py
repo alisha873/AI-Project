@@ -97,6 +97,9 @@ class GraphEdge(BaseModel):
         "accesses",
         "executes",
         "authenticates_to",
+        "hosts",
+        "forwards",
+        "depends_on",
     ]
 
     attributes: dict[str, Any] = Field(default_factory=dict)

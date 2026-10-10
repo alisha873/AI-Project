@@ -106,6 +106,66 @@ class DeterministicGraphBuilder:
                 }
             )
 
+        def add_packet_communication(event: dict[str, Any]) -> None:
+            """Add a communication edge only for observed, non-loopback IP pairs."""
+            attrs = event.get("attributes") or {}
+            source_ip = attrs.get("source_ip")
+            destination_ip = attrs.get("destination_ip")
+            event_id = event.get("event_id", "")
+
+            if not source_ip or not destination_ip:
+                return
+
+            # This baseline only models communication between distinct IPs.
+            # In particular, don't treat host loopback captures as container traffic.
+            if source_ip == destination_ip:
+                return
+
+            source_id = f"ip:{source_ip}"
+            target_id = f"ip:{destination_ip}"
+            if source_id not in nodes or target_id not in nodes:
+                return
+
+            add_edge(
+                GraphEdge(
+                    source=source_id,
+                    target=target_id,
+                    edge_type="communicates_with",
+                    basis="observed",
+                    evidence_ids=[event_id] if event_id else [],
+                    source_artifacts=["normalized/events.jsonl"],
+                    attributes={
+                        "protocol": attrs.get("protocol"),
+                        "source_port": attrs.get("source_port"),
+                        "destination_port": attrs.get("destination_port"),
+                        "relationship_basis": "observed_packet",
+                    },
+                )
+            )
+
+        
+        # Resolve configured service dependencies from captured container
+        # environment variables. These are configuration relationships,
+        # not proof of observed network communication.
+        configured_service_hosts: list[tuple[str, str, str]] = []
+
+        for container in containers:
+            raw_name = container.get("Name", "").lstrip("/")
+            config = container.get("Config", {})
+            service_name = raw_name.removeprefix("autoshield-")
+
+            for item in config.get("Env", []) or []:
+                key, separator, value = item.partition("=")
+                if (
+                    separator
+                    and key.endswith("_HOST")
+                    and value.strip()
+                ):
+                    configured_service_hosts.append(
+                        (service_name, value.strip(), key)
+                    )
+
+
         # 1. Container nodes and configured startup processes.
         for container in containers:
             raw_name = container.get("Name", "").lstrip("/")
@@ -129,6 +189,43 @@ class DeterministicGraphBuilder:
                         "docker_id": docker_id,
                         "image": container.get("Config", {}).get("Image"),
                         "status": container.get("State", {}).get("Status"),
+                    },
+                )
+            )
+
+            # Explicit service node hosted by this container.
+            config = container.get("Config", {})
+            service_name = raw_name.removeprefix("autoshield-")
+            service_id = f"service:{service_name}"
+            add_node(
+                GraphNode(
+                    node_id=service_id,
+                    node_type="service",
+                    name=service_name,
+                    basis="configured",
+                    source_artifacts=[
+                        "docker/containers_after_attack.json"
+                    ],
+                    attributes={
+                        "container": raw_name,
+                        "image": config.get("Image"),
+                        "exposed_ports": sorted(
+                            (config.get("ExposedPorts") or {}).keys()
+                        ),
+                    },
+                )
+            )
+            add_edge(
+                GraphEdge(
+                    source=container_id,
+                    target=service_id,
+                    edge_type="hosts",
+                    basis="configured",
+                    source_artifacts=[
+                        "docker/containers_after_attack.json"
+                    ],
+                    attributes={
+                        "relationship_basis": "container_service_configuration"
                     },
                 )
             )
@@ -233,6 +330,41 @@ class DeterministicGraphBuilder:
                 )
             )
 
+        
+        # 2b. Configured service dependencies (not observed traffic).
+        services_by_name = {
+            node.name: node
+            for node in nodes.values()
+            if node.node_type == "service"
+        }
+
+        for source_service, target_host, configuration_key in sorted(
+            configured_service_hosts
+        ):
+            source_node = services_by_name.get(source_service)
+            target_node = services_by_name.get(target_host)
+
+            if source_node is None or target_node is None:
+                continue
+
+            add_edge(
+                GraphEdge(
+                    source=source_node.node_id,
+                    target=target_node.node_id,
+                    edge_type="depends_on",
+                    basis="configured",
+                    source_artifacts=[
+                        "docker/containers_after_attack.json"
+                    ],
+                    attributes={
+                        "configuration_key": configuration_key,
+                        "configured_host": target_host,
+                        "relationship_basis": "container_environment",
+                    },
+                )
+            )
+
+
         # 3. IP and port nodes from observed packet and HTTP evidence.
         for event in events:
             attrs: dict[str, Any] = event.get("attributes") or {}
@@ -248,7 +380,10 @@ class DeterministicGraphBuilder:
                     ),
                 ]
 
+
             elif event_type == "http_request":
+                source_ip = event.get("source_entity")
+                destination_ip = event.get("destination_entity")
                 upstream = attrs.get("upstream", "")
                 _, separator, upstream_port = upstream.rpartition(":")
 
@@ -258,10 +393,103 @@ class DeterministicGraphBuilder:
                     else None
                 )
 
+                # Model the observed Nginx upstream relationship.
+                if upstream and separator and upstream_port.isdigit():
+                    upstream_ip = upstream.rsplit(":", 1)[0]
+                    upstream_port_number = int(upstream_port)
+                    target_service = next(
+                        (
+                            node
+                            for node in nodes.values()
+                            if node.node_type == "service"
+                            and upstream_ip
+                            in [
+                                ip_node.name
+                                for ip_node in nodes.values()
+                                if ip_node.node_type == "ip"
+                                and any(
+                                    edge.source
+                                    == f"container:{node.attributes.get('container')}"
+                                    and edge.target == ip_node.node_id
+                                    and edge.edge_type == "connects_to"
+                                    for edge in edges.values()
+                                )
+                            ]
+                        ),
+                        None,
+                    )
+                    if target_service:
+                        add_edge(
+                            GraphEdge(
+                                source="service:nginx",
+                                target=target_service.node_id,
+                                edge_type="forwards",
+                                basis="observed",
+                                evidence_ids=[event_id] if event_id else [],
+                                source_artifacts=[
+                                    "normalized/events.jsonl"
+                                ],
+                                attributes={
+                                    "upstream": upstream,
+                                    "upstream_port": upstream_port_number,
+                                    "method": attrs.get("method"),
+                                    "path": attrs.get("path"),
+                                    "relationship_basis": "observed_http_upstream",
+                                },
+                            )
+                        )
+
                 endpoints = [
-                    (event.get("source_entity"), None),
-                    (event.get("destination_entity"), port_number),
+                    (source_ip, None),
+                    (destination_ip, port_number),
                 ]
+
+                if (
+                    source_ip
+                    and destination_ip
+                    and source_ip != destination_ip
+                ):
+                    source_id = f"ip:{source_ip}"
+                    target_id = f"ip:{destination_ip}"
+
+                    for ip_address in (source_ip, destination_ip):
+                        if not ip_address:
+                            continue
+
+                        add_node(
+                            GraphNode(
+                                node_id=f"ip:{ip_address}",
+                                node_type="ip",
+                                name=ip_address,
+                                basis="observed",
+                                evidence_ids=[event_id] if event_id else [],
+                                source_artifacts=["normalized/events.jsonl"],
+                                attributes={"address": ip_address},
+                            )
+                        )
+
+                    if source_id in nodes and target_id in nodes:
+                        add_edge(
+                            GraphEdge(
+                                source=source_id,
+                                target=target_id,
+                                edge_type="accesses",
+                                basis="observed",
+                                evidence_ids=(
+                                    [event_id] if event_id else []
+                                ),
+                                source_artifacts=[
+                                    "normalized/events.jsonl"
+                                ],
+                                attributes={
+                                    "method": attrs.get("method"),
+                                    "path": attrs.get("path"),
+                                    "status": attrs.get("status"),
+                                    "upstream": upstream,
+                                    "relationship_basis": "observed_http_request",
+                                },
+                            )
+                        )
             else:
                 continue
 
@@ -298,6 +526,11 @@ class DeterministicGraphBuilder:
                         },
                     )
                 )
+
+        # 4. Build communication edges after all endpoint IP nodes exist.
+        for event in events:
+            if event.get("event_type") == "network_packet":
+                add_packet_communication(event)
 
         return AttackGraph(
             nodes=sorted(
