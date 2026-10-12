@@ -18,3 +18,5 @@ orjson
 
 requests
 groq
+
+torch
