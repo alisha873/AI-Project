@@ -1,0 +1,33 @@
+{
+  "scenario_id": "scenario_001",
+  "expected_attack_path": [
+    "attacker",
+    "autoshield-nginx",
+    "autoshield-api",
+    "autoshield-postgres"
+  ],
+  "attack_path_complete": true,
+  "edge_assessments": [
+    {
+      "source": "service:nginx",
+      "target": "service:api",
+      "edge_type": "forwards",
+      "status": "positive",
+      "justification": "Observed Nginx evidence includes the SQL-injection request routed to the API."
+    },
+    {
+      "source": "service:api",
+      "target": "service:postgres",
+      "edge_type": "depends_on",
+      "status": "unknown",
+      "justification": "Docker configuration confirms a dependency, but the captured evidence does not establish that this attack reached PostgreSQL."
+    },
+    {
+      "source": "service:nginx",
+      "target": "service:juice-shop",
+      "edge_type": "forwards",
+      "status": "unknown",
+      "justification": "The edge is supported by a different request. Its exclusion from this attack path alone is insufficient to assign a negative."
+    }
+  ]
+}
