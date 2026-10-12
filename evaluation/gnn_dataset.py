@@ -1,3 +1,4 @@
+
 """Dataset records for leakage-aware attack-graph evaluation."""
 
 from __future__ import annotations
@@ -7,11 +8,11 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from evidence.schema import AttackGraph
-
 from evaluation.gnn_path_metrics import map_ground_truth_path
 
+
 class CandidateEdgeLabel(BaseModel):
-    """Evaluation label for one candidate typed transition."""
+    """Binary evaluation label for one candidate typed transition."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -19,6 +20,7 @@ class CandidateEdgeLabel(BaseModel):
     target: str = Field(min_length=1)
     edge_type: str = Field(min_length=1)
     label: Literal[0, 1]
+
 
 class EdgeLabelAssessment(BaseModel):
     """Evaluation-only assessment of a candidate transition."""
@@ -32,8 +34,7 @@ class EdgeLabelAssessment(BaseModel):
     justification: str = Field(min_length=1)
 
     def to_binary_label(self) -> CandidateEdgeLabel | None:
-        """Return a training label only when the transition is known."""
-
+        """Convert known assessments to binary labels; omit unknowns."""
         if self.status == "unknown":
             return None
 
@@ -46,7 +47,7 @@ class EdgeLabelAssessment(BaseModel):
 
 
 class ScenarioGraphRecord(BaseModel):
-    """Observed graph input, identified independently of its labels."""
+    """Graph input, kept separate from its evaluation labels."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -55,13 +56,14 @@ class ScenarioGraphRecord(BaseModel):
 
 
 class ScenarioGroundTruth(BaseModel):
-    """Evaluation-only labels; never pass this object to encode_graph."""
+    """Evaluation-only ground truth; never pass this object to the GNN."""
 
     model_config = ConfigDict(extra="forbid")
 
     scenario_id: str = Field(pattern=r"^scenario_[0-9]{3}$")
     expected_attack_path: list[str] = Field(min_length=2)
-    positive_edges: list[CandidateEdgeLabel] = Field(min_length=1)
+    attack_path_complete: bool
+    edge_assessments: list[EdgeLabelAssessment] = Field(min_length=1)
 
 
 class ScenarioSplit(BaseModel):
@@ -72,8 +74,9 @@ class ScenarioSplit(BaseModel):
     scenario_id: str = Field(pattern=r"^scenario_[0-9]{3}$")
     split: Literal["train", "validation", "test"]
 
+
 class PreparedEdgeExample(BaseModel):
-    """A labeled edge assigned to a scenario-level dataset split."""
+    """A known edge label assigned to a scenario-level dataset split."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -81,11 +84,11 @@ class PreparedEdgeExample(BaseModel):
     split: Literal["train", "validation", "test"]
     edge: CandidateEdgeLabel
 
+
 def validate_scenario_splits(
     assignments: list[ScenarioSplit],
 ) -> dict[str, str]:
-    """Return scenario-to-split mapping, rejecting duplicates."""
-
+    """Return scenario-to-split mapping, rejecting duplicate assignments."""
     mapping: dict[str, str] = {}
 
     for assignment in assignments:
@@ -93,31 +96,25 @@ def validate_scenario_splits(
             raise ValueError(
                 f"Scenario assigned more than once: {assignment.scenario_id}"
             )
-
         mapping[assignment.scenario_id] = assignment.split
 
     return mapping
+
 
 def positive_labels_from_ground_truth(
     record: ScenarioGraphRecord,
     truth: ScenarioGroundTruth,
 ) -> list[CandidateEdgeLabel]:
-    """Extract supported positive transitions without inferring negatives.
+    """Extract observed graph edges matching adjacent mapped path nodes.
 
-    A transition is emitted only when both adjacent ground-truth labels
-    map to graph nodes and the graph contains a direct edge between them.
-    The graph's edge type is retained; no edge type is invented.
+    This helper does not infer negative labels. Even a complete ground-truth
+    path does not make configured-only edges observed attack transitions.
     """
-
     if record.scenario_id != truth.scenario_id:
         raise ValueError("Graph record and ground truth scenario IDs differ")
 
-    mapping = map_ground_truth_path(
-        record.graph,
-        truth.expected_attack_path,
-    )
+    mapping = map_ground_truth_path(record.graph, truth.expected_attack_path)
     mapped_positions = mapping.mapped_positions
-
     labels: list[CandidateEdgeLabel] = []
 
     for index in range(len(mapped_positions) - 1):
@@ -127,15 +124,9 @@ def positive_labels_from_ground_truth(
         if source is None or target is None:
             continue
 
-        matching_edges = [
-            edge
-            for edge in record.graph.edges
-            if edge.source == source and edge.target == target
-        ]
-
-        for edge in matching_edges:
-            # Configured relationships describe architecture, not proof
-            # that the attack traversed that relationship.
+        for edge in record.graph.edges:
+            if edge.source != source or edge.target != target:
+                continue
             if edge.basis != "observed":
                 continue
 
@@ -150,13 +141,13 @@ def positive_labels_from_ground_truth(
 
     return labels
 
+
 def prepare_edge_examples(
     graph_records: list[ScenarioGraphRecord],
     ground_truth_records: list[ScenarioGroundTruth],
     assignments: list[ScenarioSplit],
 ) -> list[PreparedEdgeExample]:
-    """Prepare explicitly labeled edges without mixing labels into graph input."""
-
+    """Prepare explicit known labels without leaking labels into graph input."""
     split_by_scenario = validate_scenario_splits(assignments)
     graphs_by_scenario = {record.scenario_id: record for record in graph_records}
     truth_by_scenario = {
@@ -165,18 +156,14 @@ def prepare_edge_examples(
 
     if len(graphs_by_scenario) != len(graph_records):
         raise ValueError("Duplicate graph record scenario IDs")
-
     if len(truth_by_scenario) != len(ground_truth_records):
         raise ValueError("Duplicate ground-truth scenario IDs")
-
     if set(graphs_by_scenario) != set(truth_by_scenario):
         raise ValueError("Graph and ground-truth scenario sets differ")
-
     if set(split_by_scenario) != set(graphs_by_scenario):
         raise ValueError("Every graph scenario must have exactly one split")
 
     examples: list[PreparedEdgeExample] = []
-    seen_labels: set[tuple[str, str, str, int]] = set()
 
     for scenario_id, graph_record in graphs_by_scenario.items():
         truth = truth_by_scenario[scenario_id]
@@ -184,9 +171,14 @@ def prepare_edge_examples(
             (edge.source, edge.target, edge.edge_type)
             for edge in graph_record.graph.edges
         }
+        seen_statuses: dict[tuple[str, str, str], str] = {}
 
-        for label in truth.positive_edges:
-            edge_key = (label.source, label.target, label.edge_type)
+        for assessment in truth.edge_assessments:
+            edge_key = (
+                assessment.source,
+                assessment.target,
+                assessment.edge_type,
+            )
 
             if edge_key not in graph_edges:
                 raise ValueError(
@@ -194,23 +186,26 @@ def prepare_edge_examples(
                     f"{edge_key}"
                 )
 
-            label_key = (
-                label.source,
-                label.target,
-                label.edge_type,
-                label.label,
-            )
-            if label_key in seen_labels:
+            previous_status = seen_statuses.get(edge_key)
+            if previous_status is not None:
+                if previous_status == assessment.status:
+                    raise ValueError(
+                        f"Duplicate labeled edge for {scenario_id}: {edge_key}"
+                    )
                 raise ValueError(
-                    f"Duplicate labeled edge for {scenario_id}: {label_key}"
+                    f"Conflicting labels for {scenario_id}: {edge_key}"
                 )
-            seen_labels.add(label_key)
+            seen_statuses[edge_key] = assessment.status
+
+            binary_label = assessment.to_binary_label()
+            if binary_label is None:
+                continue
 
             examples.append(
                 PreparedEdgeExample(
                     scenario_id=scenario_id,
                     split=split_by_scenario[scenario_id],
-                    edge=label,
+                    edge=binary_label,
                 )
             )
 

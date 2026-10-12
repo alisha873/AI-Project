@@ -36,8 +36,9 @@ def test_ground_truth_is_stored_separately_from_graph():
         {
             "scenario_id": "scenario_001",
             "expected_attack_path": ["a", "b"],
-            "positive_edges": [
-                {"source": "a", "target": "b", "edge_type": "accesses", "label": 1}
+            "attack_path_complete": True,
+            "edge_assessments": [
+                {"source": "a", "target": "b", "edge_type": "accesses", "status": "positive", "justification": "Ground truth confirms this transition."}
             ],
         }
     )
@@ -207,12 +208,14 @@ def test_positive_labels_use_existing_graph_edges_only():
     truth = ScenarioGroundTruth(
         scenario_id="scenario_001",
         expected_attack_path=["nginx", "api", "postgres"],
-        positive_edges=[
+        attack_path_complete=True,
+        edge_assessments=[
             {
                 "source": "service:nginx",
                 "target": "service:api",
                 "edge_type": "forwards",
-                "label": 1,
+                "status": "positive",
+                "justification": "Ground truth confirms this transition.",
             }
         ],
     )
@@ -235,12 +238,14 @@ def test_positive_label_extraction_rejects_mismatched_scenario_ids():
     truth = ScenarioGroundTruth(
         scenario_id="scenario_002",
         expected_attack_path=["a", "b"],
-        positive_edges=[
+        attack_path_complete=True,
+        edge_assessments=[
             {
                 "source": "a",
                 "target": "b",
                 "edge_type": "accesses",
-                "label": 1,
+                "status": "positive",
+                "justification": "Ground truth confirms this transition.",
             }
         ],
     )
@@ -267,12 +272,14 @@ def test_prepare_edge_examples_keeps_scenarios_in_their_assigned_splits():
     truth = ScenarioGroundTruth(
         scenario_id="scenario_001",
         expected_attack_path=["nginx", "api"],
-        positive_edges=[
+        attack_path_complete=True,
+        edge_assessments=[
             {
                 "source": "service:nginx",
                 "target": "service:api",
                 "edge_type": "forwards",
-                "label": 1,
+                "status": "positive",
+                "justification": "Ground truth confirms this transition.",
             }
         ],
     )
@@ -296,12 +303,14 @@ def test_prepare_edge_examples_rejects_labels_absent_from_graph():
     truth = ScenarioGroundTruth(
         scenario_id="scenario_001",
         expected_attack_path=["nginx", "api"],
-        positive_edges=[
+        attack_path_complete=True,
+        edge_assessments=[
             {
                 "source": "service:nginx",
                 "target": "service:api",
                 "edge_type": "forwards",
-                "label": 1,
+                "status": "positive",
+                "justification": "Ground truth confirms this transition.",
             }
         ],
     )
@@ -332,12 +341,14 @@ def test_prepare_edge_examples_rejects_duplicate_labels():
         "source": "service:nginx",
         "target": "service:api",
         "edge_type": "forwards",
-        "label": 1,
+        "status": "positive",
+        "justification": "Ground truth confirms this transition.",
     }
     truth = ScenarioGroundTruth(
         scenario_id="scenario_001",
         expected_attack_path=["nginx", "api"],
-        positive_edges=[label, label],
+        attack_path_complete=True,
+        edge_assessments=[label, label],
     )
     assignments = [
         ScenarioSplit(scenario_id="scenario_001", split="train")
