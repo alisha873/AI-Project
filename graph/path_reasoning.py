@@ -159,6 +159,7 @@ def score_candidate_path_with_gcn(
             tensors.node_features,
             tensors.edge_index,
             tensors.edge_type_ids,
+            tensors.edge_basis_ids,
         )
 
     path_embeddings = torch.stack(

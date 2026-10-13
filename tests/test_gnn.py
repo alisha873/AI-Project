@@ -25,6 +25,8 @@ def test_encode_graph_preserves_nodes_and_edge_types():
         0 <= int(edge_type_id) < len(EDGE_TYPES)
         for edge_type_id in tensors.edge_type_ids
     )
+    assert tensors.edge_basis_ids.shape == (len(graph.edges),)
+    assert set(tensors.edge_basis_ids.tolist()) <= {0, 1}
 
 
 def test_gcn_returns_one_embedding_per_node():
@@ -58,6 +60,7 @@ def test_graph_encoding_is_deterministic():
     assert first.node_ids == second.node_ids
     assert torch.equal(first.node_features, second.node_features)
     assert torch.equal(first.edge_index, second.edge_index)
+    assert torch.equal(first.edge_type_ids, second.edge_type_ids)
     assert torch.equal(first.edge_type_ids, second.edge_type_ids)
 
 
@@ -111,3 +114,32 @@ def test_edge_scorer_returns_one_score_per_candidate():
 
     assert scores.shape == (3,)
     assert torch.isfinite(scores).all()
+
+def test_gcn_uses_edge_provenance():
+    torch.manual_seed(7)
+    model = AttackGraphGCN()
+    model.eval()
+
+    features = torch.tensor(
+        [
+            [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+            [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+        ]
+    )
+    edge_index = torch.tensor([[0], [1]], dtype=torch.long)
+    edge_type_ids = torch.tensor(
+        [EDGE_TYPES.index("forwards")], dtype=torch.long
+    )
+
+    configured = torch.tensor([0], dtype=torch.long)
+    observed = torch.tensor([1], dtype=torch.long)
+
+    with torch.no_grad():
+        configured_output = model(
+            features, edge_index, edge_type_ids, configured
+        )
+        observed_output = model(
+            features, edge_index, edge_type_ids, observed
+        )
+
+    assert not torch.allclose(configured_output, observed_output)

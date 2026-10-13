@@ -125,6 +125,7 @@ def train_gnn_edge_scorer(
                 tensors.node_features,
                 tensors.edge_index,
                 tensors.edge_type_ids,
+                tensors.edge_basis_ids,
             )
             node_index = {
                 node_id: index

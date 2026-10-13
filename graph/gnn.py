@@ -31,6 +31,7 @@ EDGE_TYPES = (
     "depends_on",
 )
 
+EDGE_BASES = ("configured", "observed")
 
 @dataclass
 class GraphTensors:
@@ -40,6 +41,7 @@ class GraphTensors:
     node_features: torch.Tensor
     edge_index: torch.Tensor
     edge_type_ids: torch.Tensor
+    edge_basis_ids: torch.Tensor
 
 
 def encode_graph(graph: AttackGraph) -> GraphTensors:
@@ -75,6 +77,7 @@ def encode_graph(graph: AttackGraph) -> GraphTensors:
 
     edge_pairs = []
     edge_type_ids = []
+    edge_basis_ids = []
 
     for edge in edge_records:
         if edge.source not in node_index or edge.target not in node_index:
@@ -85,6 +88,11 @@ def encode_graph(graph: AttackGraph) -> GraphTensors:
         )
         edge_type_ids.append(EDGE_TYPES.index(edge.edge_type))
 
+        if edge.basis not in EDGE_BASES:
+            raise ValueError(f"Unsupported edge basis: {edge.basis}")
+
+        edge_basis_ids.append(EDGE_BASES.index(edge.basis))
+
     if edge_pairs:
         edge_index = torch.tensor(
             edge_pairs,
@@ -94,17 +102,22 @@ def encode_graph(graph: AttackGraph) -> GraphTensors:
             edge_type_ids,
             dtype=torch.long,
         )
+        edge_basis_tensor = torch.tensor(
+            edge_basis_ids,
+            dtype=torch.long,
+        )
     else:
         edge_index = torch.empty((2, 0), dtype=torch.long)
         edge_type_tensor = torch.empty((0,), dtype=torch.long)
+        edge_basis_tensor = torch.empty((0,), dtype=torch.long)
 
     return GraphTensors(
         node_ids=node_ids,
         node_features=node_features,
         edge_index=edge_index,
         edge_type_ids=edge_type_tensor,
+        edge_basis_ids=edge_basis_tensor,
     )
-
 
 
 class GraphConvolution(nn.Module):
@@ -118,9 +131,12 @@ class GraphConvolution(nn.Module):
     ) -> None:
         super().__init__()
         self.self_linear = nn.Linear(in_features, out_features)
+        self.num_edge_types = num_edge_types
+        self.num_edge_bases = len(EDGE_BASES)
+
         self.edge_linears = nn.ModuleList(
             nn.Linear(in_features, out_features, bias=False)
-            for _ in range(num_edge_types)
+            for _ in range(num_edge_types * self.num_edge_bases)
         )
 
     def forward(
@@ -128,6 +144,7 @@ class GraphConvolution(nn.Module):
         features: torch.Tensor,
         edge_index: torch.Tensor,
         edge_type_ids: torch.Tensor | None = None,
+        edge_basis_ids: torch.Tensor | None = None,
     ) -> torch.Tensor:
         node_count = features.shape[0]
         output = self.self_linear(features)
@@ -145,8 +162,31 @@ class GraphConvolution(nn.Module):
         else:
             edge_type_ids = edge_type_ids.to(features.device)
 
+        if edge_basis_ids is None:
+            edge_basis_ids = torch.zeros(
+                source.shape[0],
+                dtype=torch.long,
+                device=features.device,
+            )
+        else:
+            edge_basis_ids = edge_basis_ids.to(features.device)
+
+        if edge_basis_ids.shape[0] != source.shape[0]:
+            raise ValueError("Edge basis IDs must match the number of edges")
+
+        if torch.any(edge_basis_ids < 0) or torch.any(
+            edge_basis_ids >= self.num_edge_bases
+        ):
+            raise ValueError("Unsupported edge basis ID")
+
         for relation_id, transform in enumerate(self.edge_linears):
-            mask = edge_type_ids == relation_id
+            relation_type_id = relation_id // self.num_edge_bases
+            basis_id = relation_id % self.num_edge_bases
+
+            mask = (
+                (edge_type_ids == relation_type_id)
+                & (edge_basis_ids == basis_id)
+            )
             if not torch.any(mask):
                 continue
 
@@ -196,10 +236,15 @@ class AttackGraphGCN(nn.Module):
         node_features: torch.Tensor,
         edge_index: torch.Tensor,
         edge_type_ids: torch.Tensor | None = None,
+        edge_basis_ids: torch.Tensor | None = None,
     ) -> torch.Tensor:
-        hidden = self.conv1(node_features, edge_index, edge_type_ids)
+        hidden = self.conv1(
+            node_features, edge_index, edge_type_ids, edge_basis_ids
+        )
         hidden = F.relu(hidden)
-        hidden = self.conv2(hidden, edge_index, edge_type_ids)
+        hidden = self.conv2(
+            hidden, edge_index, edge_type_ids, edge_basis_ids
+        )
         return hidden
 
 
