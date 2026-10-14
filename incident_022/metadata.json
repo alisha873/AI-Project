@@ -1,0 +1,39 @@
+{
+  "incident_id": "incident_022",
+  "collection_version": "1.0",
+  "created_at_utc": "2026-10-13T19:13:30.496727+00:00",
+  "environment": "docker",
+  "network_capture_mode": "passive_incident_collection_window",
+  "evidence_files": [
+    "configs/containers/autoshield-api.json",
+    "configs/containers/autoshield-juice-shop.json",
+    "configs/containers/autoshield-linux-admin.json",
+    "configs/containers/autoshield-nginx.json",
+    "configs/containers/autoshield-postgres.json",
+    "configs/containers/autoshield-redis.json",
+    "configs/docker-compose.resolved.yml",
+    "configs/nginx.conf",
+    "logs/autoshield_api/container.log",
+    "logs/docker_events.log",
+    "logs/juice_shop/container.log",
+    "logs/juice_shop/current/access.log.2026-10-13",
+    "logs/juice_shop/current/audit.json",
+    "logs/juice_shop/current/source_manifest.json",
+    "logs/linux_admin/container.log",
+    "logs/nginx.log",
+    "logs/postgres/container.log",
+    "logs/redis/container.log",
+    "network/autoshield_net.json",
+    "network/traffic.pcap",
+    "network/traffic_summary.json",
+    "system/container_ips.txt",
+    "system/container_ports.txt",
+    "system/container_processes.txt",
+    "system/containers.txt",
+    "system/docker_networks.txt",
+    "system/system_state.json"
+  ],
+  "collection_warnings": [
+    "Linux Admin had not generated /var/log/auth.log at collection time; no authentication events were available. The Linux Admin container log is included."
+  ]
+}

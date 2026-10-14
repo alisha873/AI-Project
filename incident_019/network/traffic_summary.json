@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "collection_timestamp_utc": "2026-10-13T17:14:12.616047+00:00",
+  "pcap_file": "traffic.pcap",
+  "capture_mode": "passive_incident_collection_window",
+  "packet_count": 4,
+  "protocol_counts": {
+    "ARP": 4
+  },
+  "source_addresses": [
+    {
+      "address": "172.19.0.1",
+      "container": null,
+      "packet_count": 1
+    },
+    {
+      "address": "172.19.0.2",
+      "container": "autoshield-juice-shop",
+      "packet_count": 1
+    },
+    {
+      "address": "172.19.0.7",
+      "container": "autoshield-nginx",
+      "packet_count": 2
+    }
+  ],
+  "destination_addresses": [
+    {
+      "address": "172.19.0.1",
+      "container": null,
+      "packet_count": 1
+    },
+    {
+      "address": "172.19.0.2",
+      "container": "autoshield-juice-shop",
+      "packet_count": 1
+    },
+    {
+      "address": "172.19.0.7",
+      "container": "autoshield-nginx",
+      "packet_count": 2
+    }
+  ],
+  "duration_seconds": 5.7e-05,
+  "flows": [
+    {
+      "source_ip": "172.19.0.1",
+      "source_component": null,
+      "destination_ip": "172.19.0.7",
+      "destination_component": "autoshield-nginx",
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 1,
+      "first_packet_timestamp_utc": "2026-10-13T17:14:01.043521+00:00",
+      "last_packet_timestamp_utc": "2026-10-13T17:14:01.043521+00:00"
+    },
+    {
+      "source_ip": "172.19.0.7",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.1",
+      "destination_component": null,
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 1,
+      "first_packet_timestamp_utc": "2026-10-13T17:14:01.043562+00:00",
+      "last_packet_timestamp_utc": "2026-10-13T17:14:01.043562+00:00"
+    },
+    {
+      "source_ip": "172.19.0.2",
+      "source_component": "autoshield-juice-shop",
+      "destination_ip": "172.19.0.7",
+      "destination_component": "autoshield-nginx",
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 1,
+      "first_packet_timestamp_utc": "2026-10-13T17:14:01.043575+00:00",
+      "last_packet_timestamp_utc": "2026-10-13T17:14:01.043575+00:00"
+    },
+    {
+      "source_ip": "172.19.0.7",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.2",
+      "destination_component": "autoshield-juice-shop",
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 1,
+      "first_packet_timestamp_utc": "2026-10-13T17:14:01.043578+00:00",
+      "last_packet_timestamp_utc": "2026-10-13T17:14:01.043578+00:00"
+    }
+  ],
+  "observed_application_flows": [],
+  "collector_generated_requests": []
+}

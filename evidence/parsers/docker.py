@@ -8,14 +8,21 @@ from evidence.schema import EvidenceEvent
 class DockerParser(EvidenceParser):
     source = "docker"
 
+
     def parse(self, path: Path) -> list[EvidenceEvent]:
-        if path.name == "containers_after_attack.json":
+        if path.name in {
+            "containers_after_attack.json",
+        } or path.parent.name == "containers":
             return self._parse_containers(path)
 
-        if path.name == "network_after_attack.json":
+        if path.name in {
+            "network_after_attack.json",
+            "autoshield_net.json",
+        }:
             return self._parse_networks(path)
 
         raise ValueError(f"Unsupported Docker evidence file: {path}")
+
 
     def _load_json(self, path: Path):
         with path.open("r", encoding="utf-8") as handle:
@@ -23,6 +30,78 @@ class DockerParser(EvidenceParser):
 
     def _parse_containers(self, path: Path) -> list[EvidenceEvent]:
         containers = self._load_json(path)
+        events: list[EvidenceEvent] = []
+
+        for index, container in enumerate(containers):
+            container_id = container["Id"]
+            name = container["Name"].lstrip("/")
+            state = container.get("State", {})
+            host_config = container.get("HostConfig", {})
+            config = container.get("Config", {})
+            network_settings = container.get("NetworkSettings", {})
+
+            events.append(
+                EvidenceEvent(
+                    event_id=f"docker-container-{index}",
+                    timestamp=state.get("StartedAt", container["Created"]),
+                    source=self.source,
+                    event_type="container_state",
+                    source_entity=name,
+                    action=state.get("Status", "unknown"),
+                    attributes={
+                        "container_id": container_id,
+                        "image": config.get("Image"),
+                        "network_mode": host_config.get("NetworkMode"),
+                        "running": state.get("Running"),
+                        "paused": state.get("Paused"),
+                        "restarting": state.get("Restarting"),
+                        "oom_killed": state.get("OOMKilled"),
+                        "dead": state.get("Dead"),
+                        "restart_count": container.get("RestartCount"),
+                        "exit_code": state.get("ExitCode"),
+                        "privileged": host_config.get("Privileged"),
+                        "readonly_rootfs": host_config.get("ReadonlyRootfs"),
+                        "exposed_ports": sorted(
+                            (config.get("ExposedPorts") or {}).keys()
+                        ),
+                        "published_ports": self._published_ports(
+                            network_settings.get("Ports") or {}
+                        ),
+                    },
+                )
+            )
+
+            for network_name, network in (
+                network_settings.get("Networks") or {}
+            ).items():
+                events.append(
+                    EvidenceEvent(
+                        event_id=f"docker-container-network-{index}-{network_name}",
+                        timestamp=state.get("StartedAt", container["Created"]),
+                        source=self.source,
+                        event_type="network_membership",
+                        source_entity=name,
+                        destination_entity=network_name,
+                        action="attached_to_network",
+                        attributes={
+                            "container_id": container_id,
+                            "network_id": network.get("NetworkID"),
+                            "endpoint_id": network.get("EndpointID"),
+                            "ip_address": network.get("IPAddress"),
+                            "gateway": network.get("Gateway"),
+                            "mac_address": network.get("MacAddress"),
+                            "aliases": network.get("Aliases", []),
+                            "dns_names": network.get("DNSNames", []),
+                        },
+                    )
+                )
+
+        return events
+
+    def _parse_containers_from_data(
+        self,
+        containers: list[dict],
+    ) -> list[EvidenceEvent]:
         events: list[EvidenceEvent] = []
 
         for index, container in enumerate(containers):

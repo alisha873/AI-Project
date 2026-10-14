@@ -1,0 +1,759 @@
+{
+  "nodes": [
+    {
+      "node_id": "container:autoshield-api",
+      "node_type": "container",
+      "name": "autoshield-api",
+      "attributes": {
+        "docker_id": "b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47",
+        "image": "docker-autoshield-api",
+        "status": "running"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "container:autoshield-juice-shop",
+      "node_type": "container",
+      "name": "autoshield-juice-shop",
+      "attributes": {
+        "docker_id": "2c62cd8ebd4c98757e82558bbc8f901637d760febc1e837bee89cfee89c2465b",
+        "image": "bkimminich/juice-shop:v19.0.0",
+        "status": "running"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "container:autoshield-linux-admin",
+      "node_type": "container",
+      "name": "autoshield-linux-admin",
+      "attributes": {
+        "docker_id": "9efbf0c1081781fbe43e269f50830ff92528192cc52bf9204d1621286d306ba0",
+        "image": "docker-linux-admin",
+        "status": "running"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "container:autoshield-nginx",
+      "node_type": "container",
+      "name": "autoshield-nginx",
+      "attributes": {
+        "docker_id": "a25bab9fbf6a97a10586039894bbf24935537a8b4c2841d74469f0f465e8e4b5",
+        "image": "nginx:1.27-alpine",
+        "status": "running"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "container:autoshield-postgres",
+      "node_type": "container",
+      "name": "autoshield-postgres",
+      "attributes": {
+        "docker_id": "774375e97fe92c49ad9670826c737fc660da6e8c00fe8888e96357b28712579e",
+        "image": "postgres:16-alpine",
+        "status": "running"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "container:autoshield-redis",
+      "node_type": "container",
+      "name": "autoshield-redis",
+      "attributes": {
+        "docker_id": "2923269430ba33230b5cb8a8f7b6f9db2b33b4ce3fbf6c1eaf2a50fd5865b94e",
+        "image": "redis:7-alpine",
+        "status": "running"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "ip:172.19.0.2",
+      "node_type": "ip",
+      "name": "172.19.0.2",
+      "attributes": {
+        "address": "172.19.0.2"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/network_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "ip:172.19.0.3",
+      "node_type": "ip",
+      "name": "172.19.0.3",
+      "attributes": {
+        "address": "172.19.0.3"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/network_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "ip:172.19.0.4",
+      "node_type": "ip",
+      "name": "172.19.0.4",
+      "attributes": {
+        "address": "172.19.0.4"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/network_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "ip:172.19.0.5",
+      "node_type": "ip",
+      "name": "172.19.0.5",
+      "attributes": {
+        "address": "172.19.0.5"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/network_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "ip:172.19.0.6",
+      "node_type": "ip",
+      "name": "172.19.0.6",
+      "attributes": {
+        "address": "172.19.0.6"
+      },
+      "evidence_ids": [
+        "nginx-10"
+      ],
+      "source_artifacts": [
+        "docker/network_after_attack.json",
+        "normalized/events.jsonl"
+      ],
+      "basis": "observed"
+    },
+    {
+      "node_id": "ip:172.19.0.7",
+      "node_type": "ip",
+      "name": "172.19.0.7",
+      "attributes": {
+        "address": "172.19.0.7"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/network_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "ip:192.168.65.1",
+      "node_type": "ip",
+      "name": "192.168.65.1",
+      "attributes": {
+        "address": "192.168.65.1"
+      },
+      "evidence_ids": [
+        "nginx-10"
+      ],
+      "source_artifacts": [
+        "normalized/events.jsonl"
+      ],
+      "basis": "observed"
+    },
+    {
+      "node_id": "port:172.19.0.6:8000",
+      "node_type": "port",
+      "name": "8000",
+      "attributes": {
+        "ip": "172.19.0.6",
+        "port": 8000
+      },
+      "evidence_ids": [
+        "nginx-10"
+      ],
+      "source_artifacts": [
+        "normalized/events.jsonl"
+      ],
+      "basis": "observed"
+    },
+    {
+      "node_id": "process:autoshield-api:uvicorn",
+      "node_type": "process",
+      "name": "uvicorn",
+      "attributes": {
+        "executable": "uvicorn",
+        "args": [
+          "app.main:app",
+          "--host",
+          "0.0.0.0",
+          "--port",
+          "8000"
+        ],
+        "container": "autoshield-api"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "process:autoshield-juice-shop:node",
+      "node_type": "process",
+      "name": "node",
+      "attributes": {
+        "executable": "/nodejs/bin/node",
+        "args": [
+          "/juice-shop/build/app.js"
+        ],
+        "container": "autoshield-juice-shop"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "process:autoshield-linux-admin:start.sh",
+      "node_type": "process",
+      "name": "start.sh",
+      "attributes": {
+        "executable": "/start.sh",
+        "args": [],
+        "container": "autoshield-linux-admin"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "process:autoshield-nginx:docker-entrypoint.sh",
+      "node_type": "process",
+      "name": "docker-entrypoint.sh",
+      "attributes": {
+        "executable": "/docker-entrypoint.sh",
+        "args": [
+          "nginx",
+          "-g",
+          "daemon off;"
+        ],
+        "container": "autoshield-nginx"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "process:autoshield-postgres:docker-entrypoint.sh",
+      "node_type": "process",
+      "name": "docker-entrypoint.sh",
+      "attributes": {
+        "executable": "docker-entrypoint.sh",
+        "args": [
+          "postgres"
+        ],
+        "container": "autoshield-postgres"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "process:autoshield-redis:docker-entrypoint.sh",
+      "node_type": "process",
+      "name": "docker-entrypoint.sh",
+      "attributes": {
+        "executable": "docker-entrypoint.sh",
+        "args": [
+          "redis-server",
+          "--appendonly",
+          "yes"
+        ],
+        "container": "autoshield-redis"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "service:api",
+      "node_type": "service",
+      "name": "api",
+      "attributes": {
+        "container": "autoshield-api",
+        "image": "docker-autoshield-api",
+        "exposed_ports": [
+          "8000/tcp"
+        ]
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "service:juice-shop",
+      "node_type": "service",
+      "name": "juice-shop",
+      "attributes": {
+        "container": "autoshield-juice-shop",
+        "image": "bkimminich/juice-shop:v19.0.0",
+        "exposed_ports": [
+          "3000/tcp"
+        ]
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "service:linux-admin",
+      "node_type": "service",
+      "name": "linux-admin",
+      "attributes": {
+        "container": "autoshield-linux-admin",
+        "image": "docker-linux-admin",
+        "exposed_ports": [
+          "22/tcp"
+        ]
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "service:nginx",
+      "node_type": "service",
+      "name": "nginx",
+      "attributes": {
+        "container": "autoshield-nginx",
+        "image": "nginx:1.27-alpine",
+        "exposed_ports": [
+          "80/tcp"
+        ]
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "service:postgres",
+      "node_type": "service",
+      "name": "postgres",
+      "attributes": {
+        "container": "autoshield-postgres",
+        "image": "postgres:16-alpine",
+        "exposed_ports": [
+          "5432/tcp"
+        ]
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "node_id": "service:redis",
+      "node_type": "service",
+      "name": "redis",
+      "attributes": {
+        "container": "autoshield-redis",
+        "image": "redis:7-alpine",
+        "exposed_ports": [
+          "6379/tcp"
+        ]
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    }
+  ],
+  "edges": [
+    {
+      "source": "container:autoshield-api",
+      "target": "ip:172.19.0.6",
+      "edge_type": "connects_to",
+      "attributes": {
+        "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+        "network_name": "autoshield_net",
+        "relationship_basis": "docker_network_membership"
+      },
+      "evidence_ids": [
+        "docker-container-network-0-autoshield_net",
+        "docker-network-0-b71b5355ee7e"
+      ],
+      "source_artifacts": [
+        "docker/network_after_attack.json",
+        "normalized/events.jsonl"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-api",
+      "target": "process:autoshield-api:uvicorn",
+      "edge_type": "executes",
+      "attributes": {
+        "relationship_basis": "configured_startup"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-api",
+      "target": "service:api",
+      "edge_type": "hosts",
+      "attributes": {
+        "relationship_basis": "container_service_configuration"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-juice-shop",
+      "target": "ip:172.19.0.2",
+      "edge_type": "connects_to",
+      "attributes": {
+        "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+        "network_name": "autoshield_net",
+        "relationship_basis": "docker_network_membership"
+      },
+      "evidence_ids": [
+        "docker-container-network-1-autoshield_net",
+        "docker-network-0-2c62cd8ebd4c"
+      ],
+      "source_artifacts": [
+        "docker/network_after_attack.json",
+        "normalized/events.jsonl"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-juice-shop",
+      "target": "process:autoshield-juice-shop:node",
+      "edge_type": "executes",
+      "attributes": {
+        "relationship_basis": "configured_startup"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-juice-shop",
+      "target": "service:juice-shop",
+      "edge_type": "hosts",
+      "attributes": {
+        "relationship_basis": "container_service_configuration"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-linux-admin",
+      "target": "ip:172.19.0.5",
+      "edge_type": "connects_to",
+      "attributes": {
+        "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+        "network_name": "autoshield_net",
+        "relationship_basis": "docker_network_membership"
+      },
+      "evidence_ids": [
+        "docker-container-network-2-autoshield_net",
+        "docker-network-0-9efbf0c10817"
+      ],
+      "source_artifacts": [
+        "docker/network_after_attack.json",
+        "normalized/events.jsonl"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-linux-admin",
+      "target": "process:autoshield-linux-admin:start.sh",
+      "edge_type": "executes",
+      "attributes": {
+        "relationship_basis": "configured_startup"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-linux-admin",
+      "target": "service:linux-admin",
+      "edge_type": "hosts",
+      "attributes": {
+        "relationship_basis": "container_service_configuration"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-nginx",
+      "target": "ip:172.19.0.7",
+      "edge_type": "connects_to",
+      "attributes": {
+        "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+        "network_name": "autoshield_net",
+        "relationship_basis": "docker_network_membership"
+      },
+      "evidence_ids": [
+        "docker-container-network-3-autoshield_net",
+        "docker-network-0-a25bab9fbf6a"
+      ],
+      "source_artifacts": [
+        "docker/network_after_attack.json",
+        "normalized/events.jsonl"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-nginx",
+      "target": "process:autoshield-nginx:docker-entrypoint.sh",
+      "edge_type": "executes",
+      "attributes": {
+        "relationship_basis": "configured_startup"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-nginx",
+      "target": "service:nginx",
+      "edge_type": "hosts",
+      "attributes": {
+        "relationship_basis": "container_service_configuration"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-postgres",
+      "target": "ip:172.19.0.3",
+      "edge_type": "connects_to",
+      "attributes": {
+        "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+        "network_name": "autoshield_net",
+        "relationship_basis": "docker_network_membership"
+      },
+      "evidence_ids": [
+        "docker-container-network-4-autoshield_net",
+        "docker-network-0-774375e97fe9"
+      ],
+      "source_artifacts": [
+        "docker/network_after_attack.json",
+        "normalized/events.jsonl"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-postgres",
+      "target": "process:autoshield-postgres:docker-entrypoint.sh",
+      "edge_type": "executes",
+      "attributes": {
+        "relationship_basis": "configured_startup"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-postgres",
+      "target": "service:postgres",
+      "edge_type": "hosts",
+      "attributes": {
+        "relationship_basis": "container_service_configuration"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-redis",
+      "target": "ip:172.19.0.4",
+      "edge_type": "connects_to",
+      "attributes": {
+        "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+        "network_name": "autoshield_net",
+        "relationship_basis": "docker_network_membership"
+      },
+      "evidence_ids": [
+        "docker-container-network-5-autoshield_net",
+        "docker-network-0-2923269430ba"
+      ],
+      "source_artifacts": [
+        "docker/network_after_attack.json",
+        "normalized/events.jsonl"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-redis",
+      "target": "process:autoshield-redis:docker-entrypoint.sh",
+      "edge_type": "executes",
+      "attributes": {
+        "relationship_basis": "configured_startup"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "container:autoshield-redis",
+      "target": "service:redis",
+      "edge_type": "hosts",
+      "attributes": {
+        "relationship_basis": "container_service_configuration"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "ip:192.168.65.1",
+      "target": "ip:172.19.0.6",
+      "edge_type": "accesses",
+      "attributes": {
+        "method": "GET",
+        "path": "/api/search",
+        "query": "message=%27%20UNION%20SELECT%20NULL--",
+        "status": 500,
+        "upstream": "172.19.0.6:8000",
+        "relationship_basis": "observed_http_request"
+      },
+      "evidence_ids": [
+        "nginx-10"
+      ],
+      "source_artifacts": [
+        "normalized/events.jsonl"
+      ],
+      "basis": "observed"
+    },
+    {
+      "source": "service:api",
+      "target": "service:postgres",
+      "edge_type": "depends_on",
+      "attributes": {
+        "configuration_key": "POSTGRES_HOST",
+        "configured_host": "postgres",
+        "relationship_basis": "container_environment"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "service:api",
+      "target": "service:redis",
+      "edge_type": "depends_on",
+      "attributes": {
+        "configuration_key": "REDIS_HOST",
+        "configured_host": "redis",
+        "relationship_basis": "container_environment"
+      },
+      "evidence_ids": [],
+      "source_artifacts": [
+        "docker/containers_after_attack.json"
+      ],
+      "basis": "configured"
+    },
+    {
+      "source": "service:nginx",
+      "target": "service:api",
+      "edge_type": "forwards",
+      "attributes": {
+        "upstream": "172.19.0.6:8000",
+        "upstream_port": 8000,
+        "query": "message=%27%20UNION%20SELECT%20NULL--",
+        "method": "GET",
+        "path": "/api/search",
+        "relationship_basis": "observed_http_upstream"
+      },
+      "evidence_ids": [
+        "nginx-10"
+      ],
+      "source_artifacts": [
+        "normalized/events.jsonl"
+      ],
+      "basis": "observed"
+    }
+  ],
+  "attack_path": []
+}

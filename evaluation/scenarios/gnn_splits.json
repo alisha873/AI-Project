@@ -1,0 +1,146 @@
+[
+  {
+    "scenario_id": "scenario_003",
+    "split": "train"
+  },
+  {
+    "scenario_id": "scenario_004",
+    "split": "train"
+  },
+  {
+    "scenario_id": "scenario_005",
+    "split": "train"
+  },
+  {
+    "scenario_id": "scenario_006",
+    "split": "train"
+  },
+  {
+    "scenario_id": "scenario_007",
+    "split": "validation"
+  },
+  {
+    "scenario_id": "scenario_008",
+    "split": "validation"
+  },
+  {
+    "scenario_id": "scenario_009",
+    "split": "validation"
+  },
+  {
+    "scenario_id": "scenario_010",
+    "split": "validation"
+  },
+  {
+    "scenario_id": "scenario_011",
+    "split": "test"
+  },
+  {
+    "scenario_id": "scenario_012",
+    "split": "test"
+  },
+  {
+    "scenario_id": "scenario_013",
+    "split": "test"
+  },
+  {
+    "scenario_id": "scenario_014",
+    "split": "test"
+  },
+  {
+    "scenario_id": "scenario_015",
+    "split": "train"
+  },
+  {
+    "scenario_id": "scenario_016",
+    "split": "train"
+  },
+  {
+    "scenario_id": "scenario_017",
+    "split": "train"
+  },
+  {
+    "scenario_id": "scenario_018",
+    "split": "train"
+  },
+  {
+    "scenario_id": "scenario_019",
+    "split": "train"
+  },
+  {
+    "scenario_id": "scenario_020",
+    "split": "train"
+  },
+  {
+    "scenario_id": "scenario_021",
+    "split": "train"
+  },
+  {
+    "scenario_id": "scenario_022",
+    "split": "train"
+  },
+  {
+    "scenario_id": "scenario_023",
+    "split": "validation"
+  },
+  {
+    "scenario_id": "scenario_024",
+    "split": "validation"
+  },
+  {
+    "scenario_id": "scenario_025",
+    "split": "validation"
+  },
+  {
+    "scenario_id": "scenario_026",
+    "split": "validation"
+  },
+  {
+    "scenario_id": "scenario_027",
+    "split": "validation"
+  },
+  {
+    "scenario_id": "scenario_028",
+    "split": "validation"
+  },
+  {
+    "scenario_id": "scenario_029",
+    "split": "validation"
+  },
+  {
+    "scenario_id": "scenario_030",
+    "split": "validation"
+  },
+  {
+    "scenario_id": "scenario_031",
+    "split": "test"
+  },
+  {
+    "scenario_id": "scenario_032",
+    "split": "test"
+  },
+  {
+    "scenario_id": "scenario_033",
+    "split": "test"
+  },
+  {
+    "scenario_id": "scenario_034",
+    "split": "test"
+  },
+  {
+    "scenario_id": "scenario_035",
+    "split": "test"
+  },
+  {
+    "scenario_id": "scenario_036",
+    "split": "test"
+  },
+  {
+    "scenario_id": "scenario_037",
+    "split": "test"
+  },
+  {
+    "scenario_id": "scenario_038",
+    "split": "test"
+  }
+]

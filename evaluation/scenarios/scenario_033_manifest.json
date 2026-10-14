@@ -1,0 +1,15 @@
+{
+  "description": "Special-character product search",
+  "environment": "isolated_docker_lab",
+  "execution": {
+    "method": "scripted"
+  },
+  "ground_truth_reference": "scenario_033_ground_truth.json",
+  "scenario_family": "web_exploitation",
+  "scenario_id": "scenario_033",
+  "schema_version": "1.0",
+  "split": "test",
+  "target_allowlist": [
+    "http://127.0.0.1:8080"
+  ]
+}

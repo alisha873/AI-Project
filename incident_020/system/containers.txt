@@ -1,0 +1,6 @@
+autoshield-nginx|nginx:1.27-alpine|Up 3 seconds|0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+autoshield-api|docker-autoshield-api|Up 4 days|8000/tcp
+autoshield-postgres|postgres:16-alpine|Up 4 days|5432/tcp
+autoshield-juice-shop|bkimminich/juice-shop:v19.0.0|Up 4 days|3000/tcp
+autoshield-redis|redis:7-alpine|Up 4 days|6379/tcp
+autoshield-linux-admin|docker-linux-admin|Up 4 days|22/tcp

@@ -1,0 +1,15 @@
+{
+  "description": "Boolean-style SQL injection probe to AutoShield search API",
+  "environment": "isolated_docker_lab",
+  "execution": {
+    "method": "scripted"
+  },
+  "ground_truth_reference": "scenario_003_ground_truth.json",
+  "scenario_family": "sql_injection",
+  "scenario_id": "scenario_003",
+  "schema_version": "1.0",
+  "target_allowlist": [
+    "http://127.0.0.1:8080"
+  ],
+  "split": "train"
+}

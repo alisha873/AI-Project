@@ -13,23 +13,47 @@ class DeterministicGraphBuilder:
     def build(self, incident_dir: Path) -> AttackGraph:
         incident_dir = Path(incident_dir)
 
-        containers_path = (
+
+        legacy_containers_path = (
             incident_dir / "docker" / "containers_after_attack.json"
         )
-        network_path = (
+        legacy_network_path = (
             incident_dir / "docker" / "network_after_attack.json"
         )
+        current_containers_dir = incident_dir / "configs" / "containers"
+        current_network_path = incident_dir / "network" / "autoshield_net.json"
         events_path = incident_dir / "normalized" / "events.jsonl"
 
-        for path in (containers_path, network_path, events_path):
-            if not path.is_file():
-                raise FileNotFoundError(
-                    f"Required graph evidence not found: {path}"
+        if not events_path.is_file():
+            raise FileNotFoundError(
+                f"Required graph evidence not found: {events_path}"
+            )
+
+        if legacy_containers_path.is_file() and legacy_network_path.is_file():
+            containers = json.loads(legacy_containers_path.read_text())
+            json.loads(legacy_network_path.read_text())
+        elif current_containers_dir.is_dir() and current_network_path.is_file():
+            containers = []
+            for path in sorted(current_containers_dir.glob("*.json")):
+                data = json.loads(path.read_text())
+                if isinstance(data, list):
+                    containers.extend(data)
+                elif isinstance(data, dict):
+                    containers.append(data)
+
+            if not containers:
+                raise ValueError(
+                    f"No container snapshots found in {current_containers_dir}"
                 )
 
-        containers = json.loads(containers_path.read_text())
-        # Validate and retain the network snapshot as a required input.
-        json.loads(network_path.read_text())
+            json.loads(current_network_path.read_text())
+        else:
+            raise FileNotFoundError(
+                "Required Docker evidence not found in either supported layout: "
+                f"{legacy_containers_path} / {legacy_network_path}, or "
+                f"{current_containers_dir} / {current_network_path}"
+            )
+
 
         events = [
             json.loads(line)
@@ -143,7 +167,7 @@ class DeterministicGraphBuilder:
                 )
             )
 
-        
+
         # Resolve configured service dependencies from captured container
         # environment variables. These are configuration relationships,
         # not proof of observed network communication.
@@ -330,7 +354,7 @@ class DeterministicGraphBuilder:
                 )
             )
 
-        
+
         # 2b. Configured service dependencies (not observed traffic).
         services_by_name = {
             node.name: node
@@ -432,6 +456,7 @@ class DeterministicGraphBuilder:
                                 attributes={
                                     "upstream": upstream,
                                     "upstream_port": upstream_port_number,
+                                    "query": attrs.get("query"),
                                     "method": attrs.get("method"),
                                     "path": attrs.get("path"),
                                     "relationship_basis": "observed_http_upstream",
@@ -484,6 +509,7 @@ class DeterministicGraphBuilder:
                                 attributes={
                                     "method": attrs.get("method"),
                                     "path": attrs.get("path"),
+                                    "query": attrs.get("query"),
                                     "status": attrs.get("status"),
                                     "upstream": upstream,
                                     "relationship_basis": "observed_http_request",

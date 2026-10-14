@@ -1,0 +1,15 @@
+{
+  "description": "Ordinary homepage request",
+  "environment": "isolated_docker_lab",
+  "execution": {
+    "method": "scripted"
+  },
+  "ground_truth_reference": "scenario_006_ground_truth.json",
+  "scenario_family": "benign",
+  "scenario_id": "scenario_006",
+  "schema_version": "1.0",
+  "target_allowlist": [
+    "http://127.0.0.1:8080"
+  ],
+  "split": "train"
+}

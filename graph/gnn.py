@@ -9,7 +9,7 @@ from torch import nn
 from torch.nn import functional as F
 
 from evidence.schema import AttackGraph
-
+from graph.http_features import HTTP_FEATURE_DIM, extract_http_features
 
 NODE_TYPES = (
     "container",
@@ -51,6 +51,25 @@ def encode_graph(graph: AttackGraph) -> GraphTensors:
     node_ids = [node.node_id for node in nodes]
     node_index = {node_id: i for i, node_id in enumerate(node_ids)}
 
+    http_features_by_node = {
+        node.node_id: [0.0] * HTTP_FEATURE_DIM
+        for node in graph.nodes
+    }
+
+    for edge in graph.edges:
+        if edge.edge_type != "accesses" or edge.basis != "observed":
+            continue
+
+        edge_features = extract_http_features(edge.attributes or {})
+
+        # Associate observed request evidence with both endpoints.
+        for node_id in (edge.source, edge.target):
+            current = http_features_by_node[node_id]
+            http_features_by_node[node_id] = [
+                max(old, new)
+                for old, new in zip(current, edge_features)
+            ]
+
     # One-hot node type plus configured/observed basis.
     features = []
     for node in nodes:
@@ -62,7 +81,11 @@ def encode_graph(graph: AttackGraph) -> GraphTensors:
             float(node.basis == "configured"),
             float(node.basis == "observed"),
         ]
-        features.append(type_features + basis_features)
+        features.append(
+            type_features
+            + basis_features
+            + http_features_by_node[node.node_id]
+        )
 
     node_features = torch.tensor(features, dtype=torch.float32)
 
@@ -223,7 +246,7 @@ class AttackGraphGCN(nn.Module):
 
     def __init__(
         self,
-        input_dim: int = len(NODE_TYPES) + 2,
+        input_dim: int = len(NODE_TYPES) + 2 + HTTP_FEATURE_DIM,
         hidden_dim: int = 32,
         embedding_dim: int = 16,
     ) -> None:

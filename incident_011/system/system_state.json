@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "collection_timestamp_utc": "2026-10-13T17:10:57.143441+00:00",
+  "environment": {
+    "hostname": "Alishas-MacBook-Air.local",
+    "operating_system": "macOS-14.0-arm64-arm-64bit",
+    "python_version": "3.12.5",
+    "docker_server_version": "29.7.2",
+    "docker_compose_version": "5.5.0"
+  },
+  "expected_components": [
+    "autoshield-nginx",
+    "autoshield-juice-shop",
+    "autoshield-api",
+    "autoshield-postgres",
+    "autoshield-redis",
+    "autoshield-linux-admin"
+  ],
+  "missing_expected_components": [],
+  "running_containers": [
+    {
+      "container_id": "d9419342a044ff747cc6c5d1cc747dbbcd3bab29054ddc9bf33ca668781d9895",
+      "name": "autoshield-nginx",
+      "image": "nginx:1.27-alpine",
+      "state": "running",
+      "running": true,
+      "started_at": "2026-10-13T17:10:52.787237595Z",
+      "health": null,
+      "network_membership": {
+        "autoshield_net": {
+          "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+          "ip_address": "172.19.0.7",
+          "global_ipv6_address": "",
+          "gateway": "172.19.0.1",
+          "mac_address": "5e:03:1d:db:22:3b"
+        }
+      },
+      "published_ports": [
+        {
+          "container_port": "80/tcp",
+          "host_ip": "0.0.0.0",
+          "host_port": "8080"
+        },
+        {
+          "container_port": "80/tcp",
+          "host_ip": "::",
+          "host_port": "8080"
+        }
+      ],
+      "exposed_ports": [
+        "80/tcp"
+      ]
+    },
+    {
+      "container_id": "b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47",
+      "name": "autoshield-api",
+      "image": "docker-autoshield-api",
+      "state": "running",
+      "running": true,
+      "started_at": "2026-10-09T11:05:08.329528924Z",
+      "health": null,
+      "network_membership": {
+        "autoshield_net": {
+          "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+          "ip_address": "172.19.0.6",
+          "global_ipv6_address": "",
+          "gateway": "172.19.0.1",
+          "mac_address": "7a:1f:40:88:ed:fc"
+        }
+      },
+      "published_ports": [],
+      "exposed_ports": [
+        "8000/tcp"
+      ]
+    },
+    {
+      "container_id": "774375e97fe92c49ad9670826c737fc660da6e8c00fe8888e96357b28712579e",
+      "name": "autoshield-postgres",
+      "image": "postgres:16-alpine",
+      "state": "running",
+      "running": true,
+      "started_at": "2026-10-09T10:29:17.538095554Z",
+      "health": null,
+      "network_membership": {
+        "autoshield_net": {
+          "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+          "ip_address": "172.19.0.3",
+          "global_ipv6_address": "",
+          "gateway": "172.19.0.1",
+          "mac_address": "a6:8f:dd:bd:4a:c5"
+        }
+      },
+      "published_ports": [],
+      "exposed_ports": [
+        "5432/tcp"
+      ]
+    },
+    {
+      "container_id": "2c62cd8ebd4c98757e82558bbc8f901637d760febc1e837bee89cfee89c2465b",
+      "name": "autoshield-juice-shop",
+      "image": "bkimminich/juice-shop:v19.0.0",
+      "state": "running",
+      "running": true,
+      "started_at": "2026-10-09T10:29:17.53249047Z",
+      "health": null,
+      "network_membership": {
+        "autoshield_net": {
+          "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+          "ip_address": "172.19.0.2",
+          "global_ipv6_address": "",
+          "gateway": "172.19.0.1",
+          "mac_address": "32:07:1e:99:98:10"
+        }
+      },
+      "published_ports": [],
+      "exposed_ports": [
+        "3000/tcp"
+      ]
+    },
+    {
+      "container_id": "2923269430ba33230b5cb8a8f7b6f9db2b33b4ce3fbf6c1eaf2a50fd5865b94e",
+      "name": "autoshield-redis",
+      "image": "redis:7-alpine",
+      "state": "running",
+      "running": true,
+      "started_at": "2026-10-09T10:29:17.538470429Z",
+      "health": null,
+      "network_membership": {
+        "autoshield_net": {
+          "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+          "ip_address": "172.19.0.4",
+          "global_ipv6_address": "",
+          "gateway": "172.19.0.1",
+          "mac_address": "ca:aa:88:9b:c1:57"
+        }
+      },
+      "published_ports": [],
+      "exposed_ports": [
+        "6379/tcp"
+      ]
+    },
+    {
+      "container_id": "9efbf0c1081781fbe43e269f50830ff92528192cc52bf9204d1621286d306ba0",
+      "name": "autoshield-linux-admin",
+      "image": "docker-linux-admin",
+      "state": "running",
+      "running": true,
+      "started_at": "2026-10-09T10:29:17.53970247Z",
+      "health": null,
+      "network_membership": {
+        "autoshield_net": {
+          "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+          "ip_address": "172.19.0.5",
+          "global_ipv6_address": "",
+          "gateway": "172.19.0.1",
+          "mac_address": "aa:57:15:3f:c1:8e"
+        }
+      },
+      "published_ports": [],
+      "exposed_ports": [
+        "22/tcp"
+      ]
+    }
+  ],
+  "docker_networks": [
+    {
+      "network_id": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+      "name": "autoshield_net",
+      "driver": "bridge",
+      "scope": "local",
+      "internal": false,
+      "attachable": false,
+      "ipam": [
+        {
+          "Subnet": "172.19.0.0/16",
+          "Gateway": "172.19.0.1"
+        }
+      ],
+      "containers": {
+        "autoshield-redis": {
+          "endpoint_id": "ef911e8d563a5966c9560a6e945f42ff7688d3d035f3c0a52dce6263b74c6805",
+          "ipv4_address": "172.19.0.4/16",
+          "ipv6_address": ""
+        },
+        "autoshield-juice-shop": {
+          "endpoint_id": "668966344cb97622ebe4252a7258da24360b4e79b3a8809d82b8ad047f2981d4",
+          "ipv4_address": "172.19.0.2/16",
+          "ipv6_address": ""
+        },
+        "autoshield-postgres": {
+          "endpoint_id": "aa0111d323dc6ba0d353fdf62472081cb3fe212b19fe2d8feb2e2442faebaea8",
+          "ipv4_address": "172.19.0.3/16",
+          "ipv6_address": ""
+        },
+        "autoshield-linux-admin": {
+          "endpoint_id": "c7e4aa21fa571fa1a5c0746fd27da8819d173ab39e9455f40784719a9a9c682c",
+          "ipv4_address": "172.19.0.5/16",
+          "ipv6_address": ""
+        },
+        "autoshield-api": {
+          "endpoint_id": "d1c753b14e25a5b1f672da1e9e7326848ad216e63a6c064ed591e316fe35c62e",
+          "ipv4_address": "172.19.0.6/16",
+          "ipv6_address": ""
+        },
+        "autoshield-nginx": {
+          "endpoint_id": "b0c5bd5af55a2734a61dd66ff524026fc04def089b6fa1c74de6fc5db30fa3c2",
+          "ipv4_address": "172.19.0.7/16",
+          "ipv6_address": ""
+        }
+      }
+    },
+    {
+      "network_id": "31be96d70f1d1378c3709127973b171f9cc857b50392dd0ad3e47eed327e2bb3",
+      "name": "battlecode-backend_default",
+      "driver": "bridge",
+      "scope": "local",
+      "internal": false,
+      "attachable": false,
+      "ipam": [
+        {
+          "Subnet": "172.18.0.0/16",
+          "Gateway": "172.18.0.1"
+        }
+      ],
+      "containers": {}
+    },
+    {
+      "network_id": "2fca84694c080a869f83bf0753a1fd37b56bdd29de6b70d1660f8aba960bdb36",
+      "name": "bridge",
+      "driver": "bridge",
+      "scope": "local",
+      "internal": false,
+      "attachable": false,
+      "ipam": [
+        {
+          "Subnet": "172.17.0.0/16",
+          "Gateway": "172.17.0.1"
+        }
+      ],
+      "containers": {}
+    },
+    {
+      "network_id": "5299a74c29afa699c87a08ac0977dd5ab7bf9cf3900000e66d3fbad73a51c8c2",
+      "name": "host",
+      "driver": "host",
+      "scope": "local",
+      "internal": false,
+      "attachable": false,
+      "ipam": null,
+      "containers": {}
+    },
+    {
+      "network_id": "754022c545d25eaffae66cee3933f35a42dfa87590b388819a757b9e5e1f762d",
+      "name": "none",
+      "driver": "null",
+      "scope": "local",
+      "internal": false,
+      "attachable": false,
+      "ipam": null,
+      "containers": {}
+    }
+  ]
+}

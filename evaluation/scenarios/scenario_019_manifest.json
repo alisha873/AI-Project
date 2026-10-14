@@ -1,0 +1,15 @@
+{
+  "description": "Numeric SQL injection-shaped input",
+  "environment": "isolated_docker_lab",
+  "execution": {
+    "method": "scripted"
+  },
+  "ground_truth_reference": "scenario_019_ground_truth.json",
+  "scenario_family": "sql_injection",
+  "scenario_id": "scenario_019",
+  "schema_version": "1.0",
+  "split": "train",
+  "target_allowlist": [
+    "http://127.0.0.1:8080"
+  ]
+}

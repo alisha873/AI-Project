@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "collection_timestamp_utc": "2026-10-13T19:15:33.310820+00:00",
+  "pcap_file": "traffic.pcap",
+  "capture_mode": "passive_incident_collection_window",
+  "packet_count": 6,
+  "protocol_counts": {
+    "ARP": 2,
+    "TCP": 4
+  },
+  "source_addresses": [
+    {
+      "address": "167.82.50.132",
+      "container": null,
+      "packet_count": 2
+    },
+    {
+      "address": "172.19.0.1",
+      "container": null,
+      "packet_count": 1
+    },
+    {
+      "address": "172.19.0.7",
+      "container": "autoshield-nginx",
+      "packet_count": 3
+    }
+  ],
+  "destination_addresses": [
+    {
+      "address": "167.82.50.132",
+      "container": null,
+      "packet_count": 2
+    },
+    {
+      "address": "172.19.0.1",
+      "container": null,
+      "packet_count": 1
+    },
+    {
+      "address": "172.19.0.7",
+      "container": "autoshield-nginx",
+      "packet_count": 3
+    }
+  ],
+  "duration_seconds": 1.593229,
+  "flows": [
+    {
+      "source_ip": "167.82.50.132",
+      "source_component": null,
+      "destination_ip": "172.19.0.7",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 443,
+      "destination_port": 45502,
+      "packet_count": 2,
+      "first_packet_timestamp_utc": "2026-10-13T19:15:21.104089+00:00",
+      "last_packet_timestamp_utc": "2026-10-13T19:15:21.104251+00:00"
+    },
+    {
+      "source_ip": "172.19.0.7",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "167.82.50.132",
+      "destination_component": null,
+      "protocol": "TCP",
+      "source_port": 45502,
+      "destination_port": 443,
+      "packet_count": 2,
+      "first_packet_timestamp_utc": "2026-10-13T19:15:21.104216+00:00",
+      "last_packet_timestamp_utc": "2026-10-13T19:15:21.104278+00:00"
+    },
+    {
+      "source_ip": "172.19.0.1",
+      "source_component": null,
+      "destination_ip": "172.19.0.7",
+      "destination_component": "autoshield-nginx",
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 1,
+      "first_packet_timestamp_utc": "2026-10-13T19:15:22.697255+00:00",
+      "last_packet_timestamp_utc": "2026-10-13T19:15:22.697255+00:00"
+    },
+    {
+      "source_ip": "172.19.0.7",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "172.19.0.1",
+      "destination_component": null,
+      "protocol": "ARP",
+      "source_port": null,
+      "destination_port": null,
+      "packet_count": 1,
+      "first_packet_timestamp_utc": "2026-10-13T19:15:22.697318+00:00",
+      "last_packet_timestamp_utc": "2026-10-13T19:15:22.697318+00:00"
+    }
+  ],
+  "observed_application_flows": [],
+  "collector_generated_requests": []
+}

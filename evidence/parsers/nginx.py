@@ -4,7 +4,7 @@ from urllib.parse import urlsplit
 
 from evidence.parsers.base import EvidenceParser
 from evidence.schema import EvidenceEvent
-
+from datetime import datetime
 
 NGINX_ACCESS_PATTERN = re.compile(
     r"""
@@ -38,19 +38,83 @@ class NginxParser(EvidenceParser):
 
     source = "nginx"
 
+
     def parse(self, path: Path) -> list[EvidenceEvent]:
         events: list[EvidenceEvent] = []
 
         with path.open("r", encoding="utf-8") as handle:
             for line_number, raw_line in enumerate(handle, start=1):
                 line = raw_line.rstrip("\n")
+                match = NGINX_ACCESS_PATTERN.match(line)
 
-                event = self._parse_line(line, line_number)
+                if match is None:
+                    # Some captured logs prefix the Nginx record with
+                    # a Docker timestamp. Support that format as well.
+                    _, separator, remainder = line.partition(" ")
+                    if separator:
+                        match = NGINX_ACCESS_PATTERN.match(remainder)
 
-                if event is not None:
-                    events.append(event)
+                if match is None:
+                    continue
+
+                data = match.groupdict()
+                request_target = data["request_target"]
+                parsed_target = urlsplit(request_target)
+                upstream = data["upstream"]
+
+                destination_entity = (
+                    None if upstream == "-"
+                    else upstream.rsplit(":", 1)[0]
+                    if ":" in upstream
+                    else upstream
+                )
+
+                try:
+                    status = int(data["status"])
+                except ValueError:
+                    status = None
+
+                try:
+                    body_bytes = int(data["body_bytes"])
+                except ValueError:
+                    body_bytes = None
+
+                try:
+                    request_time = float(data["request_time"])
+                except ValueError:
+                    request_time = None
+
+                events.append(
+                    EvidenceEvent(
+                        event_id=f"nginx-{line_number}",
+                        timestamp=datetime.strptime(
+                            data["nginx_timestamp"],
+                            "%d/%b/%Y:%H:%M:%S %z",
+                        ),
+                        source=self.source,
+                        event_type="http_request",
+                        source_entity=data["client_ip"],
+                        destination_entity=destination_entity,
+                        action=f"{data['method']} {parsed_target.path}",
+                        attributes={
+                            "method": data["method"],
+                            "path": parsed_target.path,
+                            "query": parsed_target.query,
+                            "http_version": data["http_version"],
+                            "status": status,
+                            "upstream": upstream,
+                            "upstream_status": data["upstream_status"],
+                            "body_bytes": body_bytes,
+                            "request_time": request_time,
+                            "referer": data["referer"],
+                            "user_agent": data["user_agent"],
+                            "nginx_timestamp": data["nginx_timestamp"],
+                        },
+                    )
+                )
 
         return events
+
 
     def _parse_line(
         self,

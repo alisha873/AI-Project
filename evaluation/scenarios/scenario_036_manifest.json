@@ -1,0 +1,15 @@
+{
+  "description": "Unknown-user login attempt",
+  "environment": "isolated_docker_lab",
+  "execution": {
+    "method": "scripted"
+  },
+  "ground_truth_reference": "scenario_036_ground_truth.json",
+  "scenario_family": "authentication_abuse",
+  "scenario_id": "scenario_036",
+  "schema_version": "1.0",
+  "split": "test",
+  "target_allowlist": [
+    "http://127.0.0.1:8080"
+  ]
+}

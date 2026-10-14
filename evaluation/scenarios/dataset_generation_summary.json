@@ -1,0 +1,257 @@
+{
+  "caveats": [
+    "Attack cases are controlled attempts, not confirmed exploitation.",
+    "Forwarding-edge labels remain unknown unless evidence supports a stronger claim.",
+    "Dataset size alone does not establish model generalization."
+  ],
+  "dataset": "AutoShield GNN controlled scenarios",
+  "dry_run": false,
+  "results": [
+    {
+      "edges": 22,
+      "family": "sql_injection",
+      "incident_id": "incident_021",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 200,
+      "scenario_id": "scenario_015",
+      "split": "train"
+    },
+    {
+      "edges": 22,
+      "family": "authentication_abuse",
+      "incident_id": "incident_022",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 401,
+      "scenario_id": "scenario_016",
+      "split": "train"
+    },
+    {
+      "edges": 22,
+      "family": "web_exploitation",
+      "incident_id": "incident_023",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 200,
+      "scenario_id": "scenario_017",
+      "split": "train"
+    },
+    {
+      "edges": 22,
+      "family": "benign",
+      "incident_id": "incident_024",
+      "label": "negative",
+      "nodes": 26,
+      "request_status": 200,
+      "scenario_id": "scenario_018",
+      "split": "train"
+    },
+    {
+      "edges": 22,
+      "family": "sql_injection",
+      "incident_id": "incident_025",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 200,
+      "scenario_id": "scenario_019",
+      "split": "train"
+    },
+    {
+      "edges": 22,
+      "family": "authentication_abuse",
+      "incident_id": "incident_026",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 401,
+      "scenario_id": "scenario_020",
+      "split": "train"
+    },
+    {
+      "edges": 22,
+      "family": "web_exploitation",
+      "incident_id": "incident_027",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 403,
+      "scenario_id": "scenario_021",
+      "split": "train"
+    },
+    {
+      "edges": 22,
+      "family": "benign",
+      "incident_id": "incident_028",
+      "label": "negative",
+      "nodes": 26,
+      "request_status": 200,
+      "scenario_id": "scenario_022",
+      "split": "train"
+    },
+    {
+      "edges": 22,
+      "family": "sql_injection",
+      "incident_id": "incident_029",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 200,
+      "scenario_id": "scenario_023",
+      "split": "validation"
+    },
+    {
+      "edges": 22,
+      "family": "authentication_abuse",
+      "incident_id": "incident_030",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 401,
+      "scenario_id": "scenario_024",
+      "split": "validation"
+    },
+    {
+      "edges": 22,
+      "family": "web_exploitation",
+      "incident_id": "incident_031",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 403,
+      "scenario_id": "scenario_025",
+      "split": "validation"
+    },
+    {
+      "edges": 22,
+      "family": "benign",
+      "incident_id": "incident_032",
+      "label": "negative",
+      "nodes": 26,
+      "request_status": 200,
+      "scenario_id": "scenario_026",
+      "split": "validation"
+    },
+    {
+      "edges": 22,
+      "family": "sql_injection",
+      "incident_id": "incident_033",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 200,
+      "scenario_id": "scenario_027",
+      "split": "validation"
+    },
+    {
+      "edges": 22,
+      "family": "authentication_abuse",
+      "incident_id": "incident_034",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 401,
+      "scenario_id": "scenario_028",
+      "split": "validation"
+    },
+    {
+      "edges": 22,
+      "family": "web_exploitation",
+      "incident_id": "incident_035",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 200,
+      "scenario_id": "scenario_029",
+      "split": "validation"
+    },
+    {
+      "edges": 22,
+      "family": "benign",
+      "incident_id": "incident_036",
+      "label": "negative",
+      "nodes": 26,
+      "request_status": 200,
+      "scenario_id": "scenario_030",
+      "split": "validation"
+    },
+    {
+      "edges": 22,
+      "family": "sql_injection",
+      "incident_id": "incident_037",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 500,
+      "scenario_id": "scenario_031",
+      "split": "test"
+    },
+    {
+      "edges": 22,
+      "family": "authentication_abuse",
+      "incident_id": "incident_038",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 200,
+      "scenario_id": "scenario_032",
+      "split": "test"
+    },
+    {
+      "edges": 22,
+      "family": "web_exploitation",
+      "incident_id": "incident_039",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 500,
+      "scenario_id": "scenario_033",
+      "split": "test"
+    },
+    {
+      "edges": 22,
+      "family": "benign",
+      "incident_id": "incident_040",
+      "label": "negative",
+      "nodes": 26,
+      "request_status": 200,
+      "scenario_id": "scenario_034",
+      "split": "test"
+    },
+    {
+      "edges": 22,
+      "family": "sql_injection",
+      "incident_id": "incident_041",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 500,
+      "scenario_id": "scenario_035",
+      "split": "test"
+    },
+    {
+      "edges": 22,
+      "family": "authentication_abuse",
+      "incident_id": "incident_042",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 401,
+      "scenario_id": "scenario_036",
+      "split": "test"
+    },
+    {
+      "edges": 22,
+      "family": "web_exploitation",
+      "incident_id": "incident_043",
+      "label": "positive",
+      "nodes": 26,
+      "request_status": 403,
+      "scenario_id": "scenario_037",
+      "split": "test"
+    },
+    {
+      "edges": 22,
+      "family": "benign",
+      "incident_id": "incident_044",
+      "label": "negative",
+      "nodes": 26,
+      "request_status": 200,
+      "scenario_id": "scenario_038",
+      "split": "test"
+    }
+  ],
+  "scenario_count": 24,
+  "split_counts": {
+    "test": 8,
+    "train": 8,
+    "validation": 8
+  }
+}

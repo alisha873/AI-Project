@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "collection_timestamp_utc": "2026-10-13T17:11:14.666170+00:00",
+  "pcap_file": "traffic.pcap",
+  "capture_mode": "passive_incident_collection_window",
+  "packet_count": 0,
+  "protocol_counts": {},
+  "source_addresses": [],
+  "destination_addresses": [],
+  "duration_seconds": null,
+  "flows": [],
+  "observed_application_flows": [],
+  "collector_generated_requests": []
+}

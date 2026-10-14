@@ -61,7 +61,7 @@ class ScenarioGroundTruth(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     scenario_id: str = Field(pattern=r"^scenario_[0-9]{3}$")
-    expected_attack_path: list[str] = Field(min_length=2)
+    expected_attack_path: list[str] = Field(default_factory=list)
     attack_path_complete: bool
     edge_assessments: list[EdgeLabelAssessment] = Field(min_length=1)
 

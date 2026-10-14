@@ -1,0 +1,14 @@
+{
+  "attack_path_complete": false,
+  "edge_assessments": [
+    {
+      "source": "ip:192.168.65.1",
+      "target": "ip:172.19.0.2",
+      "edge_type": "accesses",
+      "status": "positive",
+      "justification": "Scenario manifest defines this as a controlled attack-attempt scenario. This label represents controlled scenario intent, not proof of successful exploitation or a confirmed attack path."
+    }
+  ],
+  "expected_attack_path": [],
+  "scenario_id": "scenario_036"
+}

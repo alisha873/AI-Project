@@ -1,0 +1,31 @@
+===== autoshield-nginx =====
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+root                32383               32360               1                   19:17               ?                   00:00:00            nginx: master process nginx -g daemon off;
+statd               32438               32383               0                   19:17               ?                   00:00:00            nginx: worker process
+
+===== autoshield-api =====
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+root                9992                9968                0                   Oct11               ?                   00:11:32            /usr/local/bin/python3.12 /usr/local/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+===== autoshield-postgres =====
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+70                  8934                8865                0                   Oct11               ?                   00:01:05            postgres
+70                  9254                8934                0                   Oct11               ?                   00:00:00            postgres: checkpointer
+70                  9255                8934                0                   Oct11               ?                   00:00:11            postgres: background writer
+70                  9261                8934                0                   Oct11               ?                   00:00:15            postgres: walwriter
+70                  9262                8934                0                   Oct11               ?                   00:00:22            postgres: autovacuum launcher
+70                  9263                8934                0                   Oct11               ?                   00:00:01            postgres: logical replication launcher
+
+===== autoshield-juice-shop =====
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+65532               8955                8837                1                   Oct11               ?                   00:36:08            /nodejs/bin/node /juice-shop/build/app.js
+
+===== autoshield-redis =====
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+999                 8938                8838                1                   Oct11               ?                   00:35:43            redis-server *:6379
+
+===== autoshield-linux-admin =====
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+root                8931                8843                0                   Oct11               ?                   00:00:00            sshd: /usr/sbin/sshd -D -e [listener] 0 of 10-100 startups
+statd               9101                8931                0                   Oct11               ?                   00:00:00            rsyslogd
+

@@ -5,6 +5,7 @@ import torch
 
 from graph.builder import DeterministicGraphBuilder
 from graph.gnn import AttackGraphGCN, EDGE_TYPES, NODE_TYPES, encode_graph
+from graph.http_features import HTTP_FEATURE_DIM
 
 
 INCIDENT_DIR = Path("incident_001")
@@ -17,7 +18,7 @@ def test_encode_graph_preserves_nodes_and_edge_types():
     assert len(tensors.node_ids) == len(graph.nodes)
     assert tensors.node_features.shape == (
         len(graph.nodes),
-        len(NODE_TYPES) + 2,
+        len(NODE_TYPES) + 2 + HTTP_FEATURE_DIM,
     )
     assert tensors.edge_index.shape == (2, len(graph.edges))
     assert tensors.edge_type_ids.shape == (len(graph.edges),)
@@ -41,7 +42,7 @@ def test_gcn_returns_one_embedding_per_node():
 
 
 def test_gcn_handles_graph_without_edges():
-    features = torch.zeros((3, len(NODE_TYPES) + 2))
+    features = torch.zeros((3, len(NODE_TYPES) + 2 + HTTP_FEATURE_DIM))
     edge_index = torch.empty((2, 0), dtype=torch.long)
 
     model = AttackGraphGCN()
@@ -75,6 +76,7 @@ def test_gcn_uses_edge_type_ids():
             [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
         ]
     )
+    features = torch.nn.functional.pad(features, (0, HTTP_FEATURE_DIM))
     edge_index = torch.tensor([[0], [1]], dtype=torch.long)
 
     first_relation = torch.tensor(
@@ -126,6 +128,7 @@ def test_gcn_uses_edge_provenance():
             [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
         ]
     )
+    features = torch.nn.functional.pad(features, (0, HTTP_FEATURE_DIM))
     edge_index = torch.tensor([[0], [1]], dtype=torch.long)
     edge_type_ids = torch.tensor(
         [EDGE_TYPES.index("forwards")], dtype=torch.long

@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "collection_timestamp_utc": "2026-10-13T17:12:45.989857+00:00",
+  "pcap_file": "traffic.pcap",
+  "capture_mode": "passive_incident_collection_window",
+  "packet_count": 4,
+  "protocol_counts": {
+    "TCP": 4
+  },
+  "source_addresses": [
+    {
+      "address": "151.101.66.132",
+      "container": null,
+      "packet_count": 2
+    },
+    {
+      "address": "172.19.0.7",
+      "container": "autoshield-nginx",
+      "packet_count": 2
+    }
+  ],
+  "destination_addresses": [
+    {
+      "address": "151.101.66.132",
+      "container": null,
+      "packet_count": 2
+    },
+    {
+      "address": "172.19.0.7",
+      "container": "autoshield-nginx",
+      "packet_count": 2
+    }
+  ],
+  "duration_seconds": 4.9e-05,
+  "flows": [
+    {
+      "source_ip": "151.101.66.132",
+      "source_component": null,
+      "destination_ip": "172.19.0.7",
+      "destination_component": "autoshield-nginx",
+      "protocol": "TCP",
+      "source_port": 443,
+      "destination_port": 35822,
+      "packet_count": 2,
+      "first_packet_timestamp_utc": "2026-10-13T17:12:33.721817+00:00",
+      "last_packet_timestamp_utc": "2026-10-13T17:12:33.721862+00:00"
+    },
+    {
+      "source_ip": "172.19.0.7",
+      "source_component": "autoshield-nginx",
+      "destination_ip": "151.101.66.132",
+      "destination_component": null,
+      "protocol": "TCP",
+      "source_port": 35822,
+      "destination_port": 443,
+      "packet_count": 2,
+      "first_packet_timestamp_utc": "2026-10-13T17:12:33.721858+00:00",
+      "last_packet_timestamp_utc": "2026-10-13T17:12:33.721866+00:00"
+    }
+  ],
+  "observed_application_flows": [],
+  "collector_generated_requests": []
+}

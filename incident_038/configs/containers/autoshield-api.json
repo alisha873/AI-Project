@@ -1,0 +1,233 @@
+[
+    {
+        "Id": "b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47",
+        "Created": "2026-10-09T11:05:07.657501882Z",
+        "Path": "uvicorn",
+        "Args": [
+            "app.main:app",
+            "--host",
+            "0.0.0.0",
+            "--port",
+            "8000"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 9992,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-09T11:05:08.329528924Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:80abdd01522bda8f3685779aa592df8c41e4bfda4a540658a4514363bbb50b4a",
+        "ResolvConfPath": "/var/lib/docker/containers/b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47/hostname",
+        "HostsPath": "/var/lib/docker/containers/b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47/hosts",
+        "LogPath": "/var/lib/docker/containers/b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47/b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47-json.log",
+        "Name": "/autoshield-api",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "autoshield_net",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "b71b5355ee7e",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "ExposedPorts": {
+                "8000/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "POSTGRES_HOST=postgres",
+                "POSTGRES_DB=autoshield",
+                "POSTGRES_USER=autoshield",
+                "POSTGRES_PASSWORD=autoshield_dev_password",
+                "REDIS_HOST=redis",
+                "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LANG=C.UTF-8",
+                "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305",
+                "PYTHON_VERSION=3.12.15",
+                "PYTHON_SHA256=c2c4321961fab0fb999d66e0cecf521c2ab3994c7992873ea99e306c1094fd5a"
+            ],
+            "Cmd": [
+                "uvicorn",
+                "app.main:app",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "8000"
+            ],
+            "Image": "docker-autoshield-api",
+            "Volumes": null,
+            "WorkingDir": "/app",
+            "Entrypoint": null,
+            "Labels": {
+                "com.docker.compose.config-hash": "f4ecbbbd36e59ba4549cd556516bd43bb5fecccec9ba1245f629d3e9fca8c294",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "redis:service_started:false,postgres:service_started:false",
+                "com.docker.compose.image": "sha256:09664645b633dc662d0783982c33e0be8ef753aa539f752e95cf0b985a61dbbe",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "docker",
+                "com.docker.compose.project.config_files": "/Users/alishar/Desktop/autoshield/infrastructure/docker/docker-compose.yml",
+                "com.docker.compose.project.working_dir": "/Users/alishar/Desktop/autoshield/infrastructure/docker",
+                "com.docker.compose.replace": "autoshield-api",
+                "com.docker.compose.service": "autoshield-api",
+                "com.docker.compose.version": "5.5.0"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "2d3ceab536bde8c9617156fc5a701b9b9f99a96738e7eb4d33d8f9e9d51d6202",
+            "SandboxKey": "/var/run/docker/netns/2d3ceab536bd",
+            "Ports": {
+                "8000/tcp": null
+            },
+            "Networks": {
+                "autoshield_net": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "autoshield-api",
+                        "autoshield-api"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1",
+                    "EndpointID": "d1c753b14e25a5b1f672da1e9e7326848ad216e63a6c064ed591e316fe35c62e",
+                    "Gateway": "172.19.0.1",
+                    "IPAddress": "172.19.0.6",
+                    "MacAddress": "7a:1f:40:88:ed:fc",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "autoshield-api",
+                        "b71b5355ee7e"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:09664645b633dc662d0783982c33e0be8ef753aa539f752e95cf0b985a61dbbe",
+            "size": 1812,
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux"
+            }
+        }
+    }
+]
