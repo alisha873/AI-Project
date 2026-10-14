@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "incident_id": "incident_001",
+  "agent": "phase_9_root_cause",
+  "created_at_utc": "2026-10-14T16:35:24Z",
+  "input_reconstruction": "incident_reconstruction.json",
+  "findings": [
+    {
+      "status": "hypothesis_not_confirmed",
+      "root_cause": "Not confirmed from the available evidence.",
+      "affected_component": "Undetermined from request evidence alone.",
+      "vulnerability_type": "potential_sql_injection (CWE-89 hypothesis)",
+      "supporting_evidence_ids": [
+        "application-4",
+        "nginx-19"
+      ],
+      "confidence": 0.55,
+      "rationale": "One or more normalized events contain SQL-injection-like request syntax. This supports an injection-attempt hypothesis but does not establish vulnerable server-side query construction, successful exploitation, or database access.",
+      "evidence_needed_to_confirm": [
+        "application source or query-construction evidence showing unsafe SQL handling",
+        "correlated application/database logs demonstrating the query was executed",
+        "request-to-response evidence tied to the same event or request identifier"
+      ]
+    }
+  ],
+  "validation": {
+    "all_supporting_event_ids_exist": true,
+    "ground_truth_used": false,
+    "principle": "No evidence, no claim."
+  }
+}
