@@ -71,3 +71,9 @@ temp/
 !baseline/network/**
 !baseline/system/
 !baseline/system/**
+
+# incident_001 is the reference incident used by the test suite and must be versioned.
+!incident_001/logs/
+!incident_001/logs/**
+!incident_001/network/
+!incident_001/network/**

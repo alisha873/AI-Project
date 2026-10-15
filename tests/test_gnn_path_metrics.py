@@ -12,7 +12,9 @@ INCIDENT_DIR = Path("incident_001")
 def test_ground_truth_path_mapping_reports_missing_nodes():
     graph = DeterministicGraphBuilder().build(INCIDENT_DIR)
     ground_truth = json.loads(
-        (INCIDENT_DIR / "ground_truth" / "ground_truth.json").read_text()
+        (INCIDENT_DIR / "ground_truth" / "ground_truth.json").read_text(
+            encoding="utf-8"
+        )
     )
 
     result = map_ground_truth_path(

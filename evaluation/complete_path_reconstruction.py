@@ -230,11 +230,11 @@ def main():
         if not path.exists():
             raise FileNotFoundError(f"Missing required file: {path.relative_to(ROOT)}")
 
-    graph_document = json.loads(GRAPH_PATH.read_text())
+    graph_document = json.loads(GRAPH_PATH.read_text(encoding=" utf-8\))
     # Scenario graph artifacts wrap the AttackGraph under a top-level "graph" key.
     graph_payload = graph_document.get("graph", graph_document)
     graph = AttackGraph.model_validate(graph_payload)
-    gt_document = json.loads(GROUND_TRUTH_PATH.read_text())
+    gt_document = json.loads(GROUND_TRUTH_PATH.read_text(encoding=" utf-8\))
     # Ground-truth artifacts may also be wrapped; accept either representation.
     gt = gt_document.get("ground_truth", gt_document)
     graph_nodes = list(graph.nodes.values()) if isinstance(graph.nodes, dict) else list(graph.nodes)

@@ -1,0 +1,19 @@
+2026-10-09T10:29:17.911742304Z /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+2026-10-09T10:29:17.911761262Z /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+2026-10-09T10:29:17.914830970Z /docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+2026-10-09T10:29:17.934609179Z 10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+2026-10-09T10:29:17.968191512Z 10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+2026-10-09T10:29:17.968379595Z /docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+2026-10-09T10:29:17.968741637Z /docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+2026-10-09T10:29:17.971683220Z /docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+2026-10-09T10:29:17.974292054Z /docker-entrypoint.sh: Configuration complete; ready for start up
+2026-10-09T10:36:48.553419137Z 192.168.65.1 - - [09/Oct/2026:10:36:48 +0000] "GET /api/health HTTP/1.1" 200 15 "-" "curl/8.1.2" upstream=172.19.0.6:8000 upstream_status=200 request_time=0.046
+2026-10-09T10:36:57.350208877Z 192.168.65.1 - - [09/Oct/2026:10:36:57 +0000] "HEAD / HTTP/1.1" 200 0 "-" "curl/8.1.2" upstream=172.19.0.2:3000 upstream_status=200 request_time=0.031
+2026-10-09T10:38:21.203132555Z 192.168.65.1 - - [09/Oct/2026:10:38:21 +0000] "GET /api/health HTTP/1.1" 200 15 "-" "curl/8.1.2" upstream=172.19.0.6:8000 upstream_status=200 request_time=0.012
+2026-10-09T10:52:07.833458007Z 192.168.65.1 - - [09/Oct/2026:10:52:07 +0000] "GET /api/data HTTP/1.1" 200 31 "-" "curl/8.1.2" upstream=172.19.0.6:8000 upstream_status=200 request_time=0.080
+2026-10-09T10:57:43.864046176Z 192.168.65.1 - - [09/Oct/2026:10:57:43 +0000] "GET /api/data HTTP/1.1" 200 31 "-" "curl/8.1.2" upstream=172.19.0.6:8000 upstream_status=200 request_time=0.097
+2026-10-09T10:58:37.635684840Z 192.168.65.1 - - [09/Oct/2026:10:58:37 +0000] "GET /api/data?q=test HTTP/1.1" 200 28 "-" "curl/8.1.2" upstream=172.19.0.6:8000 upstream_status=200 request_time=0.044
+2026-10-09T11:05:12.804582176Z 192.168.65.1 - - [09/Oct/2026:11:05:12 +0000] "GET /api/health HTTP/1.1" 200 15 "-" "curl/8.1.2" upstream=172.19.0.6:8000 upstream_status=200 request_time=0.061
+2026-10-09T11:05:17.275779136Z 192.168.65.1 - - [09/Oct/2026:11:05:17 +0000] "GET /api/search?message=security HTTP/1.1" 200 45 "-" "curl/8.1.2" upstream=172.19.0.6:8000 upstream_status=200 request_time=0.046
+2026-10-09T11:05:25.160877417Z 192.168.65.1 - - [09/Oct/2026:11:05:25 +0000] "GET /api/search?message=does-not-exist HTTP/1.1" 200 11 "-" "curl/8.1.2" upstream=172.19.0.6:8000 upstream_status=200 request_time=0.054
+2026-10-09T11:07:46.241152552Z 192.168.65.1 - - [09/Oct/2026:11:07:46 +0000] "GET /api/search?message=%27%20OR%20%271%27%3D%271 HTTP/1.1" 200 113 "-" "curl/8.1.2" upstream=172.19.0.6:8000 upstream_status=200 request_time=0.057

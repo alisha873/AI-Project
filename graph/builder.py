@@ -30,12 +30,14 @@ class DeterministicGraphBuilder:
             )
 
         if legacy_containers_path.is_file() and legacy_network_path.is_file():
-            containers = json.loads(legacy_containers_path.read_text())
-            json.loads(legacy_network_path.read_text())
+            containers = json.loads(
+                legacy_containers_path.read_text(encoding="utf-8")
+            )
+            json.loads(legacy_network_path.read_text(encoding="utf-8"))
         elif current_containers_dir.is_dir() and current_network_path.is_file():
             containers = []
             for path in sorted(current_containers_dir.glob("*.json")):
-                data = json.loads(path.read_text())
+                data = json.loads(path.read_text(encoding="utf-8"))
                 if isinstance(data, list):
                     containers.extend(data)
                 elif isinstance(data, dict):
@@ -46,7 +48,7 @@ class DeterministicGraphBuilder:
                     f"No container snapshots found in {current_containers_dir}"
                 )
 
-            json.loads(current_network_path.read_text())
+            json.loads(current_network_path.read_text(encoding="utf-8"))
         else:
             raise FileNotFoundError(
                 "Required Docker evidence not found in either supported layout: "
@@ -57,7 +59,7 @@ class DeterministicGraphBuilder:
 
         events = [
             json.loads(line)
-            for line in events_path.read_text().splitlines()
+            for line in events_path.read_text(encoding="utf-8").splitlines()
             if line.strip()
         ]
 

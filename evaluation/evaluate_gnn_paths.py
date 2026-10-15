@@ -145,7 +145,7 @@ def path_metrics(
 
 
 def main() -> None:
-    assignments = json.loads((DATA / "gnn_splits.json").read_text())
+    assignments = json.loads((DATA / "gnn_splits.json").read_text(encoding=" utf-8\))
     gcn, scorer = load_models()
 
     results = []
@@ -155,10 +155,10 @@ def main() -> None:
         split = assignment["split"]
 
         graph = AttackGraph.model_validate(json.loads(
-            (DATA / f"{sid}_graph.json").read_text()
+            (DATA / f"{sid}_graph.json").read_text(encoding=" utf-8\)
         ))
         truth = json.loads(
-            (DATA / f"{sid}_ground_truth.json").read_text()
+            (DATA / f"{sid}_ground_truth.json").read_text(encoding=" utf-8\)
         )
 
         expected_labels = truth.get("expected_attack_path", [])
