@@ -214,4 +214,5 @@ def test_the_phase_11d_report_keeps_a_rejected_answer_and_leaves_accepted_ones_c
     assert entry["status"] == "rejected_citations" and entry["answer"] is None and entry["raw_response"] == bad
     (ok,) = accepted.to_dict()["answers"]
     assert ok["status"] == "answered" and ok["answer"] == good_answer(context)
-    assert set(ok) == set(entry) == {"context", "status", "message", "answer", "validation", "raw_response", "llm"}
+    assert set(ok) == set(entry) == {
+        "context", "status", "message", "answer", "validation", "raw_response", "llm", "request_sent"}

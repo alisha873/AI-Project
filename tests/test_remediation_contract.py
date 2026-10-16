@@ -192,7 +192,10 @@ def test_the_planner_package_never_writes_files_or_runs_commands(path):
 
 def test_only_the_cli_may_write_and_only_on_request():
     text = SCRIPT.read_text(encoding="utf-8")
-    assert text.count("write_text") == 1 and "if args.output" in text
+    # Two writes, each gated on an explicit flag: the remediation report (--output) and, optionally, the
+    # reused Phase 11D grounded-answer report (--rag-output). Every write stays behind an `if args.*` guard.
+    assert text.count("write_text") == 2
+    assert "if args.output" in text and "if args.rag_output" in text
     assert "ground_truth" not in text.replace("`ground_truth/`", "")  # only mentioned in the docstring as not read
 
 

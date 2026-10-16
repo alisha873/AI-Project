@@ -25,6 +25,74 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 ROOT = Path(__file__).resolve().parents[1]
+
+# --------------------------------------------------------------------------------------------------
+# Dashboard LLM configuration (documented, consistent across the stages it launches)
+# --------------------------------------------------------------------------------------------------
+# The dashboard runs the SAME committed CLIs as a developer would; it adds no RAG logic of its own.
+# These knobs make the multi-stage run consistent and bound the number of provider requests. They are
+# read once, from the environment, and are logged (without secrets) at the start of a run.
+#
+# * AUTOSHIELD_LLM_PROVIDER     none | groq | ollama  (default none: no model is called anywhere)
+# * AUTOSHIELD_LLM_MAX_RETRIES  SDK re-send count for one call (default "0" here: the dashboard can fire
+#                               several calls per minute, so its subprocesses disable the SDK's own
+#                               re-sends to avoid multiplying provider requests. The library default is
+#                               still 2; this only affects dashboard-launched stages. Set to "" to keep
+#                               the library default.)
+# * AUTOSHIELD_LLM_TOKEN_BUDGET pre-send PER-REQUEST token budget (default unset: no per-request size cap
+#                               beyond the TPM budget below). Set e.g. "8000" to also refuse an oversized
+#                               single prompt before sending.
+# * AUTOSHIELD_LLM_TPM_LIMIT    per-MINUTE token budget shared across a subprocess's calls (default unset: the
+#                               client's built-in default, the recorded ~8000 Groq ceiling; see PROJECT_STATUS).
+#                               Set "0" to disable. This bounds a burst of calls in one minute.
+# * AUTOSHIELD_MAX_PASSAGE_CHARS shorten each reference passage in the prompt (default unset: full text).
+
+
+def _dashboard_llm_config() -> dict[str, str]:
+    provider = os.environ.get("AUTOSHIELD_LLM_PROVIDER", "none").strip().lower()
+    if provider not in {"none", "groq", "ollama"}:
+        provider = "none"
+    return {
+        "provider": provider,
+        # Default "0" re-sends for dashboard stages (documented above); AUTOSHIELD_LLM_MAX_RETRIES="" keeps
+        # the library default by passing nothing through.
+        "max_retries": os.environ.get("AUTOSHIELD_LLM_MAX_RETRIES", "0").strip(),
+        "token_budget": os.environ.get("AUTOSHIELD_LLM_TOKEN_BUDGET", "").strip(),
+        "tpm_limit": os.environ.get("AUTOSHIELD_LLM_TPM_LIMIT", "").strip(),
+        "max_passage_chars": os.environ.get("AUTOSHIELD_MAX_PASSAGE_CHARS", "").strip(),
+    }
+
+
+def _subprocess_env(config: dict[str, str]) -> dict[str, str]:
+    """Environment for a launched CLI: the parent env plus the documented LLM_* knobs (no secrets added)."""
+    env = {**os.environ, "PYTHONPATH": str(ROOT)}
+    if config["max_retries"]:
+        env["LLM_MAX_RETRIES"] = config["max_retries"]
+    if config["token_budget"]:
+        env["LLM_TOKEN_BUDGET"] = config["token_budget"]
+    if config["tpm_limit"]:
+        env["LLM_TPM_LIMIT"] = config["tpm_limit"]
+    return env
+
+
+# Phrases in a stage's output that deserve a clearer, actionable hint in the event stream.
+_RATE_LIMIT_HINT = re.compile(r"rate.?limit|RateLimitError|tokens per minute|TPM|HTTP 429|code.?429", re.IGNORECASE)
+_OVERSIZE_HINT = re.compile(r"no request was sent|prompt .*budget|request too large|HTTP 413|code.?413", re.IGNORECASE)
+
+
+def _actionable_hint(text: str) -> str | None:
+    if _OVERSIZE_HINT.search(text):
+        return ("The prompt exceeded the token budget and was refused before sending. Lower "
+                "AUTOSHIELD_MAX_PASSAGE_CHARS or --max-documents, or raise AUTOSHIELD_LLM_TOKEN_BUDGET if the "
+                "provider allows a larger request.")
+    if _RATE_LIMIT_HINT.search(text):
+        return ("The provider rate-limited the request (tokens-per-minute). Reduce the prompt size "
+                "(AUTOSHIELD_MAX_PASSAGE_CHARS / --max-documents), wait for the window to reset, or upgrade "
+                "the provider tier. SDK re-sends are disabled by default for the dashboard to avoid "
+                "multiplying requests.")
+    return None
+
+
 app = FastAPI(title="AutoShield Live Pipeline", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
@@ -42,12 +110,18 @@ STAGES = [
     {"id": "narrative", "label": "LLM narrative synthesis", "kind": "script",
      "command": [sys.executable, "-m", "scripts.run_llm_incident_synthesis", "{incident_id}"],
      "description": "Generate an evidence-grounded narrative from the saved deterministic outputs."},
-    {"id": "rag", "label": "RAG knowledge retrieval", "kind": "script",
-     "command": [sys.executable, "-m", "scripts.run_grounded_answer", "{incident_id}", "--provider", "{provider}", "--output", "{rag_output}"],
-     "description": "Run the committed RAG retrieval/grounded-answer pipeline and save its report."},
-    {"id": "remediation", "label": "Remediation planning", "kind": "script",
-     "command": [sys.executable, "-m", "scripts.run_remediation_plan", "{incident_id}", "--provider", "{provider}", "--output", "{remediation_output}"],
-     "description": "Run the committed advisory remediation planner and save its report."},
+    # RAG stage: context/retrieval preview only (provider forced to none). The grounded ANSWER is generated
+    # once, in the remediation stage below, which reuses it for planning and also writes the RAG report. This
+    # removes the previous duplicate Phase 11D model call (the rag stage and remediation stage each ran it).
+    {"id": "rag", "label": "RAG knowledge retrieval (context preview)", "kind": "script",
+     "command": [sys.executable, "-m", "scripts.run_grounded_answer", "{incident_id}", "--provider", "none", "--output", "{rag_output}"],
+     "description": "Build and save the FTS5 v1 retrieval context (no model call). The grounded answer is "
+                    "produced once in the remediation stage and written to the same RAG report."},
+    {"id": "remediation", "label": "Grounded answer + remediation planning", "kind": "script",
+     "command": [sys.executable, "-m", "scripts.run_remediation_plan", "{incident_id}", "--provider", "{provider}",
+                 "--rag-output", "{rag_output}", "--output", "{remediation_output}"],
+     "description": "Run the committed grounded-answer + advisory remediation planner once, writing both the "
+                    "RAG report and the remediation plan (no duplicate grounded-answer call)."},
     {"id": "validation", "label": "Controlled validation / Judge / SHAP / risk", "kind": "pending",
      "description": "Not launched: implementation entry points are not present in the uploaded archives."},
 ]
@@ -135,7 +209,11 @@ async def stream_run(run_id: str):
 
     async def generator():
         run["status"] = "running"
-        yield await emit({"type": "run_started", "run_id": run_id, "incident_id": run["incident_id"]})
+        config = _dashboard_llm_config()
+        run["llm_provider"] = config["provider"]
+        yield await emit({"type": "run_started", "run_id": run_id, "incident_id": run["incident_id"],
+                          "llm_config": {k: v for k, v in config.items()}})   # counts/flags only, no secrets
+        env = _subprocess_env(config)
         for stage in STAGES:
             run["current_stage"] = stage["id"]
             event = {"type": "stage_started", "stage": stage["id"], "label": stage["label"], "at": timestamp()}
@@ -147,22 +225,23 @@ async def stream_run(run_id: str):
                 yield await emit(event)
                 continue
 
-            provider = os.environ.get("AUTOSHIELD_LLM_PROVIDER", "none").strip().lower()
-            if provider not in {"none", "groq", "ollama"}:
-                provider = "none"
             incident_dir = incident_path(run["incident_id"])
             assert incident_dir is not None
             output_map = {
-                "provider": provider,
+                "provider": config["provider"],
                 "rag_output": str(incident_dir / "analysis" / "rag_report.json"),
                 "remediation_output": str(incident_dir / "analysis" / "remediation_plan.json"),
             }
             cmd = [part.format(incident_id=run["incident_id"], **output_map) for part in stage["command"]]
+            # Apply the shared passage-compression setting to the two RAG-bearing stages.
+            if config["max_passage_chars"] and stage["id"] in {"rag", "remediation"}:
+                cmd += ["--max-passage-chars", config["max_passage_chars"]]
             proc = await asyncio.create_subprocess_exec(
                 *cmd, cwd=str(ROOT), stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.STDOUT, env={**os.environ, "PYTHONPATH": str(ROOT)}
+                stderr=asyncio.subprocess.STDOUT, env=env
             )
             assert proc.stdout is not None
+            stage_hint: str | None = None
             while True:
                 line = await proc.stdout.readline()
                 if not line:
@@ -171,17 +250,23 @@ async def stream_run(run_id: str):
                 item = {"type": "stage_log", "stage": stage["id"], "message": message, "at": timestamp()}
                 run["events"].append(item)
                 yield await emit(item)
+                stage_hint = stage_hint or _actionable_hint(message)
             code = await proc.wait()
             event = {"type": "stage_completed" if code == 0 else "stage_failed",
                      "stage": stage["id"], "exit_code": code, "at": timestamp(),
                      "message": "Process exited successfully." if code == 0 else f"Process exited with code {code}."}
+            if code != 0 and stage_hint:
+                event["advice"] = stage_hint
             run["events"].append(event)
             yield await emit(event)
             if code != 0:
                 # Fail fast: don't imply downstream stages ran on valid outputs.
                 run["status"] = "failed"
                 run["current_stage"] = stage["id"]
-                yield await emit({"type": "run_failed", "stage": stage["id"], "message": event["message"]})
+                failure = {"type": "run_failed", "stage": stage["id"], "message": event["message"]}
+                if stage_hint:
+                    failure["advice"] = stage_hint
+                yield await emit(failure)
                 return
         run["status"] = "completed_with_pending_stages"
         run["current_stage"] = None

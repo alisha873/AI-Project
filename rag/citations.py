@@ -162,9 +162,98 @@ _NEGATION_AFTER = re.compile(
 
 
 def _is_negated(text: str, start: int, end: int | None = None) -> bool:
+    # NOTE: shared with `remediation.text_checks`; its behaviour is relied on there. The validator in this
+    # module uses the stricter sentence-scoped `_is_negated_in_sentence` below.
     if _NEGATION_BEFORE.search(text[max(0, start - 70):start]) is not None:
         return True
     return end is not None and _NEGATION_AFTER.match(text[end:end + 60]) is not None
+
+
+# ------------------------------------------------------------
+# Sentence-scoped negation (used by the validator only)
+# ------------------------------------------------------------
+# A hedge only counts if it sits in the SAME sentence as the claim it hedges. Sentences end at . ! ? ; :
+# (when followed by whitespace or the end of the text) or at a line break. Splitting too eagerly (for
+# example after "e.g.") can only make the validator stricter, never more permissive.
+_SENTENCE_BREAK = re.compile(r"[.!?;:](?=\s|$)|\n")
+
+# Extra hedges that follow the claim: "successful exploitation has not been established".
+_NEGATION_AFTER_EXTRA = re.compile(
+    r"^\s*(?:(?:has|have|had)\s+(?:not|never)\s+(?:yet\s+)?been"
+    r"|(?:is|are|was|were)\s+(?:not|never)\s+(?:yet|currently)(?:\s+been)?)\s+"
+    r"(?:confirmed|established|shown|demonstrated|proven|observed|evidenced|supported)\b",
+    re.IGNORECASE,
+)
+# "does not currently establish <claim>": the existing pattern has no slot for an adverb.
+_NEGATION_BEFORE_ADVERB = re.compile(
+    r"(?:(?:does|do|did)\s+not|cannot|can't|can\s+not)\s+(?:currently|yet|directly)\s+"
+    r"(?:establish|prove|show|confirm|demonstrate)\s+(?:that\s+)?(?:\w+\s+){0,2}$",
+    re.IGNORECASE,
+)
+# A negating lead whose scope can run over a plain list: "does not establish A, B, or C".
+_NEGATING_LEAD = re.compile(
+    r"(?:(?:does|do|did)\s+not|cannot|can't|can\s+not)\s+(?:(?:currently|yet|directly)\s+)?"
+    r"(?:establish|prove|show|confirm|demonstrate)\s+(?:that\s+)?"
+    r"|no\s+(?:evidence|indication|sign|proof)s?\s+(?:of|that)\s+"
+    r"|without\s+evidence\s+of\s+",
+    re.IGNORECASE,
+)
+# The list continues only through a comma and/or "or"/"nor" (never "and" or "but"), optionally "or that".
+_LIST_JOIN = re.compile(r"(?:,\s*(?:(?:or|nor)\s+)?|\s(?:or|nor)\s+)(that\s+(?:the\s+)?)?$", re.IGNORECASE)
+# Anything that starts a new or contrasting clause ends the negation's scope.
+_LIST_BREAKER = re.compile(
+    r"\b(?:but|however|although|though|yet|whereas|while|instead|rather|because|since|so|and\s+(?:then|so|thus))\b"
+    r"|[()\"]",
+    re.IGNORECASE,
+)
+# A bare list item ("..., successful exploitation occurred") followed by a finite verb is a new clause.
+_CLAUSE_VERB_AFTER = re.compile(
+    r"^\s+(?:occurred|happened|took\s+place|succeeded|was|were|is|are|has|have|had)\b", re.IGNORECASE
+)
+_MAX_LIST_WORDS = 24
+
+
+def _sentence_span(text: str, start: int, end: int) -> tuple[int, int]:
+    begin = 0
+    for match in _SENTENCE_BREAK.finditer(text, 0, start):
+        begin = match.end()
+    following = _SENTENCE_BREAK.search(text, end)
+    return begin, following.start() if following else len(text)
+
+
+def _in_negated_list(sentence: str, start: int, end: int | None) -> bool:
+    prefix = sentence[:start]
+    for lead in _NEGATING_LEAD.finditer(prefix):
+        rest = prefix[lead.end():]
+        if not rest.strip() or len(rest.split()) > _MAX_LIST_WORDS or _LIST_BREAKER.search(rest):
+            continue
+        join = _LIST_JOIN.search(rest)
+        if join is None:
+            continue
+        if join.group(1) is None and _CLAUSE_VERB_AFTER.match(sentence[end:end + 40]):
+            continue
+        return True
+    return False
+
+
+def _is_negated_in_sentence(text: str, start: int, end: int | None = None) -> bool:
+    """True if the claim at text[start:end] is explicitly hedged WITHIN ITS OWN SENTENCE.
+
+    Only the claim's own sentence is examined, so a hedge in one sentence can never excuse a claim in
+    another. `end=None` (used for confirmation wording) skips every check that looks after or around the
+    claim, which keeps that path as strict as before.
+    """
+    begin, stop = _sentence_span(text, start, start if end is None else end)
+    sentence = text[begin:stop]
+    s = start - begin
+    e = None if end is None else end - begin
+    if _is_negated(sentence, s, e):
+        return True
+    if _NEGATION_BEFORE_ADVERB.search(sentence[max(0, s - 70):s]) is not None:
+        return True
+    if e is None:
+        return False
+    return _NEGATION_AFTER_EXTRA.match(sentence[e:e + 60]) is not None or _in_negated_list(sentence, s, e)
 
 
 class _Collector:
@@ -297,13 +386,13 @@ def _check_prose(
 
     for pattern in _HIGH_IMPACT:
         for match in pattern.finditer(text):
-            if not _is_negated(text, match.start(), match.end()):
+            if not _is_negated_in_sentence(text, match.start(), match.end()):
                 out.add("high_impact_claim", where,
                         f"asserts {match.group(0)!r}; no event in this context states that outcome")
     if not facts.any_confirmed:
         for pattern in _CONFIRMATION:
             for match in pattern.finditer(text):
-                if not _is_negated(text, match.start()):
+                if not _is_negated_in_sentence(text, match.start()):
                     out.add("confirmation_claim", where,
                             f"presents {match.group(0)!r} as confirmed, but the finding is only a hypothesis")
     if requests is not None:

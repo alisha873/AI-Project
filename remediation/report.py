@@ -154,11 +154,18 @@ def run_incident_remediation(
     retriever: Retriever | None = None,
     limits: ContextLimits | None = None,
     query_limit: int = DEFAULT_LIMIT,
+    max_characters_per_passage: int | None = None,
 ) -> IncidentRemediationReport:
-    """Plan once per usable finding of the incident (only when `llm_client` is given)."""
+    """Plan once per usable finding of the incident (only when `llm_client` is given).
+
+    Pass a prebuilt `rag_report` to avoid repeating the Phase 11D model calls (the dashboard does this so the
+    grounded answer is generated once, not once per stage). `max_characters_per_passage` shortens only
+    reference-passage text in the Phase 11D prompt and is ignored when `rag_report` is supplied.
+    """
     _root_cause, reconstruction = load_analysis_artifacts(incident_dir)
     rag = rag_report or run_incident_rag(
-        incident_dir, store, llm_client, retriever=retriever, limits=limits, query_limit=query_limit
+        incident_dir, store, llm_client, retriever=retriever, limits=limits, query_limit=query_limit,
+        max_characters_per_passage=max_characters_per_passage,
     )
     if isinstance(reconstruction, dict) and reconstruction.get("incident_id") not in (None, rag.incident_id):
         raise PlannerInputError("the RAG report and the reconstruction belong to different incidents")

@@ -39,6 +39,7 @@ from ingestion.mitre_xml import MitreSourceError  # noqa: E402
 from ingestion.pipeline import IngestionError  # noqa: E402
 from knowledge.store import KnowledgeStoreError  # noqa: E402
 from rag.context import ContextBuildError, ContextLimits, RagError  # noqa: E402
+from rag.report import run_incident_rag  # noqa: E402
 from remediation.configuration import ConfigurationError  # noqa: E402
 from remediation.report import IncidentRemediationReport, run_incident_remediation  # noqa: E402
 from retrieval.contract import RetrievalError  # noqa: E402
@@ -68,6 +69,13 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--model", help="model name override for the provider")
     parser.add_argument("--max-documents", type=int, default=ContextLimits().max_documents)
     parser.add_argument("--max-chunks-per-document", type=int, default=ContextLimits().max_chunks_per_document)
+    parser.add_argument("--max-passage-chars", type=int, default=None,
+                        help="shorten each reference passage's text to at most this many characters in the "
+                             "model prompt (ids, titles and provenance are kept; off by default)")
+    parser.add_argument("--rag-output", type=Path,
+                        help="also write the Phase 11D grounded-answer (RAG) report here. The Phase 11D model "
+                             "calls are then made ONCE and reused for planning, so the dashboard does not pay "
+                             "for the grounded answer twice.")
     parser.add_argument("--output", type=Path, help="write the full JSON report here")
     return parser
 
@@ -134,7 +142,19 @@ def main(argv: list[str] | None = None) -> int:
         except Exception as exc:  # e.g. a missing API key; the provider's own message, no secrets
             raise ValueError(f"cannot create the {args.provider!r} client: {type(exc).__name__}: {exc}") from exc
         with _open_store(args) as store:
-            report = run_incident_remediation(incident_dir, store, llm_client, limits=limits)
+            # Build the Phase 11D (RAG) report ONCE, then reuse it for planning, so the grounded answer's
+            # model calls are not repeated when both reports are wanted (e.g. from the dashboard).
+            rag_report = run_incident_rag(
+                incident_dir, store, llm_client, limits=limits,
+                max_characters_per_passage=args.max_passage_chars,
+            )
+            if args.rag_output:
+                args.rag_output.parent.mkdir(parents=True, exist_ok=True)
+                args.rag_output.write_text(
+                    json.dumps(rag_report.to_dict(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+                )
+                print(f"grounded-answer (RAG) report written to {args.rag_output}")
+            report = run_incident_remediation(incident_dir, store, llm_client, rag_report=rag_report, limits=limits)
         print(render_summary(report))
         if args.output:
             args.output.parent.mkdir(parents=True, exist_ok=True)

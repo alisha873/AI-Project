@@ -40,6 +40,7 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 from llm.base import LLMClient
+from llm.token_budget import PromptTooLargeError, RequestNotSentError
 from rag.answer import describe_llm
 from remediation.contract import (
     CONFIDENCE_MEANING,
@@ -154,6 +155,9 @@ class RemediationPlanResult:
     raw_response: str | None = None
     llm: str | None = None
     error_kind: str | None = None
+    # False only when the pre-send budget refused the prompt (no request reached the provider); True
+    # otherwise, including a provider error raised after a call was attempted.
+    request_sent: bool = True
 
     @property
     def accepted(self) -> bool:
@@ -173,6 +177,7 @@ class RemediationPlanResult:
             "message": self.message,
             "error_kind": self.error_kind,
             "llm": self.llm,
+            "request_sent": self.request_sent,
             "planner_model_called": self.model_called,
             "plan": self.plan.model_dump(mode="json") if self.plan is not None else None,
             "validation": None if self.validation is None else {
@@ -284,6 +289,15 @@ def plan_remediation(planner_input: PlannerInput, llm_client: LLMClient) -> Reme
             system_prompt=SYSTEM_PROMPT,
             user_prompt=build_user_prompt(planner_input),
             response_format=plan_json_schema(),
+        )
+    except RequestNotSentError as exc:  # oversized prompt OR no per-minute budget left; nothing was sent
+        return RemediationPlanResult(
+            status="llm_error",
+            message=f"No request was sent: {safe_error_message(exc)}; no plan was produced.",
+            llm=llm,
+            error_kind="prompt_too_large" if isinstance(exc, PromptTooLargeError) else "rate_budget_exceeded",
+            request_sent=False,
+            **base,
         )
     except Exception as exc:  # any provider failure; only the type, a kind and a scrubbed message are kept
         return RemediationPlanResult(

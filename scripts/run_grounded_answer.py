@@ -76,6 +76,9 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--model", help="model name override for the provider")
     parser.add_argument("--max-documents", type=int, default=ContextLimits().max_documents)
     parser.add_argument("--max-chunks-per-document", type=int, default=ContextLimits().max_chunks_per_document)
+    parser.add_argument("--max-passage-chars", type=int, default=None,
+                        help="shorten each reference passage's text to at most this many characters in the "
+                             "model prompt (ids, titles and provenance are kept; off by default)")
     parser.add_argument("--output", type=Path, help="write the full JSON report here")
     return parser
 
@@ -162,7 +165,8 @@ def main(argv: list[str] | None = None) -> int:
         except Exception as exc:  # e.g. a missing API key; the provider's own message, no secrets
             raise ValueError(f"cannot create the {args.provider!r} client: {type(exc).__name__}: {exc}") from exc
         with _open_store(args) as store:
-            report = run_incident_rag(incident_dir, store, llm_client, limits=limits)
+            report = run_incident_rag(incident_dir, store, llm_client, limits=limits,
+                                      max_characters_per_passage=args.max_passage_chars)
         print(render_summary(report))
         if args.output:
             args.output.parent.mkdir(parents=True, exist_ok=True)

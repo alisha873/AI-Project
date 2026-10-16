@@ -155,8 +155,47 @@ def answer_json_schema() -> dict[str, Any]:
     )
 
 
-def context_for_prompt(context: GroundedContext) -> dict[str, Any]:
-    """The model-facing view of a context (full provenance stays in the stored context)."""
+# Marker appended to a passage whose text was shortened for the prompt. It names the dropped length so the
+# compression is never silent, and the stored context still holds the full text with its provenance.
+_TRUNCATION_MARKER = " […passage text shortened for size: {shown} of {full} characters shown; full text and "\
+    "provenance are retained in the stored context…]"
+MIN_PASSAGE_CHARS = 200
+
+
+def _shorten_passage_text(text: str, max_characters: int | None) -> tuple[str, bool, int]:
+    """
+    Shorten a reference passage's text to at most `max_characters`, cutting at a word boundary and appending
+    an explicit marker. Returns (text_for_prompt, was_truncated, full_length). Never shortens below the
+    marker's own needs, and only reference-passage text is ever shortened (never evidence or hypotheses).
+    """
+    full = len(text)
+    if max_characters is None or full <= max_characters:
+        return text, False, full
+    cut = text[:max_characters]
+    boundary = cut.rfind(" ")
+    if boundary >= max_characters // 2:          # prefer a word boundary, but not an almost-empty cut
+        cut = cut[:boundary]
+    shown = cut.rstrip()
+    return shown + _TRUNCATION_MARKER.format(shown=len(shown), full=full), True, full
+
+
+def _validate_max_characters_per_passage(value: int | None) -> int | None:
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, int) or value < MIN_PASSAGE_CHARS:
+        raise ValueError(f"max_characters_per_passage must be an integer of at least {MIN_PASSAGE_CHARS}")
+    return value
+
+
+def context_for_prompt(context: GroundedContext, *, max_characters_per_passage: int | None = None) -> dict[str, Any]:
+    """
+    The model-facing view of a context (full provenance stays in the stored context).
+
+    `max_characters_per_passage` (optional) shortens only the reference-passage TEXT, keeping every id, title,
+    source, URL and the rest of the provenance. Observed evidence and hypotheses are never shortened. The
+    shortening is marked in the text and flagged per passage (`text_truncated`, `text_full_chars`).
+    """
+    max_characters_per_passage = _validate_max_characters_per_passage(max_characters_per_passage)
     return {
         "incident_id": context.incident_id,
         "observed_evidence": [
@@ -188,17 +227,7 @@ def context_for_prompt(context: GroundedContext) -> dict[str, Any]:
         ],
         "reference_ids_to_assess": list(context.reference_ids),
         "reference_passages": [
-            {
-                "reference_id": ref.reference_id,
-                "document_id": ref.doc_id,
-                "retrieval_rank": ref.document_rank,
-                "source": ref.source,
-                "source_id": ref.source_id,
-                "document_type": ref.doc_type,
-                "title": ref.title,
-                "source_url": ref.source_url,
-                "text": ref.text,
-            }
+            _passage_for_prompt(ref, max_characters_per_passage)
             for ref in context.references
         ],
         "retrieval": {
@@ -211,8 +240,31 @@ def context_for_prompt(context: GroundedContext) -> dict[str, Any]:
     }
 
 
-def build_user_prompt(context: GroundedContext) -> str:
-    """A deterministic JSON user message: the task plus the model-facing context."""
+def _passage_for_prompt(ref: Any, max_characters_per_passage: int | None) -> dict[str, Any]:
+    text, truncated, full = _shorten_passage_text(ref.text, max_characters_per_passage)
+    passage = {
+        "reference_id": ref.reference_id,
+        "document_id": ref.doc_id,
+        "retrieval_rank": ref.document_rank,
+        "source": ref.source,
+        "source_id": ref.source_id,
+        "document_type": ref.doc_type,
+        "title": ref.title,
+        "source_url": ref.source_url,
+        "text": text,
+    }
+    if truncated:
+        passage["text_truncated"] = True
+        passage["text_full_chars"] = full
+    return passage
+
+
+def build_user_prompt(context: GroundedContext, *, max_characters_per_passage: int | None = None) -> str:
+    """A deterministic JSON user message: the task plus the model-facing context.
+
+    `max_characters_per_passage` (optional) is passed to `context_for_prompt` to shorten reference-passage
+    text only; all identifiers, provenance, evidence and hypotheses are preserved.
+    """
     message = {
         "task": (
             "Produce the grounded answer JSON described in the system message from the "
@@ -220,6 +272,6 @@ def build_user_prompt(context: GroundedContext) -> str:
             "Copy every identifier exactly as supplied, and assess every reference_id listed in "
             "reference_ids_to_assess."
         ),
-        "context": context_for_prompt(context),
+        "context": context_for_prompt(context, max_characters_per_passage=max_characters_per_passage),
     }
     return json.dumps(message, ensure_ascii=False, indent=2, sort_keys=False)

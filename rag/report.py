@@ -73,12 +73,23 @@ def run_incident_rag(
     retriever: Retriever | None = None,
     limits: ContextLimits | None = None,
     query_limit: int = DEFAULT_LIMIT,
+    max_characters_per_passage: int | None = None,
 ) -> IncidentRagReport:
-    """Contexts for every usable finding and, if `llm_client` is given, a grounded answer for each."""
+    """Contexts for every usable finding and, if `llm_client` is given, a grounded answer for each.
+
+    `max_characters_per_passage` (optional) shortens only reference-passage text in the model prompt.
+    """
     built = build_contexts_for_incident(
         incident_dir, store, retriever=retriever, limits=limits, query_limit=query_limit
     )
-    results = tuple(generate_grounded_answer(c, llm_client) for c in built.contexts) if llm_client else ()
+    results = (
+        tuple(
+            generate_grounded_answer(c, llm_client, max_characters_per_passage=max_characters_per_passage)
+            for c in built.contexts
+        )
+        if llm_client
+        else ()
+    )
     return IncidentRagReport(
         incident_id=built.incident_id,
         retrievers=tuple(dict.fromkeys(c.retriever for c in built.contexts)),

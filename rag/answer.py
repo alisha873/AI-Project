@@ -42,6 +42,7 @@ from dataclasses import asdict, dataclass
 from typing import Any, Literal
 
 from llm.base import LLMClient
+from llm.token_budget import RequestNotSentError
 from rag.citations import (
     CitationValidation,
     InvalidAnswerError,
@@ -72,6 +73,9 @@ class GroundedAnswerResult:
     validation: CitationValidation | None = None
     raw_response: str | None = None
     llm: str | None = None
+    # Whether a request actually reached the provider. False only when the pre-send budget refused the
+    # prompt (no network call happened); True otherwise, including a provider error after a call was made.
+    request_sent: bool = True
 
     @property
     def accepted(self) -> bool:
@@ -88,8 +92,17 @@ def describe_llm(client: LLMClient) -> str:
     return f"{name}({model})" if isinstance(model, str) and model else name
 
 
-def generate_grounded_answer(context: GroundedContext, llm_client: LLMClient) -> GroundedAnswerResult:
-    """Generate and validate one answer; see the module docstring for the statuses."""
+def generate_grounded_answer(
+    context: GroundedContext,
+    llm_client: LLMClient,
+    *,
+    max_characters_per_passage: int | None = None,
+) -> GroundedAnswerResult:
+    """Generate and validate one answer; see the module docstring for the statuses.
+
+    `max_characters_per_passage` (optional) shortens only reference-passage text sent to the model, keeping
+    all identifiers and provenance; it does not change validation, which runs on the stored context.
+    """
     if not isinstance(context, GroundedContext):
         raise TypeError("context must be a GroundedContext")
     if not isinstance(llm_client, LLMClient):
@@ -113,8 +126,14 @@ def generate_grounded_answer(context: GroundedContext, llm_client: LLMClient) ->
     try:
         response = llm_client.generate(
             system_prompt=SYSTEM_PROMPT,
-            user_prompt=build_user_prompt(context),
+            user_prompt=build_user_prompt(context, max_characters_per_passage=max_characters_per_passage),
             response_format=answer_json_schema(),
+        )
+    except RequestNotSentError as exc:  # oversized prompt OR no per-minute budget left; nothing was sent
+        return GroundedAnswerResult(
+            context, "llm_error",
+            f"No request was sent: {str(exc)[:_MAX_ERROR_CHARS]}.",
+            llm=llm, request_sent=False,
         )
     except Exception as exc:  # any provider failure; the type and a short message are kept, nothing else
         message = f"{type(exc).__name__}: {str(exc)[:_MAX_ERROR_CHARS]}"

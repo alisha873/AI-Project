@@ -377,6 +377,97 @@ class TestImpactAndConfirmation:
         assert validate_answer(answer, ctx).passed
 
 
+def impact_issues(context, text: str) -> list[str]:
+    """The high_impact_claim / confirmation_claim messages produced by `text` as a limitation."""
+    answer = broken(context, lambda a: a["limitations"].append(text))
+    return [issue.message for issue in validate_answer(answer, context).issues
+            if issue.code in ("high_impact_claim", "confirmation_claim")]
+
+
+class TestSentenceScopedNegation:
+    """Regression: cautious, explicitly negated wording is accepted; affirmative claims stay rejected."""
+
+    @pytest.mark.parametrize("text", [
+        # the reported sentence and its direct variations
+        "The evidence does not establish successful exploitation.",
+        "Successful exploitation has not been established by the available evidence.",
+        "Successful exploitation has not been confirmed.",
+        "Successful exploitation was not established by the available evidence.",
+        "Successful exploitation is not yet confirmed.",
+        "The evidence does not currently establish successful exploitation.",
+        "The available evidence cannot establish successful exploitation.",
+        "The available evidence does not establish that successful exploitation occurred.",
+        "There is no evidence of successful exploitation.",
+        # a negating verb over a list (the wording the Phase 9 rationale itself uses)
+        "This supports an injection-attempt hypothesis but does not establish vulnerable server-side "
+        "query construction, successful exploitation, or database access.",
+        "The evidence does not establish that the request reached the database or that successful "
+        "exploitation occurred.",
+        "There is no evidence of data exfiltration, privilege escalation, or successful exploitation.",
+        # a negated claim followed by an unrelated sentence that is itself cautious
+        "The evidence does not establish successful exploitation. Further logs are needed.",
+    ])
+    def test_cautious_negated_wording_is_accepted(self, context, text):
+        assert impact_issues(context, text) == [], text
+
+    @pytest.mark.parametrize("text", [
+        "Successful exploitation occurred.",
+        "The attacker successfully exploited the application.",
+        "The application was successfully exploited through the search endpoint.",
+        "The evidence shows that successful exploitation occurred.",
+        "Successful exploitation has been established by the available evidence.",
+        "The evidence establishes successful exploitation.",
+        "The evidence does establish successful exploitation.",
+        "Data was exfiltrated.",
+    ])
+    def test_affirmative_unsupported_claims_are_still_rejected(self, context, text):
+        assert impact_issues(context, text), text
+
+    @pytest.mark.parametrize("text, claim", [
+        # a separate sentence
+        ("The evidence does not establish successful exploitation. The attacker successfully exploited "
+         "the application.", "successfully exploited"),
+        ("Successful exploitation has not been established. The server was compromised.", "server was compromised"),
+        ("There is no evidence of data exfiltration. Data was exfiltrated.", "Data was exfiltrated"),
+        # a separate clause in the same sentence
+        ("The evidence does not establish successful exploitation, but the server was compromised.",
+         "server was compromised"),
+        ("Successful exploitation has not been established, however data was exfiltrated.", "data was exfiltrated"),
+        ("The evidence does not establish the injection, and the server was compromised.", "server was compromised"),
+        ("The evidence does not establish the injection, or the server was compromised.", "server was compromised"),
+        # separated by sentence-ending punctuation other than a full stop
+        ("The evidence does not establish successful exploitation; the server was compromised.",
+         "server was compromised"),
+        ("There is no evidence of exploitation: the database was accessed.", "database was accessed"),
+        ("The evidence does not establish this!\nThe server was compromised.", "server was compromised"),
+        # a comma splice: the list item is really a new clause
+        ("The evidence does not establish the injection, successful exploitation occurred.",
+         "successful exploitation"),
+    ])
+    def test_a_negation_in_one_sentence_or_clause_cannot_excuse_another_claim(self, context, text, claim):
+        messages = impact_issues(context, text)
+        assert len(messages) == 1 and claim in messages[0], (text, messages)
+
+    def test_the_negated_claim_is_not_reported_only_the_affirmative_one(self, context):
+        text = ("The evidence does not establish successful exploitation. "
+                "The attacker successfully exploited the application.")
+        (message,) = impact_issues(context, text)
+        assert "successfully exploited" in message and "successful exploitation" not in message
+
+    def test_a_negated_claim_before_a_confirmation_claim_in_another_sentence(self, context):
+        text = "There is no confirmed vulnerability. The SQL injection vulnerability is confirmed."
+        answer = broken(context, lambda a: a["hypotheses"][0].update(statement=text))
+        assert "confirmation_claim" in codes(answer, context)
+
+    def test_the_reported_sentence_passes_in_every_free_text_section(self, context):
+        text = "The evidence does not establish successful exploitation."
+        for section in ("observed_evidence", "hypotheses", "reference_guidance"):
+            answer = broken(context, lambda a: a[section][0].update(statement=text))
+            assert "high_impact_claim" not in codes(answer, context), section
+        assert validate_answer(broken(context, lambda a: a["limitations"].append(text)), context).passed
+        assert validate_answer(broken(context, lambda a: a["evidence_gaps"].append(text)), context).passed
+
+
 class TestFreeTextSections:
     def test_gaps_and_limitations_must_not_invent_ids_or_identifiers(self, context):
         for key in ("evidence_gaps", "limitations"):
