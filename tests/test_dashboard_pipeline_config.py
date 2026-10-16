@@ -7,6 +7,8 @@ subprocess is launched, no model is called and no secret is read or printed.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 import api.main as m
@@ -36,11 +38,21 @@ def test_the_rag_stage_is_context_only_and_the_remediation_stage_owns_the_model_
     assert "--rag-output" in rem and "{rag_output}" in rem
     assert "--output" in rem and "{remediation_output}" in rem
     assert "{provider}" in rem
+    validation = stages["validation"]["command"]
+    assert "--live" not in validation
+    assert "--output" in validation and "{validation_output}" in validation
+    judge = stages["judge"]["command"]
+    assert "--live" not in judge and "--provider" not in judge and "{provider}" not in judge
+    assert "--report" in judge and "{validation_output}" in judge
+    assert "--output" in judge and "{judge_output}" in judge
 
 
 def test_stages_endpoint_hides_the_raw_command():
     payload = m.stages()
-    assert [s["id"] for s in payload["stages"]] == ["evidence", "narrative", "rag", "remediation", "validation"]
+    assert [s["id"] for s in payload["stages"]] == [
+        "evidence", "narrative", "rag", "remediation", "validation", "judge",
+    ]
+    assert "judge_decision.json" in m.ALLOWED_ARTIFACTS
     assert all("command" not in s for s in payload["stages"])
 
 
@@ -100,3 +112,12 @@ def test_rate_limit_output_gets_a_rate_limit_hint():
 
 def test_ordinary_output_gets_no_hint():
     assert m._actionable_hint("report written to analysis/rag_report.json") is None
+
+
+def test_the_dashboard_page_shows_judge_provenance_and_does_not_invent_a_live_finding():
+    text = Path(__file__).resolve().parents[1].joinpath("dashboard", "index.html").read_text(encoding="utf-8")
+    assert "function judgePanel" in text
+    assert "judge_decision.json" in text
+    assert "evidence_provenance" in text
+    assert "not displayed as a live security finding" in text
+    assert "Nothing is fabricated here." in text

@@ -122,9 +122,28 @@ STAGES = [
                  "--rag-output", "{rag_output}", "--output", "{remediation_output}"],
      "description": "Run the committed grounded-answer + advisory remediation planner once, writing both the "
                     "RAG report and the remediation plan (no duplicate grounded-answer call)."},
-    {"id": "validation", "label": "Controlled validation / Judge / SHAP / risk", "kind": "pending",
-     "description": "Not launched: implementation entry points are not present in the uploaded archives."},
+    {"id": "validation", "label": "Controlled validation (dry run)", "kind": "script",
+     "command": [sys.executable, "-m", "scripts.run_controlled_validation", "{incident_id}",
+                 "--output", "{validation_output}"],
+     "description": "Offline Phase 13 dry run: writes a blocked or not_validated report. No --live flag, "
+                    "so zero network requests. A genuine live run is a separate, approval-gated CLI invocation."},
+    {"id": "judge", "label": "Judge (offline evidence assessment)", "kind": "script",
+     "command": [sys.executable, "-m", "scripts.run_judge", "--report", "{validation_output}",
+                 "--output", "{judge_output}"],
+     "description": "Offline Phase 14 judge: reads the saved validation report and writes a decision. "
+                    "No model, no network, and no live probe. A dry-run report cannot become a live finding."},
 ]
+
+# Artifact files the dashboard may return. The judge file is the Phase 14 assessment, not a fabricated demo.
+ALLOWED_ARTIFACTS = (
+    "incident_reconstruction.json",
+    "root_cause_analysis.json",
+    "llm_incident_narrative.json",
+    "rag_report.json",
+    "remediation_plan.json",
+    "validation_report.json",
+    "judge_decision.json",
+)
 
 class StartRequest(BaseModel):
     incident_id: str = Field(default="incident_001", pattern=r"^incident_[0-9]{3}$")
@@ -167,7 +186,7 @@ def incident_artifacts(incident_id: str):
     if incident_dir is None:
         raise HTTPException(404, "Incident directory not found or ambiguous")
     analysis_dir = incident_dir / "analysis"
-    allowed = ("incident_reconstruction.json", "root_cause_analysis.json", "llm_incident_narrative.json", "rag_report.json", "remediation_plan.json")
+    allowed = ALLOWED_ARTIFACTS
     artifacts = {}
     for name in allowed:
         path = analysis_dir / name
@@ -231,6 +250,8 @@ async def stream_run(run_id: str):
                 "provider": config["provider"],
                 "rag_output": str(incident_dir / "analysis" / "rag_report.json"),
                 "remediation_output": str(incident_dir / "analysis" / "remediation_plan.json"),
+                "validation_output": str(incident_dir / "analysis" / "validation_report.json"),
+                "judge_output": str(incident_dir / "analysis" / "judge_decision.json"),
             }
             cmd = [part.format(incident_id=run["incident_id"], **output_map) for part in stage["command"]]
             # Apply the shared passage-compression setting to the two RAG-bearing stages.

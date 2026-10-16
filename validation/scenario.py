@@ -49,6 +49,14 @@ from validation.contract import (
 SCENARIO_SCHEMA_VERSION = "1.0"
 
 SQLI_SCENARIO_ID = "sqli-search-incident-001"
+
+
+def _is_calendar_date(value: str) -> bool:
+    """True for an explicit YYYY-MM-DD calendar date (digits only). No regex, no parsing of locales."""
+    if len(value) != 10 or value[4] != "-" or value[7] != "-":
+        return False
+    year, month, day = value[:4], value[5:7], value[8:]
+    return year.isdigit() and month.isdigit() and day.isdigit()
 SOURCE_PATH = "incident_001/metadata/attack_request.txt"
 REQUIRED_SOURCE_KEYS = (
     "Incident", "Attack", "CWE", "Method", "Endpoint", "Parameter", "Payload", "Entry point", "Target",
@@ -182,20 +190,31 @@ class Ambiguity(_Strict):
 class ReviewerApproval(_Strict):
     """One named reviewer's EXPLICIT approval of the final procedure. Pending until `approved` is True.
 
-    An approval only counts when the reviewer confirms THIS procedure (`confirms_procedure`) and records the date.
-    Participation in the review, a technical comment, or a stated role is not an approval."""
+    An approval only counts when the reviewer confirms THIS procedure (`confirms_procedure`), records the date,
+    and binds the approval to the exact scenario id and procedure digest. Participation in the review, a
+    technical comment, or a stated role is not an approval. Nothing here invents an approval on anyone's behalf."""
 
     name: Text
     approved: bool = False
     confirms_procedure: bool = False
     date: Text | None = None
+    scenario_id: Identifier | None = None
+    procedure_sha256: Sha256 | None = None
 
     @model_validator(mode="after")
     def _explicit(self) -> "ReviewerApproval":
-        if self.approved and not (self.confirms_procedure and self.date):
-            raise ValueError("an approval must confirm this procedure and record its date")
-        if not self.approved and (self.confirms_procedure or self.date):
-            raise ValueError("a pending approval can not already carry a confirmation or a date")
+        if self.approved:
+            if not (self.confirms_procedure and self.date and self.scenario_id and self.procedure_sha256):
+                raise ValueError(
+                    "an approval must confirm this procedure, record its date, and bind the scenario id "
+                    "and procedure digest"
+                )
+            if not _is_calendar_date(self.date):
+                raise ValueError("an approval date must be an explicit YYYY-MM-DD calendar date")
+        elif self.confirms_procedure or self.date or self.scenario_id or self.procedure_sha256:
+            raise ValueError(
+                "a pending approval can not already carry a confirmation, a date or a procedure binding"
+            )
         return self
 
 
@@ -256,6 +275,17 @@ class ScenarioDefinition(_Strict):
                 raise ValueError("an approved scenario must fix its wire encoding and its control value")
             if self.review.missing_approvals():
                 raise ValueError("every required reviewer must explicitly approve before the scenario is approved")
+            digest = procedure_digest(self)
+            for approval in self.review.approvals:
+                if not approval.approved:
+                    continue
+                if approval.scenario_id != self.scenario_id:
+                    raise ValueError("an approval is bound to a different scenario and cannot authorize this one")
+                if approval.procedure_sha256 != digest:
+                    raise ValueError(
+                        "an approval is bound to a different procedure digest (stale or mismatched) "
+                        "and cannot authorize this definition"
+                    )
         return self
 
     def open_blocking_ambiguities(self) -> list[str]:
@@ -268,6 +298,32 @@ class ScenarioDefinition(_Strict):
     def definition_sha256(self) -> str:
         canonical = json.dumps(self.model_dump(mode="json"), sort_keys=True, ensure_ascii=False)
         return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+    def procedure_sha256(self) -> str:
+        """Digest of the executable procedure (endpoint, probe, oracle, ambiguities), excluding review records.
+
+        Approvals bind to this digest so a later change of encoding, control value, payload or oracle invalidates
+        them. Review status and approval records are excluded so the digest is stable as reviewers sign it."""
+        return procedure_digest(self)
+
+
+def procedure_digest(definition: ScenarioDefinition | dict) -> str:
+    """SHA-256 of the procedure fields an approval authorizes. Review records are not part of the digest."""
+    data = definition.model_dump(mode="json") if isinstance(definition, ScenarioDefinition) else definition
+    source = data.get("objective_source") or {}
+    payload = {
+        "scenario_id": data.get("scenario_id"),
+        "definition_version": data.get("definition_version"),
+        "family": data.get("family"),
+        "incident_id": data.get("incident_id"),
+        "endpoint": data.get("endpoint"),
+        "probe": data.get("probe"),
+        "oracle": data.get("oracle"),
+        "ambiguities": data.get("ambiguities"),
+        "limitations": data.get("limitations"),
+        "objective_source_sha256": source.get("sha256") if isinstance(source, dict) else None,
+    }
+    return hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
 
 
 # ============================================================

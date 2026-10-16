@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 # ============================================================
@@ -278,16 +278,57 @@ class ValidationResult(BaseModel):
 
 class JudgeDecision(BaseModel):
     """
-    Final remediation decision produced by the Judge Agent.
+    Pipeline view of a Phase 14 judge assessment.
+
+    `decision` uses the judge vocabulary: supported, not_supported, inconclusive, blocked, not_evaluated.
+    `supported` applies only to the named claim and the evidence that was checked. It is not a statement
+    that the application is secure.
+
+    `confidence` is not a calibrated probability. The Phase 14 agent always writes 0.0, which means no
+    score was computed. A non-zero value is rejected when the decision is inconclusive, blocked, or
+    not_evaluated, and whenever the evidence was not judged sufficient, so a confidence number cannot
+    stand in for missing or invalid evidence.
     """
 
-    decision: str
+    model_config = ConfigDict(extra="forbid")
 
-    confidence: float = 0.0
-
+    decision: Literal["supported", "not_supported", "inconclusive", "blocked", "not_evaluated"]
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
     reasoning: str = ""
-
     supporting_evidence: list[str] = Field(default_factory=list)
+
+    schema_version: Literal["1.0"] = "1.0"
+    incident_id: str = ""
+    scenario_id: str = ""
+    claim_id: str = ""
+    claim: str = ""
+    rationale: str = ""
+    contradicting_evidence: list[str] = Field(default_factory=list)
+    missing_evidence: list[str] = Field(default_factory=list)
+    evidence_sufficiency: Literal["sufficient", "insufficient", "not_applicable"] = "not_applicable"
+    upstream_status: str = ""
+    upstream_reason_code: str = ""
+    limitations: list[str] = Field(default_factory=list)
+    eligible_for_downstream: bool = False
+    evidence_provenance: Literal["mocked", "dry_run", "live", "unverified"] = "unverified"
+    live_evidence: bool = False
+
+    @model_validator(mode="after")
+    def _confidence_cannot_override_evidence(self) -> "JudgeDecision":
+        if self.rationale and self.reasoning and self.rationale != self.reasoning:
+            raise ValueError("rationale and reasoning must match")
+        non_evidence = self.decision in ("inconclusive", "blocked", "not_evaluated")
+        if (non_evidence or self.evidence_sufficiency != "sufficient") and self.confidence != 0.0:
+            raise ValueError("confidence cannot override missing or non-sufficient evidence")
+        if self.live_evidence and self.evidence_provenance != "live":
+            raise ValueError("live_evidence requires provenance live")
+        if self.evidence_provenance == "mocked" and (self.live_evidence or self.eligible_for_downstream):
+            raise ValueError("mocked evidence cannot be labelled live or sent downstream as a live finding")
+        if self.eligible_for_downstream and self.evidence_provenance != "live":
+            raise ValueError("only live evidence is eligible for downstream consumption")
+        if self.decision == "supported" and self.evidence_sufficiency == "sufficient" and not self.supporting_evidence:
+            raise ValueError("supported requires supporting evidence ids")
+        return self
 
 
 # ============================================================

@@ -46,7 +46,13 @@ from validation.probe_requests import (
     build_probe_requests,
     check_constructible,
 )
-from validation.scenario import ScenarioDefinition, sqli_search_scenario
+from validation.scenario import (
+    SQLI_SCENARIO_ID,
+    ReviewerApproval,
+    ScenarioDefinition,
+    procedure_digest,
+    sqli_search_scenario,
+)
 from validation.transport import TransportResponse
 
 ORIGIN = "http://127.0.0.1:8080"
@@ -366,8 +372,13 @@ def approve(data: dict, *names: str) -> dict:
     data["probe"]["control_value"] = "zzqx-no-such-record"
     data["review"]["status"] = "approved"
     data["review"]["reviewer"] = "lead-reviewer"
+    digest = procedure_digest(data)
     data["review"]["approvals"] = [
-        {"name": n, "approved": True, "confirms_procedure": True, "date": "2026-10-16"} for n in names
+        {
+            "name": n, "approved": True, "confirms_procedure": True, "date": "2026-10-16",
+            "scenario_id": data["scenario_id"], "procedure_sha256": digest,
+        }
+        for n in names
     ]
     return data
 
@@ -382,15 +393,32 @@ def test_a_scenario_requiring_two_approvers_can_not_be_approved_until_both_confi
     assert both.eligible_for_execution is True and both.review.missing_approvals() == []
 
 
-def test_an_approval_must_be_explicit_and_dated():
-    from validation.scenario import ReviewerApproval
-    with pytest.raises(ValueError, match="confirm this procedure and record its date"):
+def test_an_approval_must_be_explicit_dated_and_bound_to_the_procedure():
+    with pytest.raises(ValueError, match="confirm this procedure"):
         ReviewerApproval(name="X", approved=True, confirms_procedure=True, date=None)
-    with pytest.raises(ValueError, match="confirm this procedure and record its date"):
+    with pytest.raises(ValueError, match="confirm this procedure"):
         ReviewerApproval(name="X", approved=True, confirms_procedure=False, date="2026-10-16")
     with pytest.raises(ValueError, match="pending approval can not already carry"):
         ReviewerApproval(name="X", approved=False, date="2026-10-16")
     assert ReviewerApproval(name="X").approved is False
+
+
+def test_a_stale_or_mismatched_approval_cannot_authorize_the_scenario():
+    base = sqli_search_scenario().model_dump()
+    good = approve(base, "Alisha Ranjan Kumar", "Jihan Chhabra")
+    mismatched = copy.deepcopy(good)
+    mismatched["review"]["approvals"][0]["scenario_id"] = "other-scenario"
+    with pytest.raises(ValueError, match="different scenario"):
+        ScenarioDefinition.model_validate(mismatched)
+    stale = copy.deepcopy(good)
+    stale["review"]["approvals"][1]["procedure_sha256"] = "0" * 64
+    with pytest.raises(ValueError, match="different procedure digest"):
+        ScenarioDefinition.model_validate(stale)
+    with pytest.raises(ValueError, match="YYYY-MM-DD"):
+        ReviewerApproval(
+            name="X", approved=True, confirms_procedure=True, date="16 October 2026",
+            scenario_id=SQLI_SCENARIO_ID, procedure_sha256="a" * 64,
+        )
 
 
 def test_participation_is_not_approval_the_builtin_record_is_pending():

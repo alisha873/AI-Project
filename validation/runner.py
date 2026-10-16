@@ -125,11 +125,19 @@ def _transport_is_valid(transport: object) -> bool:
             and isinstance(transport.transport_id, str) and bool(transport.transport_id.strip()))
 
 
-def _live_gate(transport: object) -> Callable[[ScopeDecision], tuple[bool, str, str]]:
+def _live_allowed(*, live_opt_in: bool) -> bool:
+    """Live traffic is allowed only when the build lock is open OR this call carries an explicit opt-in.
+
+    `LIVE_TRANSPORT_ENABLED` stays False in this build (pinned by tests). The opt-in is a per-call flag for the
+    authorized CLI; it is not implied by localhost, a Docker hostname, or a command that merely requests `--live`."""
+    return bool(LIVE_TRANSPORT_ENABLED) or bool(live_opt_in)
+
+
+def _live_gate(transport: object, *, live_opt_in: bool = False) -> Callable[[ScopeDecision], tuple[bool, str, str]]:
     def gate(decision: ScopeDecision) -> tuple[bool, str, str]:
         if not _transport_is_valid(transport):
             return False, "No valid transport (id, kind and send) was supplied.", "transport_unavailable"
-        if transport.kind == "live" and not LIVE_TRANSPORT_ENABLED:  # type: ignore[union-attr]
+        if transport.kind == "live" and not _live_allowed(live_opt_in=live_opt_in):  # type: ignore[union-attr]
             return (False, "A live transport was supplied but live transports are not enabled in this build.",
                     "live_transport_not_enabled")
         if not decision.execution_permitted:
@@ -214,6 +222,7 @@ def run_controlled_validation(
     classifiers: ClassifierRegistry | None = None,
     clock: Clock | None = None,
     runner_id: str = RUNNER_ID,
+    live_opt_in: bool = False,
 ) -> ValidationReport:
     """Run the offline validation and report it. Sends nothing unless every precondition holds; with a fake
     transport the result is labelled a simulation. Raises `ValidationRequestError` only for a malformed request."""
@@ -231,12 +240,15 @@ def run_controlled_validation(
     attestation = assess_attestation(request.application, intake_plan(request.plan_result))
     assessment = assess(
         request, registry, policy,
-        readiness=_readiness(classifiers), live_gate=_live_gate(transport),
+        readiness=_readiness(classifiers), live_gate=_live_gate(transport, live_opt_in=live_opt_in),
         expected_lab_state_id=attestation.post_state_id if attestation.accepted else None,
         now=now, forbidden_verifier_ids=(runner_id,),
         # While the live lock is closed the refusal is `live_transport_not_enabled` (the established blocking order);
-        # the moment it opens, a live transport needs a live-suitable identity or the scope policy denies it.
-        require_live_suitable_identity=bool(getattr(transport, "kind", None) == "live" and LIVE_TRANSPORT_ENABLED),
+        # the moment it opens (build lock or an explicit per-call opt-in), a live transport needs a
+        # live-suitable identity or the scope policy denies it.
+        require_live_suitable_identity=bool(
+            getattr(transport, "kind", None) == "live" and _live_allowed(live_opt_in=live_opt_in)
+        ),
     )
     if not assessment.all_met:
         return not_attempted_report(assessment, PHASE_13B1_NOTE)
