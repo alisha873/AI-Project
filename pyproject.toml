@@ -8,6 +8,7 @@ dependencies = [
     "pydantic",
     "pydantic-settings",
     "numpy",
+    "shap",
     "torch",
     "pandas",
     "networkx",

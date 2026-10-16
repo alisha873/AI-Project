@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "incident_id": "incident_001",
   "agent": "phase_8_incident_reconstruction",
-  "created_at_utc": "2026-10-16T13:19:58Z",
+  "created_at_utc": "2026-10-16T18:48:22Z",
   "evidence_summary": {
     "normalized_event_count": 50,
     "graph_node_count": 30,

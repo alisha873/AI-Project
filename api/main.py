@@ -160,6 +160,44 @@ def incident_path(incident_id: str) -> Path | None:
     found = [p for p in candidates if p.is_dir()]
     return found[0] if len(found) == 1 else None
 
+
+
+@app.get("/api/shap")
+def shap_explanation():
+    """Serve the latest locally generated GCN SHAP explanation."""
+    path = ROOT / "evaluation" / "results" / "gnn_shap_explanation.json"
+    if not path.is_file():
+        raise HTTPException(
+            404,
+            "No SHAP explanation found. Run python -m evaluation.run_gnn_shap first."
+        )
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise HTTPException(500, f"Could not read SHAP result: {exc}") from exc
+
+    if not isinstance(payload.get("contributions"), list):
+        raise HTTPException(500, "SHAP result has no contributions list.")
+    return payload
+
+
+@app.get("/api/bnn-risk")
+def bnn_risk_results():
+    """Return saved Bayesian risk-proxy experiment results."""
+    import json
+
+    path = ROOT / "evaluation" / "results" / "bnn_risk_results.json"
+    if not path.is_file():
+        return {
+            "available": False,
+            "message": "Run python -m evaluation.run_bnn_risk first."
+        }
+    return {
+        "available": True,
+        "result": json.loads(path.read_text(encoding="utf-8"))
+    }
+
+
 @app.get("/api/health")
 def health():
     return {"status": "ok", "service": "AutoShield Live Pipeline", "repo_root": str(ROOT)}
