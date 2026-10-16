@@ -1,0 +1,32 @@
+---
+description: AutoShield project-wide working rules for all agents
+alwaysApply: true
+---
+
+# AutoShield — Project Rules
+
+AutoShield is an evidence-grounded AI cybersecurity system (forensic reconstruction, attack-path reasoning, root cause, remediation, controlled pen-test validation, explainability, residual risk). Phases and intent are defined in `PROJECT_SPEC.md`.
+
+## Before working
+1. Read `PROJECT_SPEC.md` and `PROJECT_STATUS.md` before substantive work (once both exist; if `PROJECT_STATUS.md` is missing, say so and do not assume status).
+2. Inspect existing code before proposing new modules or dependencies.
+
+## Working practices
+3. Preserve working functionality and established interfaces unless a change is justified and explained.
+4. Never claim a phase is implemented or tested without verifying it (read the code, run the tests).
+5. Work on one bounded task or phase at a time.
+6. Explain proposed changes, algorithms and trade-offs in beginner-friendly terms.
+7. After code changes, run focused tests first, then relevant regression tests.
+8. Never weaken tests, fabricate test results, silently discard changes, or overwrite committed work.
+9. Keep all penetration-testing actions confined to the authorized, isolated Docker lab. No public or third-party targets.
+10. Ask for approval before committing or pushing.
+
+## Research principles
+- Preserve evidence provenance; no evidence → no claim.
+- Separate observed activity, configured relationships and inferred hypotheses.
+- Never feed hidden evaluation ground truth to models as incident evidence.
+- Correlation is not conclusive attribution.
+- Validation success under tested conditions is not a universal security guarantee or zero residual risk.
+- SHAP explains model behavior; it does not prove causality.
+- Do not claim novelty, patentability, production readiness or generalization without evidence.
+- The dashboard must show real pipeline outputs, never fabricated demos.

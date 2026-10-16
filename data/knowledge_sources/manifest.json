@@ -1,0 +1,168 @@
+{
+  "manifest_format": "autoshield.mitre_corpus_manifest.v1",
+  "description": "Pinned, version-locked specification of AutoShield's initial MITRE reference corpus. It defines a BOUNDED, hand-curated subset of CWE and CAPEC (web-application and containerized-service topics), NOT the entire catalogues. A version change requires an explicit edit of this file and fresh verification of every selected record.",
+  "is_complete_catalogue": false,
+  "corpus_build_utc": "2026-10-15T22:53:30Z",
+  "corpus_build_utc_note": "Written to provenance.ingested_at_utc of every document instead of the wall clock, so that repeating the build produces identical documents and no store writes (the store treats a provenance-only difference as a change). It is the time this pinned build was specified.",
+  "sources": {
+    "cwe": {
+      "title": "Common Weakness Enumeration (CWE)",
+      "version": "4.20",
+      "catalog_date": "2026-04-30",
+      "parser_version": "mitre-cwe-1",
+      "official_pages": {
+        "downloads": "https://cwe.mitre.org/data/downloads.html",
+        "archive": "https://cwe.mitre.org/data/archive.html",
+        "terms_of_use": "https://cwe.mitre.org/about/termsofuse.html"
+      },
+      "archive": {
+        "filename": "cwec_v4.20.xml.zip",
+        "official_url": "https://cwe.mitre.org/data/xml/cwec_v4.20.xml.zip",
+        "sha256": "3976f599e5e5200219a3108bb896d06e2a88fbb293369e1883cb423a5e9d7d50",
+        "xml_member": "cwec_v4.20.xml",
+        "retrieved_at_utc": "2026-10-15T22:53:27Z"
+      },
+      "record_url_pattern": "https://cwe.mitre.org/data/definitions/{id}.html",
+      "license": "MITRE CWE Terms of Use: https://cwe.mitre.org/about/termsofuse.html. Copyright © 2006–2026, The MITRE Corporation. CWE™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+      "selected": [
+        {
+          "id": "20",
+          "name": "Improper Input Validation",
+          "status": "Stable"
+        },
+        {
+          "id": "22",
+          "name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+          "status": "Stable"
+        },
+        {
+          "id": "23",
+          "name": "Relative Path Traversal",
+          "status": "Draft"
+        },
+        {
+          "id": "74",
+          "name": "Improper Neutralization of Special Elements in Output Used by a Downstream Component ('Injection')",
+          "status": "Incomplete"
+        },
+        {
+          "id": "77",
+          "name": "Improper Neutralization of Special Elements used in a Command ('Command Injection')",
+          "status": "Draft"
+        },
+        {
+          "id": "78",
+          "name": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+          "status": "Stable"
+        },
+        {
+          "id": "79",
+          "name": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+          "status": "Stable"
+        },
+        {
+          "id": "89",
+          "name": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+          "status": "Stable"
+        },
+        {
+          "id": "94",
+          "name": "Improper Control of Generation of Code ('Code Injection')",
+          "status": "Draft"
+        },
+        {
+          "id": "287",
+          "name": "Improper Authentication",
+          "status": "Draft"
+        },
+        {
+          "id": "306",
+          "name": "Missing Authentication for Critical Function",
+          "status": "Draft"
+        },
+        {
+          "id": "862",
+          "name": "Missing Authorization",
+          "status": "Incomplete"
+        },
+        {
+          "id": "918",
+          "name": "Server-Side Request Forgery (SSRF)",
+          "status": "Incomplete"
+        }
+      ]
+    },
+    "capec": {
+      "title": "Common Attack Pattern Enumeration and Classification (CAPEC)",
+      "version": "3.9",
+      "catalog_date": "2023-01-24",
+      "parser_version": "mitre-capec-1",
+      "official_pages": {
+        "downloads": "https://capec.mitre.org/data/downloads.html",
+        "archive": "https://capec.mitre.org/data/archive.html",
+        "terms_of_use": "https://capec.mitre.org/about/termsofuse.html"
+      },
+      "archive": {
+        "filename": "capec_v3.9.zip",
+        "official_url": "https://capec.mitre.org/data/archive/capec_v3.9.zip",
+        "sha256": "c56527f3d64b7164fcdae73c1a7545ee6e83b1150546c07a93339b1543a3041d",
+        "xml_member": "capec_v3.9.xml",
+        "retrieved_at_utc": "2026-10-15T22:53:30Z"
+      },
+      "record_url_pattern": "https://capec.mitre.org/data/definitions/{id}.html",
+      "license": "MITRE CAPEC Terms of Use: https://capec.mitre.org/about/termsofuse.html. Copyright © 2007–2026, The MITRE Corporation. CAPEC™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+      "selected": [
+        {
+          "id": "7",
+          "name": "Blind SQL Injection",
+          "status": "Draft"
+        },
+        {
+          "id": "66",
+          "name": "SQL Injection",
+          "status": "Draft"
+        },
+        {
+          "id": "88",
+          "name": "OS Command Injection",
+          "status": "Draft"
+        },
+        {
+          "id": "108",
+          "name": "Command Line Execution through SQL Injection",
+          "status": "Draft"
+        },
+        {
+          "id": "115",
+          "name": "Authentication Bypass",
+          "status": "Draft"
+        },
+        {
+          "id": "126",
+          "name": "Path Traversal",
+          "status": "Draft"
+        },
+        {
+          "id": "137",
+          "name": "Parameter Injection",
+          "status": "Stable"
+        },
+        {
+          "id": "242",
+          "name": "Code Injection",
+          "status": "Stable"
+        },
+        {
+          "id": "248",
+          "name": "Command Injection",
+          "status": "Stable"
+        },
+        {
+          "id": "664",
+          "name": "Server Side Request Forgery",
+          "status": "Stable"
+        }
+      ]
+    }
+  }
+}

@@ -24,7 +24,7 @@ OUTPUT_PATH = ROOT / "evaluation/results/path_reconstruction_comparison.json"
 
 
 def load_graph(path: Path):
-    doc = json.loads(path.read_text(encoding=" utf-8\))
+    doc = json.loads(path.read_text(encoding="utf-8"))
     payload = doc.get("graph", doc)
     return AttackGraph.model_validate(payload)
 
@@ -70,7 +70,7 @@ def main():
             excluded.append({"scenario_id": scenario_id, "reason": "missing graph artifact"})
             continue
 
-        gt_doc = json.loads(gt_path.read_text(encoding=" utf-8\))
+        gt_doc = json.loads(gt_path.read_text(encoding="utf-8"))
         gt = gt_doc.get("ground_truth", gt_doc)
         raw_expected = gt.get("expected_attack_path", [])
         if not raw_expected or not gt.get("attack_path_complete", False):

@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+TEST FIXTURE. Verbatim extract of the attack patterns CAPEC-664, CAPEC-137, CAPEC-106 and CAPEC-242 (plus the
+External_References they cite) from the official MITRE CAPEC v3.9 XML (capec_v3.9.xml, inside
+https://capec.mitre.org/data/archive/capec_v3.9.zip). The catalog root start tag is copied unchanged; everything
+else of the catalogue is omitted, so this is NOT the complete CAPEC list. Copyright (c) 2007-2026, The MITRE
+Corporation. CAPEC is a trademark of The MITRE Corporation. Use is subject to the CAPEC Terms of Use:
+https://capec.mitre.org/about/termsofuse.html
+-->
+<Attack_Pattern_Catalog xmlns="http://capec.mitre.org/capec-3"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xmlns:capec="http://capec.mitre.org/capec-3"
+                        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+                        Name="CAPEC"
+                        Version="3.9"
+                        Date="2023-01-24"
+                        xsi:schemaLocation="http://capec.mitre.org/capec-3 http://capec.mitre.org/data/xsd/ap_schema_v3.5.xsd">
+<Attack_Patterns>
+<Attack_Pattern ID="664" Name="Server Side Request Forgery" Abstraction="Standard"
+                      Status="Stable">
+         <Description>
+            <xhtml:p>An adversary exploits improper input validation by submitting maliciously crafted input to a target application running on a server, with the goal of forcing the server to make a request either to itself, to web services running in the server’s internal network, or to external third parties. If successful, the adversary’s request will be made with the server’s privilege level, bypassing its authentication controls. This ultimately allows the adversary to access sensitive data, execute commands on the server’s network, and make external requests with the stolen identity of the server. Server Side Request Forgery attacks differ from Cross Site Request Forgery attacks in that they target the server itself, whereas CSRF attacks exploit an insecure user authentication mechanism to perform unauthorized actions on the user's behalf.</xhtml:p>
+         </Description>
+         <Likelihood_Of_Attack>High</Likelihood_Of_Attack>
+         <Typical_Severity>High</Typical_Severity>
+         <Related_Attack_Patterns>
+            <Related_Attack_Pattern Nature="ChildOf" CAPEC_ID="115"/>
+         </Related_Attack_Patterns>
+         <Execution_Flow>
+            <Attack_Step>
+               <Step>1</Step>
+               <Phase>Explore</Phase>
+               <Description>[Find target application] Find target web application that accepts a user input and retrieves data from the server</Description>
+            </Attack_Step>
+            <Attack_Step>
+               <Step>2</Step>
+               <Phase>Experiment</Phase>
+               <Description>[Examine existing application requests] Examine HTTP/GET requests to view the URL query format. Adversaries test to see if this type of attack is possible through weaknesses in an application's protection to Server Side Request Forgery</Description>
+               <Technique>Attempt manipulating the URL to retrieve an error response/code from the server to determine if URL/request validation is done.</Technique>
+               <Technique>Use a list of XSS probe strings to specify as parameters to known URLs. If possible, use probe strings with unique identifiers.</Technique>
+               <Technique>Create a GET request with a common server file path such as /etc/passwd as a parameter and examine output.</Technique>
+            </Attack_Step>
+            <Attack_Step>
+               <Step>3</Step>
+               <Phase>Exploit</Phase>
+               <Description>[Malicious request] Adversary crafts a malicious URL request that assumes the privilege level of the server to query internal or external network services and sends the request to the application</Description>
+            </Attack_Step>
+         </Execution_Flow>
+         <Prerequisites>
+            <Prerequisite>Server must be running a web application that processes HTTP requests.</Prerequisite>
+         </Prerequisites>
+         <Skills_Required>
+            <Skill Level="Medium">The adversary will have to detect the vulnerability through an intermediary service or specify maliciously crafted URLs and analyze the server response.</Skill>
+            <Skill Level="High">The adversary will be required to access internal resources, extract information, or leverage the services running on the server to perform unauthorized actions such as traversing the local network or routing a reflected TCP DDoS through them.</Skill>
+         </Skills_Required>
+         <Resources_Required>
+            <Resource>[None] No specialized resources are required to execute this type of attack.</Resource>
+         </Resources_Required>
+         <Consequences>
+            <Consequence>
+               <Scope>Integrity</Scope>
+               <Scope>Confidentiality</Scope>
+               <Scope>Availability</Scope>
+               <Impact>Modify Data</Impact>
+            </Consequence>
+            <Consequence>
+               <Scope>Confidentiality</Scope>
+               <Impact>Read Data</Impact>
+            </Consequence>
+            <Consequence>
+               <Scope>Availability</Scope>
+               <Impact>Resource Consumption</Impact>
+            </Consequence>
+         </Consequences>
+         <Mitigations>
+            <Mitigation>Handling incoming requests securely is the first line of action to mitigate this vulnerability. This can be done through URL validation.</Mitigation>
+            <Mitigation>Further down the process flow, examining the response and verifying that it is as expected before sending would be another way to secure the server.</Mitigation>
+            <Mitigation>Allowlist the DNS name or IP address of every service the web application is required to access is another effective security measure. This ensures the server cannot make external requests to arbitrary services.</Mitigation>
+            <Mitigation>Requiring authentication for local services adds another layer of security between the adversary and internal services running on the server. By enforcing local authentication, an adversary will not gain access to all internal services only with access to the server.</Mitigation>
+            <Mitigation>Enforce the usage of relevant URL schemas. By limiting requests be made only through HTTP or HTTPS, for example, attacks made through insecure schemas such as file://, ftp://, etc. can be prevented.</Mitigation>
+         </Mitigations>
+         <Example_Instances>
+            <Example>
+               <xhtml:p>An e-commerce website allows a customer to filter results by specific categories. When the customer selects the category of choice, the web shop queries a back-end service to retrieve the requested products. The request may look something like:</xhtml:p>
+               <xhtml:div style="margin-left:1em;" class="informative">
+                  <xhtml:p>POST /product/category HTTP/1.0</xhtml:p>
+                  <xhtml:p>Content-Type: application/x-www-form-urlencoded</xhtml:p>
+                  <xhtml:p>Content-Length: 200</xhtml:p>
+                  <xhtml:p>vulnerableService=http://vulnerableshop.net:8080/product/category/check%3FcategoryName%3DsomeCategory</xhtml:p>
+               </xhtml:div>
+               <xhtml:p>A malicious user can modify the request URL to look like this instead:</xhtml:p>
+               <xhtml:div style="margin-left:1em;" class="attack">
+                  <xhtml:p>POST /product/category HTTP/1.0</xhtml:p>
+                  <xhtml:p>Content-Type: application/x-www-form-urlencoded</xhtml:p>
+                  <xhtml:p>Content-Length: 200</xhtml:p>
+                  <xhtml:p>vulnerableService=http://localhost/server-status</xhtml:p>
+               </xhtml:div>
+               <xhtml:p>or</xhtml:p>
+               <xhtml:div style="margin-left:1em;" class="attack">
+                  <xhtml:p>vulnerableService = file:///etc/passwd</xhtml:p>
+               </xhtml:div>
+               <xhtml:p>or</xhtml:p>
+               <xhtml:div style="margin-left:1em;" class="attack">
+                  <xhtml:p>vulnerableService=dict://localhost:12345/info</xhtml:p>
+               </xhtml:div>
+               <xhtml:p>If the exploit is successful, the server may return the data requested by the adversary</xhtml:p>
+               <xhtml:div style="margin-left:1em;" class="bad">
+                  <xhtml:p>root:!:0:0::/:/usr/bin/ksh</xhtml:p>
+                  <xhtml:p>daemon:!:1:1::/etc:</xhtml:p>
+                  <xhtml:p>bin:!:2:2::/bin:</xhtml:p>
+                  <xhtml:p>sys:!:3:3::/usr/sys:</xhtml:p>
+                  <xhtml:p>adm:!:4:4::/var/adm:</xhtml:p>
+                  <xhtml:p>uucp:!:5:5::/usr/lib/uucp:</xhtml:p>
+                  <xhtml:p>guest:!:100:100::/home/guest:</xhtml:p>
+                  <xhtml:p>nobody:!:4294967294:4294967294::/:</xhtml:p>
+                  <xhtml:p>lpd:!:9:4294967294::/:</xhtml:p>
+                  <xhtml:p>lp:*:11:11::/var/spool/lp:/bin/false</xhtml:p>
+                  <xhtml:p>invscout:*:200:1::/var/adm/invscout:/usr/bin/ksh</xhtml:p>
+                  <xhtml:p>nuucp:*:6:5:uucp login user:/var/spool/uucppublic:/usr/sbin/uucp/uucico</xhtml:p>
+                  <xhtml:p>paul:!:201:1::/home/paul:/usr/bin/ksh</xhtml:p>
+                  <xhtml:p>jdoe:*:202:1:My name:/home/myname:/usr/bin/ksh</xhtml:p>
+               </xhtml:div>
+            </Example>
+            <Example>
+               <xhtml:p>The CallStranger attack is an observed example of SSRF. It specifically targets the UPnP (Universal Plug and Play) protocol used by various network devices and gaming consoles. To execute the attack, an adversary performs a scan of the LAN to discover UPnP enabled devices, and subsequently a list of UPnP services they use. Once the UPnP service endpoints are listed, a vulnerability in the UPnP protocol is used to send these endpoints as encrypted to a verification server via the UPnP Callback method. Because the encryption is done on the client side, the server returns an encrypted list of services which is decrypted on the client side. The adversary then has a list of services running the vulnerable UPnP protocol, which the adversary can leverage to make spoofed requests. [REF-646]</xhtml:p>
+            </Example>
+         </Example_Instances>
+         <Related_Weaknesses>
+            <Related_Weakness CWE_ID="918"/>
+            <Related_Weakness CWE_ID="20"/>
+         </Related_Weaknesses>
+         <References>
+            <Reference External_Reference_ID="REF-644"/>
+            <Reference External_Reference_ID="REF-645"/>
+            <Reference External_Reference_ID="REF-646"/>
+         </References>
+         <Content_History>
+            <Submission>
+               <Submission_Name>CAPEC Content Team</Submission_Name>
+               <Submission_Organization>The MITRE Corporation</Submission_Organization>
+               <Submission_Date>2021-06-24</Submission_Date>
+            </Submission>
+            <Modification>
+               <Modification_Name>CAPEC Content Team</Modification_Name>
+               <Modification_Organization>The MITRE Corporation</Modification_Organization>
+               <Modification_Date>2021-10-21</Modification_Date>
+               <Modification_Comment>Updated Execution_Flow</Modification_Comment>
+            </Modification>
+            <Modification>
+               <Modification_Name>CAPEC Content Team</Modification_Name>
+               <Modification_Organization>The MITRE Corporation</Modification_Organization>
+               <Modification_Date>2022-09-29</Modification_Date>
+               <Modification_Comment>Updated Example_Instances</Modification_Comment>
+            </Modification>
+         </Content_History>
+      </Attack_Pattern>
+<Attack_Pattern ID="137" Name="Parameter Injection" Abstraction="Meta" Status="Stable">
+         <Description>An adversary manipulates the content of request parameters for the purpose of undermining the security of the target. Some parameter encodings use text characters as separators. For example, parameters in a HTTP GET message are encoded as name-value pairs separated by an ampersand (&amp;). If an attacker can supply text strings that are used to fill in these parameters, then they can inject special characters used in the encoding scheme to add or modify parameters. For example, if user input is fed directly into an HTTP GET request and the user provides the value "myInput&amp;new_param=myValue", then the input parameter is set to myInput, but a new parameter (new_param) is also added with a value of myValue. This can significantly change the meaning of the query that is processed by the server. Any encoding scheme where parameters are identified and separated by text characters is potentially vulnerable to this attack - the HTTP GET encoding used above is just one example.</Description>
+         <Likelihood_Of_Attack>Medium</Likelihood_Of_Attack>
+         <Typical_Severity>Medium</Typical_Severity>
+         <Prerequisites>
+            <Prerequisite>The target application must use a parameter encoding where separators and parameter identifiers are expressed in regular text.</Prerequisite>
+            <Prerequisite>The target application must accept a string as user input, fail to sanitize characters that have a special meaning in the parameter encoding, and insert the user-supplied string in an encoding which is then processed.</Prerequisite>
+         </Prerequisites>
+         <Resources_Required>
+            <Resource>None: No specialized resources are required to execute this type of attack. The only requirement is the ability to provide string input to the target.</Resource>
+         </Resources_Required>
+         <Consequences>
+            <Consequence>
+               <Scope>Integrity</Scope>
+               <Impact>Modify Data</Impact>
+               <Note>Successful parameter injection attacks mean a compromise to integrity of the application.</Note>
+            </Consequence>
+         </Consequences>
+         <Mitigations>
+            <Mitigation>Implement an audit log written to a separate host. In the event of a compromise, the audit log may be able to provide evidence and details of the compromise.</Mitigation>
+            <Mitigation>Treat all user input as untrusted data that must be validated before use.</Mitigation>
+         </Mitigations>
+         <Related_Weaknesses>
+            <Related_Weakness CWE_ID="88"/>
+         </Related_Weaknesses>
+         <Content_History>
+            <Submission>
+               <Submission_Name>CAPEC Content Team</Submission_Name>
+               <Submission_Organization>The MITRE Corporation</Submission_Organization>
+               <Submission_Date>2014-06-23</Submission_Date>
+            </Submission>
+            <Modification>
+               <Modification_Name>CAPEC Content Team</Modification_Name>
+               <Modification_Organization>The MITRE Corporation</Modification_Organization>
+               <Modification_Date>2017-05-01</Modification_Date>
+               <Modification_Comment>Updated Activation_Zone, Attack_Motivation-Consequences, Description Summary, Injection_Vector, Payload, Payload_Activation_Impact, Resources_Required, Solutions_and_Mitigations, Typical_Likelihood_of_Exploit</Modification_Comment>
+            </Modification>
+            <Modification>
+               <Modification_Name>CAPEC Content Team</Modification_Name>
+               <Modification_Organization>The MITRE Corporation</Modification_Organization>
+               <Modification_Date>2017-08-04</Modification_Date>
+               <Modification_Comment>Updated Resources_Required</Modification_Comment>
+            </Modification>
+            <Modification>
+               <Modification_Name>CAPEC Content Team</Modification_Name>
+               <Modification_Organization>The MITRE Corporation</Modification_Organization>
+               <Modification_Date>2019-04-04</Modification_Date>
+               <Modification_Comment>Updated Description, Related_Weaknesses</Modification_Comment>
+            </Modification>
+         </Content_History>
+      </Attack_Pattern>
+<Attack_Pattern ID="106" Name="DEPRECATED: XSS through Log Files" Abstraction="Detailed"
+                      Status="Deprecated">
+         <Description>This attack pattern has been deprecated as it referes to an existing chain relationship between "CAPEC-93 : Log Injection-Tampering-Forging" and "CAPEC-63 : Cross-Site Scripting". Please refer to these CAPECs going forward.</Description>
+         <Content_History>
+            <Submission>
+               <Submission_Name>CAPEC Content Team</Submission_Name>
+               <Submission_Organization>The MITRE Corporation</Submission_Organization>
+               <Submission_Date>2014-06-23</Submission_Date>
+            </Submission>
+            <Modification>
+               <Modification_Name>CAPEC Content Team</Modification_Name>
+               <Modification_Organization>The MITRE Corporation</Modification_Organization>
+               <Modification_Date>2017-01-09</Modification_Date>
+               <Modification_Comment>Updated Related_Attack_Patterns</Modification_Comment>
+            </Modification>
+            <Modification>
+               <Modification_Name>CAPEC Content Team</Modification_Name>
+               <Modification_Organization>The MITRE Corporation</Modification_Organization>
+               <Modification_Date>2017-05-01</Modification_Date>
+               <Modification_Comment>Updated Activation_Zone, Architectural_Paradigms, Attack_Motivation-Consequences, Attack_Phases, Attack_Prerequisites, Attacker_Skills_or_Knowledge_Required, CIA_Impact, Description, Description Summary, Examples-Instances, Frameworks, Injection_Vector, Languages, Methods_of_Attack, Payload, Payload_Activation_Impact, Platforms, Probing_Techniques, Purposes, Related_Attack_Patterns, Related_Security_Principles, Related_Weaknesses, Relevant_Security_Requirements, Resources_Required, Solutions_and_Mitigations, Technical_Context, Typical_Likelihood_of_Exploit, Typical_Severity</Modification_Comment>
+            </Modification>
+            <Previous_Entry_Name Date="2017-05-01">Cross Site Scripting through Log Files</Previous_Entry_Name>
+         </Content_History>
+      </Attack_Pattern>
+<Attack_Pattern ID="242" Name="Code Injection" Abstraction="Meta" Status="Stable">
+         <Description>An adversary exploits a weakness in input validation on the target to inject new code into that which is currently executing. This differs from code inclusion in that code inclusion involves the addition or replacement of a reference to a code file, which is subsequently loaded by the target and used as part of the code of some application.</Description>
+         <Likelihood_Of_Attack>High</Likelihood_Of_Attack>
+         <Typical_Severity>High</Typical_Severity>
+         <Prerequisites>
+            <Prerequisite>The target software does not validate user-controlled input such that the execution of a process may be altered by sending code in through legitimate data channels, using no other mechanism.</Prerequisite>
+         </Prerequisites>
+         <Consequences>
+            <Consequence>
+               <Scope>Confidentiality</Scope>
+               <Scope>Integrity</Scope>
+               <Scope>Availability</Scope>
+               <Impact>Other</Impact>
+               <Note>Code Injection attack patterns can result in a wide variety of consequences and negatively affect all three elements of the security triad.</Note>
+            </Consequence>
+         </Consequences>
+         <Mitigations>
+            <Mitigation>Utilize strict type, character, and encoding enforcement</Mitigation>
+            <Mitigation>Ensure all input content that is delivered to client is sanitized against an acceptable content specification.</Mitigation>
+            <Mitigation>Perform input validation for all content.</Mitigation>
+            <Mitigation>Enforce regular patching of software.</Mitigation>
+         </Mitigations>
+         <Related_Weaknesses>
+            <Related_Weakness CWE_ID="94"/>
+         </Related_Weaknesses>
+         <Taxonomy_Mappings>
+            <Taxonomy_Mapping Taxonomy_Name="OWASP Attacks">
+               <Entry_Name>Code Injection</Entry_Name>
+            </Taxonomy_Mapping>
+         </Taxonomy_Mappings>
+         <References>
+            <Reference External_Reference_ID="REF-612" Section="Testing for Code Injection"/>
+         </References>
+         <Content_History>
+            <Submission>
+               <Submission_Name>CAPEC Content Team</Submission_Name>
+               <Submission_Organization>The MITRE Corporation</Submission_Organization>
+               <Submission_Date>2014-06-23</Submission_Date>
+            </Submission>
+            <Modification>
+               <Modification_Name>CAPEC Content Team</Modification_Name>
+               <Modification_Organization>The MITRE Corporation</Modification_Organization>
+               <Modification_Date>2017-05-01</Modification_Date>
+               <Modification_Comment>Updated Attack_Motivation-Consequences, Attack_Prerequisites, Related_Weaknesses, Solutions_and_Mitigations, Typical_Likelihood_of_Exploit, Typical_Severity</Modification_Comment>
+            </Modification>
+            <Modification>
+               <Modification_Name>CAPEC Content Team</Modification_Name>
+               <Modification_Organization>The MITRE Corporation</Modification_Organization>
+               <Modification_Date>2019-04-04</Modification_Date>
+               <Modification_Comment>Updated Related_Weaknesses</Modification_Comment>
+            </Modification>
+            <Modification>
+               <Modification_Name>CAPEC Content Team</Modification_Name>
+               <Modification_Organization>The MITRE Corporation</Modification_Organization>
+               <Modification_Date>2020-12-17</Modification_Date>
+               <Modification_Comment>Updated References, Taxonomy_Mappings</Modification_Comment>
+            </Modification>
+         </Content_History>
+      </Attack_Pattern>
+</Attack_Patterns>
+<External_References>
+<External_Reference Reference_ID="REF-644">
+         <Title>OWASP SSRF Bible</Title>
+         <Publication_Year>2017</Publication_Year>
+         <Publication_Month>--01</Publication_Month>
+         <Publication_Day>---26</Publication_Day>
+         <Publisher>OWASP</Publisher>
+         <URL>https://cheatsheetseries.owasp.org/assets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet_SSRF_Bible.pdf</URL>
+         <URL_Date>2021-05-17</URL_Date>
+      </External_Reference>
+<External_Reference Reference_ID="REF-645">
+         <Title>Server Side Request Forgery</Title>
+         <Publisher>PortSwigger</Publisher>
+         <URL>https://portswigger.net/web-security/ssrf</URL>
+         <URL_Date>2021-05-17</URL_Date>
+      </External_Reference>
+<External_Reference Reference_ID="REF-646">
+         <Title>CallStranger Vulnerability</Title>
+         <Publication_Year>2020</Publication_Year>
+         <Publication_Month>--06</Publication_Month>
+         <Publication_Day>---08</Publication_Day>
+         <Publisher>Yunus Cadirici</Publisher>
+         <URL>https://github.com/yunuscadirci/CallStranger</URL>
+         <URL_Date>2021-05-17</URL_Date>
+      </External_Reference>
+<External_Reference Reference_ID="REF-612">
+         <Title>OWASP Web Security Testing Guide</Title>
+         <Publisher>The Open Web Application Security Project (OWASP)</Publisher>
+         <URL>https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11-Testing_for_Code_Injection.html</URL>
+      </External_Reference>
+</External_References>
+</Attack_Pattern_Catalog>

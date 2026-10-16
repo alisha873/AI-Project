@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 results_path = Path("evaluation/results/gnn_baseline_results.json")
-results = json.loads(results_path.read_text(encoding=" utf-8\))
+results = json.loads(results_path.read_text(encoding="utf-8"))
 
 actual = [item["actual"] for item in results["test"]["predictions"]]
 predicted = [item["predicted"] for item in results["test"]["predictions"]]

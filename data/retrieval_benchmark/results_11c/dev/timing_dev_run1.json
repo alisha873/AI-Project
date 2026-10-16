@@ -1,0 +1,7 @@
+{
+  "corpus_seconds": 0.94,
+  "embedding_setup_seconds_instruction_off": 0.504,
+  "embedding_setup_seconds_instruction_on": 54.562,
+  "evaluation_seconds": 7.74,
+  "peak_working_set_bytes": 763379712
+}

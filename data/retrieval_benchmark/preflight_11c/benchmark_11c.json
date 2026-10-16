@@ -1,0 +1,883 @@
+{
+  "format": "autoshield.retrieval_benchmark.v3",
+  "benchmark_id": "mitre-subset-retrieval-benchmark-v3-final-heldout",
+  "supersedes": null,
+  "relation_to_previous": "Independent of v1 and v2, which are unchanged on disk. Benchmark v2's held-out split has been used (its results were observed) and must no longer be described as untouched. This v3 set is a fresh final held-out set for the Milestone 11C comparison. No question here duplicates a v1 or v2 question.",
+  "description": "30 scored retrieval cases and 6 behaviour cases over the pinned 23-record MITRE subset (CWE 4.20 and CAPEC 3.9). A SMALL, MANUALLY AUTHORED benchmark: it is not an unbiased or comprehensive relevance assessment and is not evidence of general retrieval quality.",
+  "protocol": "All cases are the final held-out set. They must be run only after the retriever implementation, embedding model and revision, and configuration are frozen, and never used for tuning. Defects found after retrieval has been observed must not be fixed in place: document the defect and create a new benchmark version. See evaluation_protocol_11c.md.",
+  "corpus": {
+    "cwe_version": "4.20",
+    "capec_version": "3.9",
+    "is_complete_catalogue": false,
+    "document_count": 23,
+    "manifest": "data/knowledge_sources/manifest.json",
+    "corpus_fingerprint": "813692f1fce5a5039a9e29a3ac3bb63cc1bb44b0ce5464d6be13d30cf71a2af5"
+  },
+  "annotation_guide": "data/retrieval_benchmark/ANNOTATION_GUIDE_v2.md (relevance rules 1-2 and the conjunction rule) with the v3 differences listed in label_method",
+  "label_method": {
+    "summary": "Single pass by the authoring AI assistant, from the source text of the records only. Each relevant label cites a verbatim quote from the record and section that supports it; records that were considered but rejected are listed with a reason. Where the question depends on a distinctive phrase, an exclusivity check records which records of the corpus contain that phrase (verified mechanically by verify_benchmark_11c.py against the in-memory corpus). Labels were NOT derived from retrieval ranks, model scores or any retrieval output on these questions, and no retriever was run on them.",
+    "differences_from_v2_guide": [
+      "Strict labels use only the facet rule (a record is relevant when it contains the facet that the question asks about, for the same topic). The v2 cross-lane amendment (clause 1) is NOT applied to the strict labels.",
+      "Records of the other lane that the sources themselves declare as related and that describe the same behaviour are listed separately in lenient_extra_doc_ids. Evaluators may report a sensitivity analysis against strict union lenient; the strict set is primary.",
+      "The conjunction rule is kept: when a question asks for several things together, only records that contain all of them are relevant. Exclusivity checks were used to verify this against the full records, not a digest."
+    ],
+    "limitations": [
+      "The author is an AI assistant of the same model family that wrote v1 and v2 and that implemented the retrievers; its judgement errors may be correlated with those of other AI reviewers.",
+      "The author knew the v1 and v2 questions and had seen retrieval results for v1 and v2 in earlier phases. It had not seen any result for these questions.",
+      "Several questions paraphrase a source sentence closely; they test whether a retriever finds a specific facet, not open-ended understanding.",
+      "Labels have not been independently reviewed, blind-annotated or checked by a human."
+    ]
+  },
+  "label_audit": {
+    "note": "Changes made to labels while authoring, found by the mechanical source checks in verify_benchmark_11c.py. All were made BEFORE the benchmark was frozen and BEFORE any retriever or embedding model was run on these questions. They are recorded here because this benchmark is not blind and the audit trail is part of its honesty.",
+    "changes": [
+      {"case_id": "RB3-F13", "change": "cwe:CWE-22 moved from lenient extra to strict relevant: its Potential Mitigations contain the same two pieces of advice (mapping fixed values to actual filenames; chroot jail) in different words. The question is restricted to path manipulation, so cwe:CWE-78 (similar generic advice, different topic) stays not relevant.", "evidence_source": "cwe:CWE-22 Potential Mitigations"},
+      {"case_id": "RB3-F20", "change": "cwe:CWE-89 moved from lenient extra to strict relevant: its Potential Mitigations caution against dynamically constructing query strings inside stored procedures.", "evidence_source": "cwe:CWE-89 Potential Mitigations"},
+      {"case_id": "RB3-F26", "change": "Exclusivity check scoped to the Alternate Terms section, because cwe:CWE-23 contains the words only inside a reference title. Strict label unchanged.", "evidence_source": "cwe:CWE-23 References"}
+    ]
+  },
+  "review_summary": {
+    "human_review": "not_performed",
+    "independent_review": "not_performed",
+    "ai_review_passes": 0,
+    "blind": false,
+    "note": "Labels are single-pass author labels, grounded in verbatim source quotes. They are not blind, not independently annotated and not human-reviewed."
+  },
+  "label_provenance": {
+    "authored_by": "AI assistant (Cursor agent), same model family as the authors of benchmark v1 and v2",
+    "authored_during": "Phase 11, Milestone 11C preflight",
+    "labels_derived_from": "source text of the 23 corpus records only",
+    "retrieval_run_on_these_cases_before_freeze": false
+  },
+  "cases": [
+    {
+      "case_id": "RB3-F01",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "weakness_consequence",
+      "query_style": "descriptive",
+      "question": "Which weakness description warns that, because the application itself carries out the injected operating system commands, harmful activity may look as though it came from the application or its owner?",
+      "task": "Find the weakness record whose consequences note that injected OS commands appear to originate from the application.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-78"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "Only the OS command injection weakness states that the application executes the commands, so malicious activity may appear to come from the application or its owner.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-78", "section": "Common Consequences", "quote": "any malicious activities may appear to come from the application or the application's owner"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-77", "reason": "Generic command injection consequence mentions only an injected delimiter and a new command, not attribution to the application."},
+        {"doc_id": "capec:CAPEC-88", "reason": "Attack pattern consequences list privilege gain and code execution without the attribution statement."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "appear to come from the application", "expected_docs": ["cwe:CWE-78"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F02",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "terminology",
+      "query_style": "descriptive",
+      "question": "Which weakness record describes an attack in which compressed file archives contain entries whose names carry traversal sequences, so that extracting them writes files outside the intended directory?",
+      "task": "Find the record that names the archive-extraction variant of relative path traversal.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-23"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "The relative path traversal weakness lists the Zip Slip archive attack as an alternate term; no other record of the corpus mentions it.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-23", "section": "Alternate Terms", "quote": "\"Zip slip\" is an attack that uses file archives"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-22", "reason": "General restricted-directory weakness; does not discuss archive extraction."},
+        {"doc_id": "capec:CAPEC-126", "reason": "Attack pattern for path traversal in requested paths; no archive discussion."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "zip slip", "expected_docs": ["cwe:CWE-23"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F03",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "terminology",
+      "query_style": "descriptive",
+      "question": "Why is using one shared short form for both proving identity and checking permissions discouraged in web application security writing, and which separate short forms are used instead?",
+      "task": "Find the records that explain the AuthN and AuthZ abbreviations.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-287", "cwe:CWE-862"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "Both the improper authentication record and the missing authorization record explain that plain 'Auth' is discouraged because it may mean either, and give AuthN/AuthC and AuthZ.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-287", "section": "Alternate Terms", "quote": "The use of \"Auth\" as an abbreviation is discouraged, since it could be used for either authentication or authorization."},
+        {"doc_id": "cwe:CWE-862", "section": "Alternate Terms", "quote": "The use of \"Auth\" as an abbreviation is discouraged, since it could be used for either authentication or authorization."}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-306", "reason": "Missing authentication weakness; has no abbreviation discussion."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "as an abbreviation is discouraged", "expected_docs": ["cwe:CWE-287", "cwe:CWE-862"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F04",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "disambiguation",
+      "query_style": "descriptive",
+      "question": "Which weakness record explains that, once a user's identity is known, the remaining step is deciding whether that user may reach a given resource under the permissions and access-control rules that apply to it?",
+      "task": "Find the record that defines authorization as distinct from identity proof.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-862"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "The missing authorization record defines authorization as the process of determining whether a user can access a resource based on privileges and permissions.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-862", "section": "Notes", "quote": "authorization is the process of determining whether that user can access a given resource"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-287", "reason": "Concerns proving identity; mentions authorization only as an abbreviation distinction."},
+        {"doc_id": "cwe:CWE-306", "reason": "Missing authentication; does not define authorization."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "authorization is the process of determining", "expected_docs": ["cwe:CWE-862"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F05",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "forensic_observation",
+      "query_style": "descriptive",
+      "question": "After a login succeeded, the software opened a second network port and accepted the next connection there without asking who the caller was, on the assumption that only the authenticated party would connect. Which weakness describes this design mistake?",
+      "task": "Find the weakness record describing authentication performed on a primary channel but skipped on a secondary channel.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-306"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "The missing authentication for critical function record gives this exact secondary-channel scenario under modes of introduction and mitigations.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-306", "section": "Modes of Introduction", "quote": "it may open up a second port where it waits for the connection, but avoids authentication because it assumes that only the authenticated party will connect to the port"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-287", "reason": "Authentication proves identity insufficiently; the secondary-channel scenario is not in this record."},
+        {"doc_id": "capec:CAPEC-115", "reason": "Also an assumption-based avoidance of a checkpoint, but about reaching web content by path, not about a second port opened after login."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "second port", "expected_docs": ["cwe:CWE-306"]}
+      ],
+      "close_call": "CAPEC-115 describes a related assumption about where authentication happens; excluded because the specific secondary-channel facet is only in CWE-306.",
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F06",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "terminology",
+      "query_style": "descriptive",
+      "question": "Which weakness record uses the name HTML injection for the variant in which dangerous data is kept in a database, message forum or visitor log and later read back into dynamic pages?",
+      "task": "Find the record that lists HTML injection as a synonym of stored cross-site scripting.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-79"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "The cross-site scripting weakness lists HTML Injection as a synonym of stored (Type 2) XSS and describes the stored-data scenario.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-79", "section": "Alternate Terms", "quote": "HTML Injection: Used as a synonym of stored (Type 2) XSS."}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "capec:CAPEC-108", "reason": "Also stores injected data for later use, but as command-line arguments, not as page content."},
+        {"doc_id": "cwe:CWE-89", "reason": "SQL injection; stores user input in databases but is not about page generation."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "HTML injection", "expected_docs": ["cwe:CWE-79"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F07",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "weakness_consequence",
+      "query_style": "descriptive",
+      "question": "A script placed in a page ran in visitors' browsers and sent their stored session details to a system the attacker controlled, which is especially serious when the victim administers the site. What does the weakness description say about this outcome?",
+      "task": "Find the weakness consequence about theft of private cookie information through script in a page.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-79"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "The cross-site scripting weakness states that the most common attack discloses private information in cookies such as session data and is especially dangerous for administrators.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-79", "section": "Common Consequences", "quote": "The most common attack performed with cross-site scripting involves the disclosure of private information stored in user cookies, such as session information."}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-94", "reason": "Code injection consequences concern server-side code, not scripts in a visitor's browser."},
+        {"doc_id": "cwe:CWE-74", "reason": "Generic injection consequences; no cookie or browser discussion."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "stored in user cookies", "expected_docs": ["cwe:CWE-79"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F08",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "weakness_consequence",
+      "query_style": "descriptive",
+      "question": "If a badly written database command is used to check user names and passwords, what does the record say could happen to someone who does not know the password?",
+      "task": "Find the weakness record about authentication bypass as a consequence of unsafe database commands.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-89"],
+      "lenient_extra_doc_ids": ["capec:CAPEC-66"],
+      "rationale": "The SQL injection weakness states that poor SQL used to check credentials may let someone connect as another user with no knowledge of the password.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-89", "section": "Common Consequences", "quote": "it may be possible to connect to the product as another user with no previous knowledge of the password"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-287", "reason": "Its notes say improper authentication can result from SQL injection, but the record does not describe this consequence."},
+        {"doc_id": "capec:CAPEC-66", "reason": "Attack pattern lists generic gain-privileges consequences without the credential-check scenario (kept as a lenient extra only because it is the declared attack pattern of CWE-89)."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "no previous knowledge of the password", "expected_docs": ["cwe:CWE-89"]}
+      ],
+      "close_call": "CWE-287 notes that improper authentication can result from SQL injection; excluded because the question asks for the consequence of unsafe credential-checking commands, which is only stated in CWE-89.",
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F09",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "terminology",
+      "query_style": "descriptive",
+      "question": "Which record gives Cross Site Port Attack as another name for a weakness in which a web server fetches a URL supplied by someone else without checking where it is going?",
+      "task": "Find the record that lists XSPA as an alternate term for server-side request forgery.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-918"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "The server-side request forgery weakness lists XSPA (Cross Site Port Attack) as an alternate term; no other record uses that name.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-918", "section": "Alternate Terms", "quote": "XSPA: Cross Site Port Attack"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "capec:CAPEC-664", "reason": "Attack pattern for the same behaviour; does not list this alternate name and the question asks which record gives the name."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "Cross Site Port Attack", "expected_docs": ["cwe:CWE-918"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F10",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "disambiguation",
+      "query_style": "descriptive",
+      "question": "How is forged outbound request handling by a server related to external entity processing in XML, and why might the word server in the name not always fit the XML case?",
+      "task": "Find the note that contrasts server-side request forgery with XML external entity processing.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-918"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "The SSRF weakness notes its close relationship to XXE and that XXE can occur client-side, so the 'Server' in the acronym does not necessarily apply.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-918", "section": "Notes", "quote": "XXE can be performed client-side, or in other contexts in which the software is not acting directly as a server"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "capec:CAPEC-664", "reason": "Attack pattern; does not discuss XML external entities."},
+        {"doc_id": "cwe:CWE-20", "reason": "General input validation; no XXE discussion."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "XXE", "expected_docs": ["cwe:CWE-918"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F11",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "disambiguation",
+      "query_style": "descriptive",
+      "question": "How do forged requests aimed at the server itself differ from those that exploit a user's insecure authentication mechanism to act on that user's behalf?",
+      "task": "Find the attack pattern that contrasts server-side with cross-site request forgery.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["capec:CAPEC-664"],
+      "lenient_extra_doc_ids": ["cwe:CWE-918"],
+      "rationale": "The server-side request forgery attack pattern states it differs from cross-site request forgery because it targets the server rather than a user's authentication.",
+      "evidence": [
+        {"doc_id": "capec:CAPEC-664", "section": "Description", "quote": "Server Side Request Forgery attacks differ from Cross Site Request Forgery attacks in that they target the server itself"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-918", "reason": "Weakness for the same behaviour; does not discuss cross-site request forgery (lenient extra only)."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "Cross Site Request Forgery", "expected_docs": ["capec:CAPEC-664"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F12",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "Which advice limits outbound requests made on a user's behalf to the ordinary web protocols so that other URL schemes, such as local file access or file transfer, cannot be abused?",
+      "task": "Find the mitigation that restricts permitted URL schemas.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["capec:CAPEC-664"],
+      "lenient_extra_doc_ids": ["cwe:CWE-918"],
+      "rationale": "Only the server-side request forgery attack pattern has mitigations, including restricting requests to HTTP or HTTPS so that schemes such as file:// and ftp:// are blocked.",
+      "evidence": [
+        {"doc_id": "capec:CAPEC-664", "section": "Mitigations", "quote": "By limiting requests be made only through HTTP or HTTPS, for example, attacks made through insecure schemas such as file://, ftp://, etc. can be prevented."}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-918", "reason": "Mentions file:// and other protocols as abuse in its consequences but has no mitigation advice (lenient extra only)."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "URL schemas", "expected_docs": ["capec:CAPEC-664"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F13",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "Which mitigation advice for path manipulation says to use indirect references instead of actual file names, and also to run server interfaces under a non-root account or chroot-style jail?",
+      "task": "Find the mitigation list that contains both indirect references and a non-root or chroot confinement.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["capec:CAPEC-126", "cwe:CWE-22"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "For the path manipulation topic, the path traversal attack pattern and the path traversal weakness both give the two pieces of advice together: referencing files indirectly (CAPEC-126: indirect references; CWE-22: a mapping from fixed input values to the actual filenames) and confining the server (CAPEC-126: non-root account or chroot jail; CWE-22: a jail such as the Unix chroot jail, and lowest privileges). CWE-22 was added to the strict label after a source audit of paraphrased advice, before any retrieval was run (see label_audit).",
+      "evidence": [
+        {"doc_id": "capec:CAPEC-126", "section": "Mitigations", "quote": "Use indirect references rather than actual file names."},
+        {"doc_id": "capec:CAPEC-126", "section": "Mitigations", "quote": "Run server interfaces with a non-root account and/or utilize chroot jails"},
+        {"doc_id": "cwe:CWE-22", "section": "Potential Mitigations", "quote": "create a mapping from a set of fixed input values (such as numeric IDs) to the actual filenames or URLs, and reject all other inputs"},
+        {"doc_id": "cwe:CWE-22", "section": "Potential Mitigations", "quote": "OS-level examples include the Unix chroot jail, AppArmor, and SELinux."}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-23", "reason": "Child weakness; its mitigations contain neither the mapping advice nor the jail advice (verified by exclusivity checks)."},
+        {"doc_id": "cwe:CWE-78", "reason": "Has similar generic mapping and chroot jail advice, but for OS command injection, not for path manipulation, which the question restricts to."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "indirect references rather than actual file names", "expected_docs": ["capec:CAPEC-126"]},
+        {"phrase": "non-root account and/or utilize chroot jails", "expected_docs": ["capec:CAPEC-126"]},
+        {"phrase": "create a mapping from a set of fixed input values", "expected_docs": ["cwe:CWE-22", "cwe:CWE-78", "cwe:CWE-79", "cwe:CWE-89"]},
+        {"phrase": "Unix chroot jail", "expected_docs": ["cwe:CWE-22", "cwe:CWE-78", "cwe:CWE-94"]}
+      ],
+      "close_call": "CWE-22 states the same advice in different words; it is included after the source audit. CWE-78 has similar generic advice but a different topic.",
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F14",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "weakness_consequence",
+      "query_style": "descriptive",
+      "question": "Which records warn that adding a new account to a password file through a flaw in file path handling could let an attacker get around authentication?",
+      "task": "Find every record that gives the password-file example for overwriting files through path manipulation.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-22", "cwe:CWE-23", "capec:CAPEC-126"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "The path traversal weakness, its relative path traversal child and the path traversal attack pattern all give the example of appending a new account to a password file to bypass authentication.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-22", "section": "Common Consequences", "quote": "appending a new account at the end of a password file may allow an attacker to bypass authentication"},
+        {"doc_id": "cwe:CWE-23", "section": "Common Consequences", "quote": "appending a new account at the end of a password file may allow an attacker to bypass authentication"},
+        {"doc_id": "capec:CAPEC-126", "section": "Consequences", "quote": "appending a new account at the end of a password file may allow an attacker to bypass authentication"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-89", "reason": "Authentication bypass through SQL, not through file path handling."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "appending a new account at the end of a password file", "expected_docs": ["cwe:CWE-22", "cwe:CWE-23", "capec:CAPEC-126"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F15",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "attack_technique",
+      "query_style": "descriptive",
+      "question": "Which attack pattern places data into a database now so that a later backend step fetches it and uses it as an argument on a command line?",
+      "task": "Find the attack pattern whose execution flow stores malicious data for later use as command line arguments.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["capec:CAPEC-108"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "Command line execution through SQL injection has an execution-flow step that injects data into the database for later use as command line arguments, and a step that triggers the execution.",
+      "evidence": [
+        {"doc_id": "capec:CAPEC-108", "section": "Execution Flow", "quote": "Leverage SQL injection to inject data in the database that could later be used to achieve command injection if ever used as a command line argument"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "capec:CAPEC-66", "reason": "General SQL injection; no stored-data-to-command step."},
+        {"doc_id": "cwe:CWE-89", "reason": "SQL injection weakness; not about later command-line use."},
+        {"doc_id": "cwe:CWE-78", "reason": "OS command injection weakness; no database-storage step."},
+        {"doc_id": "capec:CAPEC-88", "reason": "OS command injection pattern; input goes directly to commands, no stored-data step."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "inject data in the database that could later be used", "expected_docs": ["capec:CAPEC-108"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F16",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "weakness_consequence",
+      "query_style": "descriptive",
+      "question": "Which weakness arises when programmers wrongly believe that cookies and hidden form fields cannot be changed from a browser, and therefore perform no checking of those inputs at all?",
+      "task": "Find the weakness record whose modes of introduction describe skipped input checks based on false trust in client-side data.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-20"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "The improper input validation weakness states that a programmer who believes an attacker cannot modify certain inputs might not validate them at all, citing cookies and hidden form fields.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-20", "section": "Modes of Introduction", "quote": "If a programmer believes that an attacker cannot modify certain inputs, then the programmer might not perform any input validation at all."}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-862", "reason": "Also notes a developer may assume headers or cookies cannot be modified, but for authorization checks rather than input validation."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "might not perform any input validation at all", "expected_docs": ["cwe:CWE-20"]}
+      ],
+      "close_call": "CWE-862 has a similar false-assumption statement about cookies and headers, for authorization checks; excluded because the question asks about skipped input checking.",
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F17",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "attack_technique",
+      "query_style": "descriptive",
+      "question": "Which attack pattern depends on the target using a parameter encoding in which separators and parameter names are written as ordinary text characters?",
+      "task": "Find the attack pattern whose prerequisite is a text-based parameter encoding.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["capec:CAPEC-137"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "The parameter injection attack pattern lists, as its first prerequisite, a parameter encoding where separators and identifiers are expressed in regular text.",
+      "evidence": [
+        {"doc_id": "capec:CAPEC-137", "section": "Prerequisites", "quote": "The target application must use a parameter encoding where separators and parameter identifiers are expressed in regular text."}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-20", "reason": "General input validation; does not discuss parameter encodings with textual separators."},
+        {"doc_id": "cwe:CWE-74", "reason": "Generic injection weakness; no parameter encoding prerequisite."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "parameter encoding", "expected_docs": ["capec:CAPEC-137"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F18",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "attack_technique",
+      "query_style": "descriptive",
+      "question": "Which attack pattern notes that the vulnerable application usually appends user-supplied text to a fixed string defined by the application to form the complete command to run?",
+      "task": "Find the attack pattern whose prerequisite describes concatenating input to a constant command string.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["capec:CAPEC-248"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "The command injection attack pattern states that, in virtually all cases, user string input is concatenated to a constant string defined by the application to form the full command.",
+      "evidence": [
+        {"doc_id": "capec:CAPEC-248", "section": "Prerequisites", "quote": "this is some form of string input that is concatenated to a constant string defined by the application to form the full command to be executed"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "capec:CAPEC-88", "reason": "Prerequisite is user input used in operating system commands; no constant-string concatenation statement."},
+        {"doc_id": "cwe:CWE-77", "reason": "Notes that data is part of a string executed as a command, without the constant-string concatenation description."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "constant string", "expected_docs": ["capec:CAPEC-248"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F19",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "attack_technique",
+      "query_style": "descriptive",
+      "question": "An intruder tried injected comparisons built from character codes to learn whether the backend was SQL Server or MySQL, judging only from whether the page answered normally. Which attack pattern describes identifying the database type this way?",
+      "task": "Find the attack pattern with a step that determines the database type using logical conditions.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["capec:CAPEC-7"],
+      "lenient_extra_doc_ids": ["cwe:CWE-89"],
+      "rationale": "The blind SQL injection attack pattern has an execution-flow step that determines the database type through logical conditions, including char(0x31)=char(0x31) for SQL Server and 0x313D31 for MySQL.",
+      "evidence": [
+        {"doc_id": "capec:CAPEC-7", "section": "Execution Flow", "quote": "Determines the type of the database, such as MS SQL Server or Oracle or MySQL, using logical conditions as part of the injected queries"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "capec:CAPEC-66", "reason": "General SQL injection pattern; its execution flow has no database-type determination step."},
+        {"doc_id": "cwe:CWE-89", "reason": "Weakness record; no database fingerprinting step (lenient extra only as the declared related weakness of CAPEC-7)."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "Determines the type of the database", "expected_docs": ["capec:CAPEC-7"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F20",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "Which guidance cautions that stored procedures do not by themselves stop database query manipulation when the final statement is assembled dynamically?",
+      "task": "Find the mitigation that warns about dynamic query construction inside stored procedures.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["capec:CAPEC-66", "cwe:CWE-89"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "The SQL injection attack pattern says injection is possible even with stored procedures if the eventual query is constructed dynamically. The SQL injection weakness gives the same caution in other words: do not dynamically construct and execute query strings inside stored procedures, since that may re-introduce injection. CWE-89 was added to the strict label after a source audit of paraphrased advice, before any retrieval was run (see label_audit).",
+      "evidence": [
+        {"doc_id": "capec:CAPEC-66", "section": "Mitigations", "quote": "Note that SQL Injection is possible even in the presence of stored procedures if the eventual query is constructed dynamically."},
+        {"doc_id": "cwe:CWE-89", "section": "Potential Mitigations", "quote": "Do not dynamically construct and execute query strings within these features using \"exec\" or similar functionality, since this may re-introduce the possibility of SQL injection."}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "capec:CAPEC-7", "reason": "Blind SQL injection mitigations cover obscurity and input validation, not stored procedures."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "even in the presence of stored procedures", "expected_docs": ["capec:CAPEC-66"]}
+      ],
+      "close_call": "The CWE-89 statement is a paraphrase of the CAPEC-66 caution; both are labelled relevant after the source audit.",
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F21",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "Why is hiding database error messages not enough to stop injection into queries, and what should an application do with errors instead?",
+      "task": "Find the guidance that rejects security by obscurity for SQL injection and says how to handle errors.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["capec:CAPEC-7"],
+      "lenient_extra_doc_ids": ["cwe:CWE-89"],
+      "rationale": "The blind SQL injection pattern states that suppressing error messages alone is insufficient and that errors should be handled gracefully through a custom page without revealing internals.",
+      "evidence": [
+        {"doc_id": "capec:CAPEC-7", "section": "Mitigations", "quote": "Security by Obscurity is not a solution to preventing SQL Injection."}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "capec:CAPEC-66", "reason": "Advises custom error pages that do not disclose database information, but does not state that suppressing errors is insufficient."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "Security by Obscurity", "expected_docs": ["capec:CAPEC-7"]}
+      ],
+      "close_call": "CAPEC-66 gives overlapping custom-error-page advice; excluded under the conjunction rule because only CAPEC-7 states that suppression is insufficient.",
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F22",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "attack_technique",
+      "query_style": "descriptive",
+      "question": "Why does exploiting injection into a system shell call for high attacker skill, and what specific knowledge about the target platform is required?",
+      "task": "Find the attack pattern whose skills section requires knowing the exact commands of the target operating system.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["capec:CAPEC-88"],
+      "lenient_extra_doc_ids": ["cwe:CWE-78"],
+      "rationale": "The OS command injection attack pattern lists High skill: knowledge of the application and the exact nature of commands that pertain to the target operating system.",
+      "evidence": [
+        {"doc_id": "capec:CAPEC-88", "section": "Skills Required", "quote": "the exact nature of commands that pertain to the target operating system"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "capec:CAPEC-108", "reason": "Also High skill, but about familiarity with internal system functionality, not operating system commands."},
+        {"doc_id": "capec:CAPEC-248", "reason": "Generic command injection pattern; no skills section."},
+        {"doc_id": "cwe:CWE-78", "reason": "Weakness record; no attacker skills section (lenient extra only)."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "exact nature of commands", "expected_docs": ["capec:CAPEC-88"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F23",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "identifier_lookup",
+      "query_style": "identifier",
+      "question": "CAPEC-248",
+      "task": "Look up a record by its CAPEC identifier.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["capec:CAPEC-248"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "An identifier query is relevant to the record it names.",
+      "evidence": [
+        {"doc_id": "capec:CAPEC-248", "section": "Description", "quote": "An adversary looking to execute a command of their choosing, injects new items into an existing command"}
+      ],
+      "considered_not_relevant": [],
+      "exclusivity_checks": [],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F24",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "identifier_lookup",
+      "query_style": "identifier",
+      "question": "cwe-94",
+      "task": "Look up a record by its CWE identifier written in lower case.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-94"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "An identifier query is relevant to the record it names.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-94", "section": "Description", "quote": "The product constructs all or part of a code segment using externally-influenced input from an upstream component"}
+      ],
+      "considered_not_relevant": [],
+      "exclusivity_checks": [],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F25",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "identifier_lookup",
+      "query_style": "identifier",
+      "question": "compare CWE-287 with CWE-306",
+      "task": "Look up two records named by identifier.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-287", "cwe:CWE-306"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "An identifier query is relevant to every record it names.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-287", "section": "Description", "quote": "the product does not prove or insufficiently proves that the claim is correct"},
+        {"doc_id": "cwe:CWE-306", "section": "Description", "quote": "The product does not perform any authentication for functionality that requires a provable user identity"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-862", "reason": "Not named in the query."}
+      ],
+      "exclusivity_checks": [],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F26",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "terminology",
+      "query_style": "short",
+      "question": "directory traversal",
+      "task": "Find records that use directory traversal as an alternate term.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-22", "capec:CAPEC-126"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "Both the path traversal weakness and the path traversal attack pattern list Directory Traversal as an alternate term.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-22", "section": "Alternate Terms", "quote": "Directory traversal"},
+        {"doc_id": "capec:CAPEC-126", "section": "Alternate Terms", "quote": "Directory Traversal"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-23", "reason": "Relative path traversal child; the words appear only inside a reference title, not as an alternate term."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "directory traversal", "section": "Alternate Terms", "expected_docs": ["cwe:CWE-22", "capec:CAPEC-126"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F27",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "terminology",
+      "query_style": "short",
+      "question": "shell injection",
+      "task": "Find the record that lists shell injection as an alternate term.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-78"],
+      "lenient_extra_doc_ids": ["capec:CAPEC-88"],
+      "rationale": "The OS command injection weakness lists Shell injection as an alternate term. The attack pattern CAPEC-88 describes the same behaviour and is its declared related attack pattern; it is a lenient extra, not part of the strict label.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-78", "section": "Alternate Terms", "quote": "Shell injection"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "capec:CAPEC-88", "reason": "Same behaviour but does not use the term (lenient extra only)."},
+        {"doc_id": "cwe:CWE-77", "reason": "Generic command injection; does not list shell injection."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "shell injection", "expected_docs": ["cwe:CWE-78"]}
+      ],
+      "close_call": "Contested under cross-lane equivalence: a reviewer applying the v2 cross-lane amendment could label CAPEC-88 relevant. It is held back as a lenient extra.",
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F28",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "weakness_consequence",
+      "query_style": "descriptive",
+      "question": "Which weakness records say that the actions performed by injected control code are often unlogged?",
+      "task": "Find every record whose consequences say injected control code leaves its actions unlogged.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-74", "cwe:CWE-94"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "The general injection weakness and the code injection weakness both list Hide Activities with the note that the actions performed by injected control code are often unlogged.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-74", "section": "Common Consequences", "quote": "Often the actions performed by injected control code are unlogged."},
+        {"doc_id": "cwe:CWE-94", "section": "Common Consequences", "quote": "Often the actions performed by injected control code are unlogged."}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-78", "reason": "Lists Hide Activities as an impact, but its note attributes activity to the application rather than saying actions are unlogged."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "actions performed by injected control code are unlogged", "expected_docs": ["cwe:CWE-74", "cwe:CWE-94"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F29",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "attack_technique",
+      "query_style": "descriptive",
+      "question": "A site assumed every visitor had passed through a particular link, so people who typed the address of the protected content directly were never asked to authenticate. Which attack pattern describes avoiding authentication entirely this way, as opposed to faking it?",
+      "task": "Find the attack pattern for reaching protected content without passing the authentication checkpoint.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["capec:CAPEC-115"],
+      "lenient_extra_doc_ids": ["cwe:CWE-287"],
+      "rationale": "The authentication bypass attack pattern gives exactly this example of reaching secured web content by entering its path instead of clicking through the authentication link, and says it avoids authentication rather than faking it.",
+      "evidence": [
+        {"doc_id": "capec:CAPEC-115", "section": "Extended Description", "quote": "an attacker might be able to reach secured web content by explicitly entering the path to the content rather than clicking through the authentication link, thereby avoiding the check entirely"}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-306", "reason": "Weakness record; the question asks for an attack pattern."},
+        {"doc_id": "cwe:CWE-287", "reason": "Declared related weakness of CAPEC-115 (lenient extra only); does not describe the click-through example."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "authentication link", "expected_docs": ["capec:CAPEC-115"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    },
+    {
+      "case_id": "RB3-F30",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "disambiguation",
+      "query_style": "descriptive",
+      "question": "Which weakness record notes that the phrase command injection is often used when the operating system specific form was actually meant?",
+      "task": "Find the alternate-terms note that distinguishes generic command injection from OS command injection.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": ["cwe:CWE-77"],
+      "lenient_extra_doc_ids": [],
+      "rationale": "The generic command injection weakness has an alternate-term note that the phrase is often used when OS command injection was intended.",
+      "evidence": [
+        {"doc_id": "cwe:CWE-77", "section": "Alternate Terms", "quote": "Note: often used when \"OS command injection\" (CWE-78) was intended."}
+      ],
+      "considered_not_relevant": [
+        {"doc_id": "cwe:CWE-78", "reason": "The OS-specific record; it is the thing being confused, not the record that contains the note."},
+        {"doc_id": "capec:CAPEC-248", "reason": "Attack pattern; no such note."}
+      ],
+      "exclusivity_checks": [
+        {"phrase": "often used when \"OS command injection\"", "expected_docs": ["cwe:CWE-77"]}
+      ],
+      "close_call": null,
+      "review_status": "author_only_not_independently_reviewed"
+    }
+  ],
+  "behaviour_cases": [
+    {
+      "case_id": "RB3-B01",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "low_information",
+      "query_style": "short",
+      "question": "flaw",
+      "task": "A one-word query that carries no specific need must be handled as low information, not answered with confident results.",
+      "expectation": "low_information",
+      "relevant_doc_ids": [],
+      "absence_checks": [],
+      "rationale": "Single generic word; no weakness or attack is named.",
+      "review_status": "not_applicable_no_labels"
+    },
+    {
+      "case_id": "RB3-B02",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "low_information",
+      "query_style": "short",
+      "question": "how to fix",
+      "task": "A generic phrase naming no topic must be handled as low information.",
+      "expectation": "low_information",
+      "relevant_doc_ids": [],
+      "absence_checks": [],
+      "rationale": "Generic phrase; it names no weakness, attack or product.",
+      "review_status": "not_applicable_no_labels"
+    },
+    {
+      "case_id": "RB3-B03",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "unanswerable",
+      "query_style": "descriptive",
+      "question": "How do I configure request rate limiting on an API gateway?",
+      "task": "A topic that is not in the corpus; no document should be presented as relevant.",
+      "expectation": "no_relevant_documents",
+      "relevant_doc_ids": [],
+      "absence_checks": ["rate limiting", "API gateway"],
+      "rationale": "No corpus record covers rate limiting or API gateways (verified by phrase search over the in-memory corpus).",
+      "review_status": "not_applicable_no_labels"
+    },
+    {
+      "case_id": "RB3-B04",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "unanswerable",
+      "query_style": "descriptive",
+      "question": "What is the formula for a CVSS base score?",
+      "task": "A scoring-methodology topic that is not in the corpus.",
+      "expectation": "no_relevant_documents",
+      "relevant_doc_ids": [],
+      "absence_checks": ["CVSS", "base score"],
+      "rationale": "No corpus record explains CVSS scoring (verified by phrase search).",
+      "review_status": "not_applicable_no_labels"
+    },
+    {
+      "case_id": "RB3-B05",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "unanswerable",
+      "query_style": "descriptive",
+      "question": "Which cipher suites should a TLS server prefer?",
+      "task": "A transport-encryption configuration topic that is not in the corpus.",
+      "expectation": "no_relevant_documents",
+      "relevant_doc_ids": [],
+      "absence_checks": ["cipher suite", "TLS"],
+      "rationale": "No corpus record covers cipher suite selection (verified by phrase search).",
+      "review_status": "not_applicable_no_labels"
+    },
+    {
+      "case_id": "RB3-B06",
+      "split": "final_heldout",
+      "origin": "v3",
+      "category": "unanswerable",
+      "query_style": "descriptive",
+      "question": "How do I write a YARA rule to detect a malware family?",
+      "task": "A malware-detection authoring topic that is not in the corpus.",
+      "expectation": "no_relevant_documents",
+      "relevant_doc_ids": [],
+      "absence_checks": ["YARA", "malware family"],
+      "rationale": "No corpus record covers YARA rules (verified by phrase search).",
+      "review_status": "not_applicable_no_labels"
+    }
+  ]
+}

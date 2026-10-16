@@ -26,7 +26,7 @@ CANDIDATE_TARGETS = ("service:juice-shop", "service:postgres", "service:redis")
 
 
 def load_graph(path: Path) -> AttackGraph:
-    doc = json.loads(path.read_text(encoding=" utf-8\))
+    doc = json.loads(path.read_text(encoding="utf-8"))
     return AttackGraph.model_validate(doc.get("graph", doc))
 
 
@@ -56,7 +56,7 @@ def main() -> None:
     node_ids = {base.node_id(node) for node in nodes}
     node_ids.discard(None)
 
-    gt_doc = json.loads(GT_FILE.read_text(encoding=" utf-8\))
+    gt_doc = json.loads(GT_FILE.read_text(encoding="utf-8"))
     gt = gt_doc.get("ground_truth", gt_doc)
     expected = base.normalize_gt_path(gt.get("expected_attack_path", []), nodes)
     if len(expected) < 2:

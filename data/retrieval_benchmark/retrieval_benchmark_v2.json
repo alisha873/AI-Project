@@ -1,0 +1,2005 @@
+{
+  "format": "autoshield.retrieval_benchmark.v2",
+  "benchmark_id": "mitre-subset-retrieval-benchmark-v2",
+  "supersedes": "mitre-subset-retrieval-benchmark-v1",
+  "description": "57 retrieval cases over the pinned 23-record MITRE subset (CWE 4.20 and CAPEC 3.9). Scored cases have relevant source documents; behaviour cases have none and only check how a retriever handles thin or out-of-corpus queries. A SMALL, MANUALLY CURATED benchmark: not an unbiased or comprehensive relevance assessment, and not evidence of general retrieval quality.",
+  "protocol": "Version 1 (22 cases, unchanged on disk) is carried forward as the DEVELOPMENT set because its results had already been observed; labels of carried cases are copied verbatim. All new cases were written by the implementing AI assistant after reading the corpus and BEFORE any retrieval was run on them, and were assigned to a development or heldout split when written. Retrieval changes may be tuned only on development cases; heldout cases are run once after the retrieval implementation is frozen. The author knew both sets, so the split limits tuning leakage but does not make the benchmark blind. Labels follow data/retrieval_benchmark/ANNOTATION_GUIDE_v2.md. Review status of each label set is in label_provenance; no human reviewer has been involved. Questions never contain identifiers except in category identifier_lookup, where every identifier must name a labelled record.",
+  "corpus": {
+    "cwe_version": "4.20",
+    "capec_version": "3.9",
+    "is_complete_catalogue": false,
+    "document_count": 23,
+    "manifest": "data/knowledge_sources/manifest.json",
+    "corpus_fingerprint": "813692f1fce5a5039a9e29a3ac3bb63cc1bb44b0ce5464d6be13d30cf71a2af5"
+  },
+  "splits": {
+    "development": "May be used to tune the retriever. Includes all 22 cases carried from v1.",
+    "heldout": "Run only after the retrieval implementation is frozen; never used for tuning."
+  },
+  "annotation_guide": "data/retrieval_benchmark/ANNOTATION_GUIDE_v2.md",
+  "review_summary": {
+    "human_review": "not_performed",
+    "ai_review_passes": 1,
+    "note": "Pass 1 was a blind AI review (same model family as the author, separate context, truncated corpus digest). It is not an independent human annotation. Disagreements were adjudicated by the author under the amendments in the annotation guide and are flagged for human re-adjudication. Pass 1 was completed before any retrieval was run on v2.",
+    "items_reviewed": 53,
+    "exact_set_agreement": 46,
+    "adjudicated": 7,
+    "adjudicated_case_ids": [
+      "RB-002",
+      "RB-014",
+      "RB-015",
+      "RB-020",
+      "RB2-H02",
+      "RB2-H04",
+      "RB2-H09"
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "RB-001",
+      "split": "development",
+      "origin": "v1",
+      "category": "forensic_observation",
+      "query_style": "descriptive",
+      "question": "A web search endpoint received a request whose message parameter contained a quote followed by an always-true comparison, and it still answered with HTTP 200 and a larger response body than ordinary searches. What describes a database query being assembled unsafely from request input?",
+      "task": "Find reference knowledge for a suspected unsafe-database-query hypothesis behind a tautology-style request.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-89",
+        "capec:CAPEC-66"
+      ],
+      "rationale": "CWE-89 is the weakness for building database commands from untrusted input; CAPEC-66 is the attack pattern that exploits it, and CWE-89 declares CAPEC-66 as a related attack pattern.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-89",
+          "capec:CAPEC-66"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-89",
+              "capec:CAPEC-66"
+            ],
+            "note": "Quote plus always-true condition describes generic SQL injection. Blind variant not indicated."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-002",
+      "split": "development",
+      "origin": "v1",
+      "category": "forensic_observation",
+      "query_style": "descriptive",
+      "question": "Repeated requests to one parameter differed only by true-or-false conditions appended to the value. The application showed no error text, but response sizes and timing changed according to the condition, as if the database were answering yes-or-no questions.",
+      "task": "Find knowledge for an inference-style data extraction hypothesis where no data is echoed back.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "capec:CAPEC-7",
+        "cwe:CWE-89"
+      ],
+      "rationale": "CAPEC-7 is the blind variant (a child of the generic database-injection pattern) and declares CWE-89 as a related weakness.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "capec:CAPEC-7",
+          "cwe:CWE-89"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-7"
+            ],
+            "note": "Boolean true/false probing without error text is Blind SQL Injection. Parent CAPEC-66 and CWE-89 are excluded as general classes."
+          }
+        ],
+        "adjudication": {
+          "decision": "keep_author",
+          "reason": "cross_lane_link",
+          "rationale": "CAPEC-7 declares CWE-89 as a related weakness (clause 1).",
+          "final_labels": [
+            "capec:CAPEC-7",
+            "cwe:CWE-89"
+          ],
+          "contested_doc_ids": [
+            "cwe:CWE-89"
+          ],
+          "adjudicated_by": "author (AI assistant)",
+          "independent": false,
+          "awaiting_human_adjudication": true
+        },
+        "review_status": "ai_review_adjudicated"
+      }
+    },
+    {
+      "case_id": "RB-003",
+      "split": "development",
+      "origin": "v1",
+      "category": "forensic_observation",
+      "query_style": "descriptive",
+      "question": "File download requests carried repeated parent-directory sequences in the filename parameter, and the server returned a file that is not inside the intended download folder.",
+      "task": "Find knowledge for a file-access-outside-the-intended-directory hypothesis.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-22",
+        "capec:CAPEC-126",
+        "cwe:CWE-23"
+      ],
+      "rationale": "CWE-22 is the restricted-directory weakness; CAPEC-126 is the matching attack pattern and declares CWE-22; CWE-23 (relative path traversal) is a declared child of CWE-22.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-22",
+          "capec:CAPEC-126",
+          "cwe:CWE-23"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-126",
+              "cwe:CWE-22",
+              "cwe:CWE-23"
+            ],
+            "note": "Close call: dot-dot sequences fit CWE-23, but the question does not exclude the general class CWE-22."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-004",
+      "split": "development",
+      "origin": "v1",
+      "category": "forensic_observation",
+      "query_style": "descriptive",
+      "question": "The filename parameter was percent-encoded so that it climbed out of the current directory with dot-dot-slash style steps, aiming at system configuration files rather than the files the page serves.",
+      "task": "Find knowledge for an encoded relative-path file read attempt.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-23",
+        "cwe:CWE-22",
+        "capec:CAPEC-126"
+      ],
+      "rationale": "CWE-23 covers relative path sequences and is a declared child of CWE-22; CAPEC-126 declares CWE-22.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-23",
+          "cwe:CWE-22",
+          "capec:CAPEC-126"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-126",
+              "cwe:CWE-22",
+              "cwe:CWE-23"
+            ],
+            "note": "Encoded dot-dot-slash traversal. Close call between general CWE-22 and specific CWE-23, so both are kept."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-005",
+      "split": "development",
+      "origin": "v1",
+      "category": "forensic_observation",
+      "query_style": "descriptive",
+      "question": "An image-import feature accepted a web address from the user, and the server then made an outbound request to a private internal address and to the cloud instance metadata address, returning the fetched content to the requester.",
+      "task": "Find knowledge for a server-made request to an attacker-chosen destination.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-918",
+        "capec:CAPEC-664"
+      ],
+      "rationale": "CWE-918 is server-side request forgery; CAPEC-664 is the attack pattern and declares CWE-918 (and CWE-918 declares CAPEC-664).",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-918",
+          "capec:CAPEC-664"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-664",
+              "cwe:CWE-918"
+            ],
+            "note": ""
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-006",
+      "split": "development",
+      "origin": "v1",
+      "category": "forensic_observation",
+      "query_style": "descriptive",
+      "question": "A parameter value contained a semicolon followed by a shell command, and the web server's process started a child process whose arguments matched that text.",
+      "task": "Find knowledge for user input reaching an operating-system shell.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-78",
+        "capec:CAPEC-88"
+      ],
+      "rationale": "CWE-78 is neutralization of special elements in an OS command; CAPEC-88 declares CWE-78. The parent class CWE-77 and CAPEC-248 are left unlabelled.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-78",
+          "capec:CAPEC-88"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-78",
+              "capec:CAPEC-88"
+            ],
+            "note": "Shell command through a web process is OS command injection. Generic CWE-77 and CAPEC-248 are parents and excluded."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-007",
+      "split": "development",
+      "origin": "v1",
+      "category": "forensic_observation",
+      "query_style": "descriptive",
+      "question": "Text supplied by a user in a template field was evaluated by the application's scripting engine, and the server then ran statements written by the requester inside its own runtime.",
+      "task": "Find knowledge for attacker-supplied code being generated or evaluated by the application.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-94",
+        "capec:CAPEC-242"
+      ],
+      "rationale": "CWE-94 is improper control of code generation; CAPEC-242 is the attack pattern and CWE-94 declares CAPEC-242.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-94",
+          "capec:CAPEC-242"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-94",
+              "capec:CAPEC-242"
+            ],
+            "note": "Requester statements run inside the application's own runtime, which is code injection."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-008",
+      "split": "development",
+      "origin": "v1",
+      "category": "forensic_observation",
+      "query_style": "descriptive",
+      "question": "An administrative function responded successfully to requests that carried no session cookie and no credentials at all.",
+      "task": "Find knowledge for a sensitive function reachable without any login.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-306"
+      ],
+      "rationale": "CWE-306 is missing authentication for a critical function. Its parent CWE-287 (improper authentication) is left unlabelled.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-306"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-306"
+            ],
+            "note": "Missing authentication on an administrative function. CAPEC-115 (bypass attack) and CWE-287 judged less central."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-009",
+      "split": "development",
+      "origin": "v1",
+      "category": "forensic_observation",
+      "query_style": "descriptive",
+      "question": "A signed-in ordinary user retrieved another user's records by changing an identifier in the address, and the server never checked whether that user was permitted to see them.",
+      "task": "Find knowledge for a missing permission check after successful login.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-862"
+      ],
+      "rationale": "CWE-862 is missing authorization: an authenticated actor performs an action without a permission check.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-862"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-862"
+            ],
+            "note": "Authenticated user, but no authorization check on the object."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-010",
+      "split": "development",
+      "origin": "v1",
+      "category": "forensic_observation",
+      "query_style": "descriptive",
+      "question": "A parameter containing an HTML script element was echoed without escaping inside the response page, so it would run in the browser of anyone who opened the crafted link.",
+      "task": "Find knowledge for attacker script running in a visitor's browser.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-79"
+      ],
+      "rationale": "CWE-79 is improper neutralization of input during web page generation (cross-site scripting).",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-79"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-79"
+            ],
+            "note": ""
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-011",
+      "split": "development",
+      "origin": "v1",
+      "category": "forensic_observation",
+      "query_style": "descriptive",
+      "question": "Request parameter values were altered and extra parameters were appended so that the backend processed the request differently from what the page intended.",
+      "task": "Find knowledge for tampering with request parameters to change backend behaviour.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "capec:CAPEC-137"
+      ],
+      "rationale": "CAPEC-137 is the parameter injection attack pattern; the source declares no related weakness inside this corpus (its CWE-88 target is outside the corpus), so only CAPEC-137 is labelled.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "capec:CAPEC-137"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-137"
+            ],
+            "note": ""
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-012",
+      "split": "development",
+      "origin": "v1",
+      "category": "forensic_observation",
+      "query_style": "descriptive",
+      "question": "Malformed, oversized and special-character values were accepted by many endpoints without any check of their form, length or allowed characters.",
+      "task": "Find knowledge for missing or weak checking of incoming data.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-20"
+      ],
+      "rationale": "CWE-20 is improper input validation, the general weakness for unchecked input.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-20"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-20"
+            ],
+            "note": ""
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-013",
+      "split": "development",
+      "origin": "v1",
+      "category": "terminology",
+      "query_style": "terminology",
+      "question": "Investigate a suspected SQL injection against the search endpoint: the request contained an OR 1 equals 1 style condition.",
+      "task": "Find knowledge for a suspected SQL injection hypothesis.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-89",
+        "capec:CAPEC-66"
+      ],
+      "rationale": "CWE-89 is the SQL injection weakness and CAPEC-66 the SQL injection attack pattern; each declares the other.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-89",
+          "capec:CAPEC-66"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-89",
+              "capec:CAPEC-66"
+            ],
+            "note": ""
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-014",
+      "split": "development",
+      "origin": "v1",
+      "category": "terminology",
+      "query_style": "terminology",
+      "question": "Blind SQL injection is suspected because response timing differs between boolean conditions injected into one parameter.",
+      "task": "Find knowledge for a suspected blind SQL injection hypothesis.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "capec:CAPEC-7",
+        "cwe:CWE-89"
+      ],
+      "rationale": "CAPEC-7 is blind SQL injection and declares CWE-89.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "capec:CAPEC-7",
+          "cwe:CWE-89"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-7"
+            ],
+            "note": "Timing differences on boolean conditions describe Blind SQL Injection."
+          }
+        ],
+        "adjudication": {
+          "decision": "keep_author",
+          "reason": "cross_lane_link",
+          "rationale": "CAPEC-7 declares CWE-89 as a related weakness (clause 1).",
+          "final_labels": [
+            "capec:CAPEC-7",
+            "cwe:CWE-89"
+          ],
+          "contested_doc_ids": [
+            "cwe:CWE-89"
+          ],
+          "adjudicated_by": "author (AI assistant)",
+          "independent": false,
+          "awaiting_human_adjudication": true
+        },
+        "review_status": "ai_review_adjudicated"
+      }
+    },
+    {
+      "case_id": "RB-015",
+      "split": "development",
+      "origin": "v1",
+      "category": "terminology",
+      "query_style": "terminology",
+      "question": "The SQL injection appears to have reached the operating system, because commands ran on the database host through a database feature.",
+      "task": "Find knowledge for SQL injection escalating to command execution.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "capec:CAPEC-108",
+        "cwe:CWE-89",
+        "cwe:CWE-78"
+      ],
+      "rationale": "CAPEC-108 (command line execution through SQL injection) declares both CWE-89 and CWE-78 as related weaknesses.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "capec:CAPEC-108",
+          "cwe:CWE-89",
+          "cwe:CWE-78"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-108"
+            ],
+            "note": "SQL injection reaching the OS through a database feature such as xp_cmdshell."
+          }
+        ],
+        "adjudication": {
+          "decision": "keep_author",
+          "reason": "cross_lane_link",
+          "rationale": "CAPEC-108 declares CWE-89 and CWE-78 as related weaknesses (clause 1).",
+          "final_labels": [
+            "capec:CAPEC-108",
+            "cwe:CWE-89",
+            "cwe:CWE-78"
+          ],
+          "contested_doc_ids": [
+            "cwe:CWE-78",
+            "cwe:CWE-89"
+          ],
+          "adjudicated_by": "author (AI assistant)",
+          "independent": false,
+          "awaiting_human_adjudication": true
+        },
+        "review_status": "ai_review_adjudicated"
+      }
+    },
+    {
+      "case_id": "RB-016",
+      "split": "development",
+      "origin": "v1",
+      "category": "terminology",
+      "query_style": "terminology",
+      "question": "Path traversal attempt: download requests used dot-dot-slash sequences to reach files outside the web root.",
+      "task": "Find knowledge for a suspected path traversal hypothesis.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-22",
+        "capec:CAPEC-126",
+        "cwe:CWE-23"
+      ],
+      "rationale": "CWE-22 and its declared child CWE-23 are the path traversal weaknesses; CAPEC-126 is the path traversal attack pattern.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-22",
+          "capec:CAPEC-126",
+          "cwe:CWE-23"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-126",
+              "cwe:CWE-22",
+              "cwe:CWE-23"
+            ],
+            "note": "Question names 'path traversal' generally. CWE-23 included because dot-dot-slash sequences are the relative variant. Close call."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-017",
+      "split": "development",
+      "origin": "v1",
+      "category": "terminology",
+      "query_style": "terminology",
+      "question": "Server-side request forgery is suspected: the application fetched a URL chosen by the requester and returned the response.",
+      "task": "Find knowledge for a suspected server-side request forgery hypothesis.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-918",
+        "capec:CAPEC-664"
+      ],
+      "rationale": "CWE-918 and CAPEC-664 are the server-side request forgery weakness and attack pattern and declare each other.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-918",
+          "capec:CAPEC-664"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-664",
+              "cwe:CWE-918"
+            ],
+            "note": ""
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-018",
+      "split": "development",
+      "origin": "v1",
+      "category": "terminology",
+      "query_style": "terminology",
+      "question": "OS command injection in a network diagnostics form: the submitted host value included shell metacharacters.",
+      "task": "Find knowledge for a suspected operating-system command injection hypothesis.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-78",
+        "capec:CAPEC-88"
+      ],
+      "rationale": "CWE-78 is OS command injection and CAPEC-88 is the OS command injection attack pattern, which declares CWE-78.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-78",
+          "capec:CAPEC-88"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-78",
+              "capec:CAPEC-88"
+            ],
+            "note": "OS-specific command injection. CWE-77 and CAPEC-248 are generic parents and excluded."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-019",
+      "split": "development",
+      "origin": "v1",
+      "category": "disambiguation",
+      "query_style": "terminology",
+      "question": "Generic command injection: a command string built from request parameters was executed, and the interpreter involved is not yet known.",
+      "task": "Find knowledge for command injection when the shell type is unconfirmed.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-77",
+        "capec:CAPEC-248"
+      ],
+      "rationale": "CWE-77 is the general command injection weakness and CAPEC-248 the general command injection pattern, which declares CWE-77.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-77",
+          "capec:CAPEC-248"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-77",
+              "capec:CAPEC-248"
+            ],
+            "note": "Interpreter unknown, so the generic command injection records apply. OS-specific records excluded."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-020",
+      "split": "development",
+      "origin": "v1",
+      "category": "terminology",
+      "query_style": "terminology",
+      "question": "Authentication bypass: a protected page loaded without a valid login after the request was altered.",
+      "task": "Find knowledge for a suspected authentication bypass hypothesis.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "capec:CAPEC-115",
+        "cwe:CWE-287"
+      ],
+      "rationale": "CAPEC-115 is authentication bypass and declares CWE-287 (improper authentication).",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "capec:CAPEC-115",
+          "cwe:CWE-287"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-115"
+            ],
+            "note": "Attack-pattern wording. CWE-287 and CWE-306 are related weaknesses and excluded."
+          }
+        ],
+        "adjudication": {
+          "decision": "keep_author",
+          "reason": "cross_lane_link",
+          "rationale": "CAPEC-115 declares CWE-287 as a related weakness (clause 1).",
+          "final_labels": [
+            "capec:CAPEC-115",
+            "cwe:CWE-287"
+          ],
+          "contested_doc_ids": [
+            "cwe:CWE-287"
+          ],
+          "adjudicated_by": "author (AI assistant)",
+          "independent": false,
+          "awaiting_human_adjudication": true
+        },
+        "review_status": "ai_review_adjudicated"
+      }
+    },
+    {
+      "case_id": "RB-021",
+      "split": "development",
+      "origin": "v1",
+      "category": "terminology",
+      "query_style": "terminology",
+      "question": "Reflected cross-site scripting in the search results page: the query value appeared unescaped in the HTML.",
+      "task": "Find knowledge for a suspected reflected cross-site scripting hypothesis.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-79"
+      ],
+      "rationale": "CWE-79 is the cross-site scripting weakness.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-79"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-79"
+            ],
+            "note": ""
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB-022",
+      "split": "development",
+      "origin": "v1",
+      "category": "disambiguation",
+      "query_style": "terminology",
+      "question": "Special characters were passed unneutralized to some downstream interpreter, and the kind of interpreter is not yet known: a general injection weakness.",
+      "task": "Find knowledge for an injection hypothesis whose target interpreter is unconfirmed.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-74"
+      ],
+      "rationale": "CWE-74 is the general injection weakness (improper neutralization of special elements in output used by a downstream component) and the declared parent of the specific injection weaknesses.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-74"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-74"
+            ],
+            "note": "Unknown interpreter, so the general injection class applies. Specific children excluded."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-D01",
+      "split": "development",
+      "origin": "v2",
+      "category": "attack_technique",
+      "query_style": "descriptive",
+      "question": "Before injecting anything, the intruder first inventoried the application's links with a web crawler and captured network traffic to find which inputs feed database queries. What describes that opening exploration step?",
+      "task": "Find the attack pattern whose execution flow starts by surveying the application.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "capec:CAPEC-66"
+      ],
+      "rationale": "CAPEC-66 execution flow step 1 ('Survey application') lists spidering the site's links and sniffing network communications.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "capec:CAPEC-66"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-66"
+            ],
+            "note": "CAPEC-66 Step 1 'Survey application' lists spidering and sniffing. CAPEC-7 Step 1 is hypothesizing queries."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-D02",
+      "split": "development",
+      "origin": "v2",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "The database logged an unusually large number of failed or malformed queries that were traced back to user-supplied input.",
+      "task": "Find detection guidance (indicators) for a suspected injection into database queries.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "capec:CAPEC-66"
+      ],
+      "rationale": "CAPEC-66 lists as an indicator 'too many false or invalid queries to the database, especially those caused by malformed input'.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "capec:CAPEC-66"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-66"
+            ],
+            "note": "CAPEC-66 indicator: too many false or invalid queries from malformed input. CAPEC-7's indicator is about logical conditions."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-D03",
+      "split": "development",
+      "origin": "v2",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "Which advice recommends a vetted library or framework that encodes output, so that user input cannot turn into executable markup inside a page?",
+      "task": "Find mitigation guidance for script injection into generated pages.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-79"
+      ],
+      "rationale": "CWE-79 potential mitigations name vetted libraries and frameworks that provide output encoding (for example Anti-XSS and ESAPI Encoding).",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-79"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-79"
+            ],
+            "note": "Vetted library or framework that encodes output (Anti-XSS, ESAPI Encoding)."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-D04",
+      "split": "development",
+      "origin": "v2",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "Which guidance suggests describing acceptable inputs with a formal language and building recognizers, with parsing kept as its own layer between raw input and internal data?",
+      "task": "Find mitigation guidance for weak input checking.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-20"
+      ],
+      "rationale": "CWE-20 potential mitigations describe language-theoretic security (formal-language input recognizers, parsing as a distinct layer).",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-20"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-20"
+            ],
+            "note": "LangSec mitigation, visible in CWE-20."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-D05",
+      "split": "development",
+      "origin": "v2",
+      "category": "identifier_lookup",
+      "query_style": "identifier",
+      "question": "CWE-89",
+      "task": "Look up a record by its identifier.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-89"
+      ],
+      "rationale": "The question is the identifier of the record itself.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-89"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-89"
+            ],
+            "note": "Identifier query."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-D06",
+      "split": "development",
+      "origin": "v2",
+      "category": "identifier_lookup",
+      "query_style": "identifier",
+      "question": "cwe-862",
+      "task": "Look up a record by its identifier written in lower case.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-862"
+      ],
+      "rationale": "The question is the (lower-case) identifier of the record itself.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-862"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-862"
+            ],
+            "note": "Identifier query, case-insensitive."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-D07",
+      "split": "development",
+      "origin": "v2",
+      "category": "identifier_lookup",
+      "query_style": "identifier",
+      "question": "CWE\u201179",
+      "task": "Look up a record whose identifier was typed with a non-breaking hyphen (U+2011), as can happen when text is pasted from a document.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-79"
+      ],
+      "rationale": "The question is the identifier of the record itself, written with a Unicode hyphen variant.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-79"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-79"
+            ],
+            "note": "Identifier query, with a non-breaking hyphen."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H01",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "weakness_consequence",
+      "query_style": "descriptive",
+      "question": "Code supplied through input ran inside the application with access to resources that the sender could not reach directly, and in some cases that code decided who was authenticated. What consequences are documented for this kind of weakness?",
+      "task": "Find the weakness record that documents consequences of attacker-supplied code being generated.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-94"
+      ],
+      "rationale": "CWE-94 common consequences: bypass of protection mechanisms, gaining privileges or assuming identity, executing unauthorized code.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-94"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-94"
+            ],
+            "note": "Injected code accessing restricted resources and controlling authentication matches CWE-94 consequences. CWE-74 and CAPEC-242 are weaker."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H02",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "weakness_consequence",
+      "query_style": "descriptive",
+      "question": "A server fetched addresses chosen by an outsider and thereby acted as a stepping stone to hosts and ports behind a firewall that the outsider could not reach directly. What consequences does the reference material describe?",
+      "task": "Find consequences of a server making attacker-chosen requests.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-918"
+      ],
+      "rationale": "CWE-918 consequences include bypassing access controls such as firewalls; CAPEC-664 describes forcing the server to reach its internal network with the server's privilege.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-918",
+          "capec:CAPEC-664"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-918"
+            ],
+            "note": "Firewall bypass and stepping-stone consequence is visible in CWE-918. CAPEC-664 consequences are not visible in that form."
+          }
+        ],
+        "adjudication": {
+          "decision": "accept_reviewer",
+          "reason": "facet_in_one_record",
+          "rationale": "The firewall/stepping-stone consequence appears in CWE-918 only; text search finds no 'firewall' in CAPEC-664 (clause 2).",
+          "final_labels": [
+            "cwe:CWE-918"
+          ],
+          "contested_doc_ids": [
+            "capec:CAPEC-664"
+          ],
+          "adjudicated_by": "author (AI assistant)",
+          "independent": false,
+          "awaiting_human_adjudication": true
+        },
+        "review_status": "ai_review_adjudicated"
+      }
+    },
+    {
+      "case_id": "RB2-H03",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "Which mitigation advice replaces building queries by joining strings with parameterized queries, prepared statements or similar structured mechanisms that keep data separate from code?",
+      "task": "Find mitigation guidance for unsafe database query construction.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-89",
+        "capec:CAPEC-66"
+      ],
+      "rationale": "CWE-89 mitigations recommend structured, parameterized mechanisms; CAPEC-66 mitigations recommend parameterized queries or stored procedures.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-89",
+          "capec:CAPEC-66"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-89",
+              "capec:CAPEC-66"
+            ],
+            "note": "Parameterized queries appear in both mitigations. CAPEC-7 mitigation is truncated before any such text, so it is excluded."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H04",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "Which hardening advice says to use library calls or language APIs instead of passing data to an external process or shell, and to run the code inside a jail or sandbox?",
+      "task": "Find mitigation guidance for user input reaching a command interpreter.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-78"
+      ],
+      "rationale": "CWE-78 and CWE-77 mitigations recommend library calls instead of external processes (CWE-78 also a jail/sandbox); CAPEC-88 recommends language APIs instead of passing data to the OS shell.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-78",
+          "cwe:CWE-77",
+          "capec:CAPEC-88"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-78"
+            ],
+            "note": "Library calls plus jail/sandbox are both visible in CWE-78. CWE-77 shows only the library-call part and CAPEC-88 only language APIs. Digest is truncated."
+          }
+        ],
+        "adjudication": {
+          "decision": "accept_reviewer",
+          "reason": "conjunction",
+          "rationale": "The question needs library calls AND a jail/sandbox; only CWE-78 contains both (text search; clause 2).",
+          "final_labels": [
+            "cwe:CWE-78"
+          ],
+          "contested_doc_ids": [
+            "capec:CAPEC-88",
+            "cwe:CWE-77"
+          ],
+          "adjudicated_by": "author (AI assistant)",
+          "independent": false,
+          "awaiting_human_adjudication": true
+        },
+        "review_status": "ai_review_adjudicated"
+      }
+    },
+    {
+      "case_id": "RB2-H05",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "How can a function that should require a proven user identity, yet never asks for one, be found through testing such as manual penetration testing or threat modelling?",
+      "task": "Find detection guidance for a critical function with no authentication.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-306"
+      ],
+      "rationale": "CWE-306 detection methods name manual analysis such as penetration testing and threat modelling for this weakness. Other authentication/authorization records mention similar techniques but this is the record whose central subject is the missing check.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-306"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-306"
+            ],
+            "note": "Detection via manual penetration testing and threat modeling is visible in CWE-306."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H06",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "Application or database logs showed near-identical queries whose logical conditions became more complex over time. What do the references say about such indicators?",
+      "task": "Find indicator guidance for inference-style injection in logs.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "capec:CAPEC-7"
+      ],
+      "rationale": "CAPEC-7 indicators: logs showing similar queries with slightly differing logical conditions that increase in complexity over time.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "capec:CAPEC-7"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-7"
+            ],
+            "note": "Indicator text matches CAPEC-7 exactly."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H07",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "attack_technique",
+      "query_style": "descriptive",
+      "question": "Which attack pattern begins by finding a web application feature that accepts user input and retrieves data from the server, then examines the URL format of GET requests?",
+      "task": "Find the attack pattern from its execution flow.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "capec:CAPEC-664"
+      ],
+      "rationale": "CAPEC-664 execution flow steps 1-2: find a target application that accepts user input and retrieves data; examine HTTP GET request URL format.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "capec:CAPEC-664"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-664"
+            ],
+            "note": "Execution flow Steps 1-2 of CAPEC-664."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H08",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "The database server's extended stored procedure for running shell commands was enabled and was invoked from injected SQL. What hardening step is recommended?",
+      "task": "Find mitigation guidance for SQL injection that reaches the operating system.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "capec:CAPEC-108"
+      ],
+      "rationale": "CAPEC-108 mitigations: disable the MSSQL xp_cmdshell directive on the database.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "capec:CAPEC-108"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-108"
+            ],
+            "note": "Mitigation: disable MSSQL xp_cmdshell."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H09",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "Which advice recommends adopting an established authentication framework or library, such as an OWASP security API, rather than writing custom login checks?",
+      "task": "Find mitigation guidance for authentication weaknesses.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-287",
+        "cwe:CWE-306"
+      ],
+      "rationale": "CWE-287 mitigation: use an authentication framework or library such as the OWASP ESAPI Authentication feature; CWE-306 mitigation: consider libraries with authentication capabilities such as OpenSSL or the ESAPI Authenticator (verified by text search of the source records).",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-287",
+          "cwe:CWE-306"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-287"
+            ],
+            "note": "Mitigation: authentication framework such as OWASP ESAPI."
+          }
+        ],
+        "adjudication": {
+          "decision": "keep_author",
+          "reason": "hidden_by_truncation",
+          "rationale": "CWE-306's mitigation recommends libraries with authentication capabilities such as the ESAPI Authenticator; the reviewer's digest hid it (clause 3).",
+          "final_labels": [
+            "cwe:CWE-287",
+            "cwe:CWE-306"
+          ],
+          "contested_doc_ids": [
+            "cwe:CWE-306"
+          ],
+          "adjudicated_by": "author (AI assistant)",
+          "independent": false,
+          "awaiting_human_adjudication": true
+        },
+        "review_status": "ai_review_adjudicated"
+      }
+    },
+    {
+      "case_id": "RB2-H10",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "Role-based access control was in place, yet a user could still act against other users holding the same role. Which weakness description warns about this limitation?",
+      "task": "Find guidance about the limits of role-based access control.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-862"
+      ],
+      "rationale": "CWE-862 mitigations note that role-based access control may not protect against horizontal authorization (a user attacking others with the same role).",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-862"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-862"
+            ],
+            "note": "RBAC note about horizontal authorization."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H11",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "disambiguation",
+      "query_style": "descriptive",
+      "question": "Which weakness is specifically about relative sequences such as dot-dot that resolve outside a restricted directory, as opposed to the general class of restricted-directory escapes?",
+      "task": "Distinguish the specific relative-sequence weakness from its general parent class.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-23"
+      ],
+      "rationale": "CWE-23 is Relative Path Traversal. Its parent CWE-22 is the general class and is deliberately NOT labelled because the question asks for the specific variant.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-23"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-23"
+            ],
+            "note": "The question explicitly asks for the specific relative variant, so CWE-22 is excluded."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H12",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "weakness_consequence",
+      "query_style": "descriptive",
+      "question": "Unexpected values supplied to the application made it crash and consume excessive CPU and memory. Which weakness lists denial of service among its consequences?",
+      "task": "Find the weakness whose consequences include resource exhaustion from unexpected input.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-20"
+      ],
+      "rationale": "CWE-20 common consequences: availability impact through crash and CPU/memory consumption from unexpected values. Other records list denial of service as a side effect but their central subject is different.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-20"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-20"
+            ],
+            "note": "CWE-20 consequences list DoS from unexpected values. CWE-78 lists DoS only as a side effect."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H13",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "attack_technique",
+      "query_style": "descriptive",
+      "question": "Why must an attacker first learn the target's operating system before trying to climb out of a directory, so that the correct file separator is used?",
+      "task": "Find the attack pattern whose execution flow explains operating-system fingerprinting before traversal.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "capec:CAPEC-126"
+      ],
+      "rationale": "CAPEC-126 execution flow step 1 fingerprints the operating system so that the proper file separator is used.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "capec:CAPEC-126"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-126"
+            ],
+            "note": "CAPEC-126 Step 1: OS fingerprinting to choose the file separator."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H14",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "disambiguation",
+      "query_style": "descriptive",
+      "question": "How does injecting new code into a running program differ from code inclusion, where a reference to a code file is replaced and later loaded by the target?",
+      "task": "Distinguish code injection from code inclusion.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "capec:CAPEC-242"
+      ],
+      "rationale": "CAPEC-242's description states the difference from code inclusion explicitly.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "capec:CAPEC-242"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-242"
+            ],
+            "note": "Description contrasts code injection with code inclusion."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H15",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "As a safeguard for investigating a compromise afterwards, which advice says to write the audit log to a separate host?",
+      "task": "Find evidence-preservation guidance for request-parameter attacks.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "capec:CAPEC-137"
+      ],
+      "rationale": "CAPEC-137 mitigations: implement an audit log written to a separate host (found by text search of the source records).",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "capec:CAPEC-137"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-137"
+            ],
+            "note": "Audit log on a separate host appears in CAPEC-137 mitigations. Other records' mitigations are truncated."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H16",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "mitigation_detection",
+      "query_style": "descriptive",
+      "question": "Which mitigation says to allowlist the DNS names or addresses of every service the application must contact, and to verify the response before returning it?",
+      "task": "Find mitigation guidance for server-made requests to attacker-chosen destinations.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "capec:CAPEC-664"
+      ],
+      "rationale": "CAPEC-664 mitigations include allowlisting the DNS name or IP address of every service and examining the response. CWE-918 has no Potential_Mitigations section in this release, so it is not labelled.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "capec:CAPEC-664"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-664"
+            ],
+            "note": "Allowlist of DNS names or IPs and response verification."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H17",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "terminology",
+      "query_style": "short",
+      "question": "SSRF",
+      "task": "Look up a common acronym.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-918",
+        "capec:CAPEC-664"
+      ],
+      "rationale": "SSRF is the acronym for server-side request forgery, the subject of CWE-918 and CAPEC-664 (both contain the acronym).",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-918",
+          "capec:CAPEC-664"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-664",
+              "cwe:CWE-918"
+            ],
+            "note": "Acronym query, so both SSRF records."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H18",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "terminology",
+      "query_style": "short",
+      "question": "XSS",
+      "task": "Look up a common acronym.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-79"
+      ],
+      "rationale": "XSS is the acronym for cross-site scripting, the subject of CWE-79. Other records mention the acronym only in passing.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-79"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-79"
+            ],
+            "note": "Acronym query. No CAPEC XSS record in the corpus."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H19",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "identifier_lookup",
+      "query_style": "identifier",
+      "question": "CAPEC-126",
+      "task": "Look up a record by its identifier.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "capec:CAPEC-126"
+      ],
+      "rationale": "The question is the identifier of the record itself.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "capec:CAPEC-126"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "capec:CAPEC-126"
+            ],
+            "note": "Identifier query."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H20",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "identifier_lookup",
+      "query_style": "identifier",
+      "question": "difference between CWE-77 and CWE-78",
+      "task": "Look up two records named by identifier.",
+      "expectation": "relevant_documents",
+      "relevant_doc_ids": [
+        "cwe:CWE-77",
+        "cwe:CWE-78"
+      ],
+      "rationale": "Both identifiers named in the question are labelled.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [
+          "cwe:CWE-77",
+          "cwe:CWE-78"
+        ],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [
+              "cwe:CWE-77",
+              "cwe:CWE-78"
+            ],
+            "note": "Comparison question, so both named records are relevant."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-D08",
+      "split": "development",
+      "origin": "v2",
+      "category": "low_information",
+      "query_style": "short",
+      "question": "attack",
+      "task": "A single generic word.",
+      "expectation": "low_information",
+      "relevant_doc_ids": [],
+      "rationale": "One generic word names no weakness or technique, so no document can be called relevant.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [],
+        "reviews": [],
+        "adjudication": null,
+        "review_status": "not_applicable_no_labels"
+      }
+    },
+    {
+      "case_id": "RB2-D09",
+      "split": "development",
+      "origin": "v2",
+      "category": "low_information",
+      "query_style": "short",
+      "question": "vulnerability",
+      "task": "A single generic word.",
+      "expectation": "low_information",
+      "relevant_doc_ids": [],
+      "rationale": "One generic word names no weakness or technique.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [],
+        "reviews": [],
+        "adjudication": null,
+        "review_status": "not_applicable_no_labels"
+      }
+    },
+    {
+      "case_id": "RB2-D10",
+      "split": "development",
+      "origin": "v2",
+      "category": "low_information",
+      "query_style": "short",
+      "question": "the and of it",
+      "task": "Only function words.",
+      "expectation": "low_information",
+      "relevant_doc_ids": [],
+      "rationale": "No searchable content at all.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [],
+        "reviews": [],
+        "adjudication": null,
+        "review_status": "not_applicable_no_labels"
+      }
+    },
+    {
+      "case_id": "RB2-D11",
+      "split": "development",
+      "origin": "v2",
+      "category": "unanswerable",
+      "query_style": "descriptive",
+      "question": "How should TLS certificates be rotated for a private container registry?",
+      "task": "A question about a topic outside the CWE/CAPEC subset.",
+      "expectation": "no_relevant_documents",
+      "relevant_doc_ids": [],
+      "rationale": "The 23-record subset contains no certificate-management knowledge.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [],
+            "note": "Container registry TLS is not in the corpus."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H21",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "low_information",
+      "query_style": "short",
+      "question": "security problem",
+      "task": "Two generic words.",
+      "expectation": "low_information",
+      "relevant_doc_ids": [],
+      "rationale": "Two generic words do not name a weakness or technique.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [],
+        "reviews": [],
+        "adjudication": null,
+        "review_status": "not_applicable_no_labels"
+      }
+    },
+    {
+      "case_id": "RB2-H22",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "unanswerable",
+      "query_style": "descriptive",
+      "question": "Which Kubernetes admission controller blocks privileged pods from starting?",
+      "task": "A question about a topic outside the CWE/CAPEC subset.",
+      "expectation": "no_relevant_documents",
+      "relevant_doc_ids": [],
+      "rationale": "The subset contains no Kubernetes knowledge.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [],
+            "note": "Kubernetes admission control is not in the corpus."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H23",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "unanswerable",
+      "query_style": "descriptive",
+      "question": "What is the recommended minimum length for user passwords?",
+      "task": "A question about a topic outside the CWE/CAPEC subset.",
+      "expectation": "no_relevant_documents",
+      "relevant_doc_ids": [],
+      "rationale": "The subset contains no password-policy knowledge (authentication records mention passwords only in passing).",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [],
+            "note": "Password length guidance is not in the corpus; none of the visible records state it."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    },
+    {
+      "case_id": "RB2-H24",
+      "split": "heldout",
+      "origin": "v2",
+      "category": "unanswerable",
+      "query_style": "descriptive",
+      "question": "Describe how ransomware encrypts files on a backup server.",
+      "task": "A question about a topic outside the CWE/CAPEC subset.",
+      "expectation": "no_relevant_documents",
+      "relevant_doc_ids": [],
+      "rationale": "The subset contains no ransomware knowledge.",
+      "label_provenance": {
+        "authored_by": "AI assistant (Cursor agent), the same author as benchmark v1",
+        "author_labels": [],
+        "reviews": [
+          {
+            "reviewer_id": "ai-review-pass-1",
+            "reviewer_type": "ai_subagent_same_model_family_as_author",
+            "method": "Blind: a separate agent context saw only the annotation guide, the question-only sheet and a truncated corpus digest. It saw no author labels, no benchmark file and no retrieval output. Being the same model family as the author, its errors may be correlated with the author's. Not a human.",
+            "labels": [],
+            "note": "Ransomware is not in the corpus."
+          }
+        ],
+        "adjudication": null,
+        "review_status": "ai_review_agreed"
+      }
+    }
+  ]
+}

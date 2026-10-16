@@ -1,0 +1,191 @@
+{
+  "format": "autoshield.retrieval_benchmark.v1",
+  "benchmark_id": "mitre-subset-retrieval-benchmark-v1",
+  "description": "22 hand-written retrieval questions in the style of forensic investigation needs, labelled against the pinned 23-record MITRE subset (CWE 4.20: 20, 22, 23, 74, 77, 78, 79, 89, 94, 287, 306, 862, 918; CAPEC 3.9: 7, 66, 88, 108, 115, 126, 137, 242, 248, 664). A SMALL, MANUALLY CURATED benchmark. It is not an unbiased or comprehensive relevance assessment.",
+  "protocol": "Written on 2026-10-16 by the implementing AI assistant, AFTER reading the titles and the source-declared relationships of the 23 records and BEFORE running any retrieval on these questions. Frozen at that point: labels are not to be changed to improve scores (a genuine labelling error must be corrected openly in a new benchmark version). NOT blind: the author knew the corpus. Relevance is binary and conservative: a document is labelled only if its own title or a relationship declared by the source itself (ChildOf / RelatedWeakness / RelatedAttackPattern) directly ties it to the described behaviour. Parent and sibling records (for example CWE-74, CAPEC-248) are deliberately left UNLABELLED unless stated, so an unlabelled document may still be reasonable to retrieve; Recall@k and MRR only reward labelled documents. There are no negative (nothing-relevant) cases. Questions never contain CWE/CAPEC/CVE identifiers (enforced by the loader). Half of the questions describe behaviour in everyday words ('descriptive'); the rest use standard weakness terminology ('terminology'), so the lexical-vocabulary gap of a keyword baseline is visible. These questions are separate from the 16 smoke-test questions in tests/test_mitre_corpus.py, which were written after inspecting the data and are not an evaluation.",
+  "corpus": {
+    "cwe_version": "4.20",
+    "capec_version": "3.9",
+    "is_complete_catalogue": false,
+    "document_count": 23,
+    "manifest": "data/knowledge_sources/manifest.json"
+  },
+  "cases": [
+    {
+      "case_id": "RB-001",
+      "query_style": "descriptive",
+      "question": "A web search endpoint received a request whose message parameter contained a quote followed by an always-true comparison, and it still answered with HTTP 200 and a larger response body than ordinary searches. What describes a database query being assembled unsafely from request input?",
+      "task": "Find reference knowledge for a suspected unsafe-database-query hypothesis behind a tautology-style request.",
+      "relevant_doc_ids": ["cwe:CWE-89", "capec:CAPEC-66"],
+      "rationale": "CWE-89 is the weakness for building database commands from untrusted input; CAPEC-66 is the attack pattern that exploits it, and CWE-89 declares CAPEC-66 as a related attack pattern."
+    },
+    {
+      "case_id": "RB-002",
+      "query_style": "descriptive",
+      "question": "Repeated requests to one parameter differed only by true-or-false conditions appended to the value. The application showed no error text, but response sizes and timing changed according to the condition, as if the database were answering yes-or-no questions.",
+      "task": "Find knowledge for an inference-style data extraction hypothesis where no data is echoed back.",
+      "relevant_doc_ids": ["capec:CAPEC-7", "cwe:CWE-89"],
+      "rationale": "CAPEC-7 is the blind variant (a child of the generic database-injection pattern) and declares CWE-89 as a related weakness."
+    },
+    {
+      "case_id": "RB-003",
+      "query_style": "descriptive",
+      "question": "File download requests carried repeated parent-directory sequences in the filename parameter, and the server returned a file that is not inside the intended download folder.",
+      "task": "Find knowledge for a file-access-outside-the-intended-directory hypothesis.",
+      "relevant_doc_ids": ["cwe:CWE-22", "capec:CAPEC-126", "cwe:CWE-23"],
+      "rationale": "CWE-22 is the restricted-directory weakness; CAPEC-126 is the matching attack pattern and declares CWE-22; CWE-23 (relative path traversal) is a declared child of CWE-22."
+    },
+    {
+      "case_id": "RB-004",
+      "query_style": "descriptive",
+      "question": "The filename parameter was percent-encoded so that it climbed out of the current directory with dot-dot-slash style steps, aiming at system configuration files rather than the files the page serves.",
+      "task": "Find knowledge for an encoded relative-path file read attempt.",
+      "relevant_doc_ids": ["cwe:CWE-23", "cwe:CWE-22", "capec:CAPEC-126"],
+      "rationale": "CWE-23 covers relative path sequences and is a declared child of CWE-22; CAPEC-126 declares CWE-22."
+    },
+    {
+      "case_id": "RB-005",
+      "query_style": "descriptive",
+      "question": "An image-import feature accepted a web address from the user, and the server then made an outbound request to a private internal address and to the cloud instance metadata address, returning the fetched content to the requester.",
+      "task": "Find knowledge for a server-made request to an attacker-chosen destination.",
+      "relevant_doc_ids": ["cwe:CWE-918", "capec:CAPEC-664"],
+      "rationale": "CWE-918 is server-side request forgery; CAPEC-664 is the attack pattern and declares CWE-918 (and CWE-918 declares CAPEC-664)."
+    },
+    {
+      "case_id": "RB-006",
+      "query_style": "descriptive",
+      "question": "A parameter value contained a semicolon followed by a shell command, and the web server's process started a child process whose arguments matched that text.",
+      "task": "Find knowledge for user input reaching an operating-system shell.",
+      "relevant_doc_ids": ["cwe:CWE-78", "capec:CAPEC-88"],
+      "rationale": "CWE-78 is neutralization of special elements in an OS command; CAPEC-88 declares CWE-78. The parent class CWE-77 and CAPEC-248 are left unlabelled."
+    },
+    {
+      "case_id": "RB-007",
+      "query_style": "descriptive",
+      "question": "Text supplied by a user in a template field was evaluated by the application's scripting engine, and the server then ran statements written by the requester inside its own runtime.",
+      "task": "Find knowledge for attacker-supplied code being generated or evaluated by the application.",
+      "relevant_doc_ids": ["cwe:CWE-94", "capec:CAPEC-242"],
+      "rationale": "CWE-94 is improper control of code generation; CAPEC-242 is the attack pattern and CWE-94 declares CAPEC-242."
+    },
+    {
+      "case_id": "RB-008",
+      "query_style": "descriptive",
+      "question": "An administrative function responded successfully to requests that carried no session cookie and no credentials at all.",
+      "task": "Find knowledge for a sensitive function reachable without any login.",
+      "relevant_doc_ids": ["cwe:CWE-306"],
+      "rationale": "CWE-306 is missing authentication for a critical function. Its parent CWE-287 (improper authentication) is left unlabelled."
+    },
+    {
+      "case_id": "RB-009",
+      "query_style": "descriptive",
+      "question": "A signed-in ordinary user retrieved another user's records by changing an identifier in the address, and the server never checked whether that user was permitted to see them.",
+      "task": "Find knowledge for a missing permission check after successful login.",
+      "relevant_doc_ids": ["cwe:CWE-862"],
+      "rationale": "CWE-862 is missing authorization: an authenticated actor performs an action without a permission check."
+    },
+    {
+      "case_id": "RB-010",
+      "query_style": "descriptive",
+      "question": "A parameter containing an HTML script element was echoed without escaping inside the response page, so it would run in the browser of anyone who opened the crafted link.",
+      "task": "Find knowledge for attacker script running in a visitor's browser.",
+      "relevant_doc_ids": ["cwe:CWE-79"],
+      "rationale": "CWE-79 is improper neutralization of input during web page generation (cross-site scripting)."
+    },
+    {
+      "case_id": "RB-011",
+      "query_style": "descriptive",
+      "question": "Request parameter values were altered and extra parameters were appended so that the backend processed the request differently from what the page intended.",
+      "task": "Find knowledge for tampering with request parameters to change backend behaviour.",
+      "relevant_doc_ids": ["capec:CAPEC-137"],
+      "rationale": "CAPEC-137 is the parameter injection attack pattern; the source declares no related weakness inside this corpus (its CWE-88 target is outside the corpus), so only CAPEC-137 is labelled."
+    },
+    {
+      "case_id": "RB-012",
+      "query_style": "descriptive",
+      "question": "Malformed, oversized and special-character values were accepted by many endpoints without any check of their form, length or allowed characters.",
+      "task": "Find knowledge for missing or weak checking of incoming data.",
+      "relevant_doc_ids": ["cwe:CWE-20"],
+      "rationale": "CWE-20 is improper input validation, the general weakness for unchecked input."
+    },
+    {
+      "case_id": "RB-013",
+      "query_style": "terminology",
+      "question": "Investigate a suspected SQL injection against the search endpoint: the request contained an OR 1 equals 1 style condition.",
+      "task": "Find knowledge for a suspected SQL injection hypothesis.",
+      "relevant_doc_ids": ["cwe:CWE-89", "capec:CAPEC-66"],
+      "rationale": "CWE-89 is the SQL injection weakness and CAPEC-66 the SQL injection attack pattern; each declares the other."
+    },
+    {
+      "case_id": "RB-014",
+      "query_style": "terminology",
+      "question": "Blind SQL injection is suspected because response timing differs between boolean conditions injected into one parameter.",
+      "task": "Find knowledge for a suspected blind SQL injection hypothesis.",
+      "relevant_doc_ids": ["capec:CAPEC-7", "cwe:CWE-89"],
+      "rationale": "CAPEC-7 is blind SQL injection and declares CWE-89."
+    },
+    {
+      "case_id": "RB-015",
+      "query_style": "terminology",
+      "question": "The SQL injection appears to have reached the operating system, because commands ran on the database host through a database feature.",
+      "task": "Find knowledge for SQL injection escalating to command execution.",
+      "relevant_doc_ids": ["capec:CAPEC-108", "cwe:CWE-89", "cwe:CWE-78"],
+      "rationale": "CAPEC-108 (command line execution through SQL injection) declares both CWE-89 and CWE-78 as related weaknesses."
+    },
+    {
+      "case_id": "RB-016",
+      "query_style": "terminology",
+      "question": "Path traversal attempt: download requests used dot-dot-slash sequences to reach files outside the web root.",
+      "task": "Find knowledge for a suspected path traversal hypothesis.",
+      "relevant_doc_ids": ["cwe:CWE-22", "capec:CAPEC-126", "cwe:CWE-23"],
+      "rationale": "CWE-22 and its declared child CWE-23 are the path traversal weaknesses; CAPEC-126 is the path traversal attack pattern."
+    },
+    {
+      "case_id": "RB-017",
+      "query_style": "terminology",
+      "question": "Server-side request forgery is suspected: the application fetched a URL chosen by the requester and returned the response.",
+      "task": "Find knowledge for a suspected server-side request forgery hypothesis.",
+      "relevant_doc_ids": ["cwe:CWE-918", "capec:CAPEC-664"],
+      "rationale": "CWE-918 and CAPEC-664 are the server-side request forgery weakness and attack pattern and declare each other."
+    },
+    {
+      "case_id": "RB-018",
+      "query_style": "terminology",
+      "question": "OS command injection in a network diagnostics form: the submitted host value included shell metacharacters.",
+      "task": "Find knowledge for a suspected operating-system command injection hypothesis.",
+      "relevant_doc_ids": ["cwe:CWE-78", "capec:CAPEC-88"],
+      "rationale": "CWE-78 is OS command injection and CAPEC-88 is the OS command injection attack pattern, which declares CWE-78."
+    },
+    {
+      "case_id": "RB-019",
+      "query_style": "terminology",
+      "question": "Generic command injection: a command string built from request parameters was executed, and the interpreter involved is not yet known.",
+      "task": "Find knowledge for command injection when the shell type is unconfirmed.",
+      "relevant_doc_ids": ["cwe:CWE-77", "capec:CAPEC-248"],
+      "rationale": "CWE-77 is the general command injection weakness and CAPEC-248 the general command injection pattern, which declares CWE-77."
+    },
+    {
+      "case_id": "RB-020",
+      "query_style": "terminology",
+      "question": "Authentication bypass: a protected page loaded without a valid login after the request was altered.",
+      "task": "Find knowledge for a suspected authentication bypass hypothesis.",
+      "relevant_doc_ids": ["capec:CAPEC-115", "cwe:CWE-287"],
+      "rationale": "CAPEC-115 is authentication bypass and declares CWE-287 (improper authentication)."
+    },
+    {
+      "case_id": "RB-021",
+      "query_style": "terminology",
+      "question": "Reflected cross-site scripting in the search results page: the query value appeared unescaped in the HTML.",
+      "task": "Find knowledge for a suspected reflected cross-site scripting hypothesis.",
+      "relevant_doc_ids": ["cwe:CWE-79"],
+      "rationale": "CWE-79 is the cross-site scripting weakness."
+    },
+    {
+      "case_id": "RB-022",
+      "query_style": "terminology",
+      "question": "Special characters were passed unneutralized to some downstream interpreter, and the kind of interpreter is not yet known: a general injection weakness.",
+      "task": "Find knowledge for an injection hypothesis whose target interpreter is unconfirmed.",
+      "relevant_doc_ids": ["cwe:CWE-74"],
+      "rationale": "CWE-74 is the general injection weakness (improper neutralization of special elements in output used by a downstream component) and the declared parent of the specific injection weaknesses."
+    }
+  ]
+}
