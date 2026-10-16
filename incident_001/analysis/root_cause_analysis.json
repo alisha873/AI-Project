@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "incident_id": "incident_001",
   "agent": "phase_9_root_cause",
-  "created_at_utc": "2026-10-14T16:35:24Z",
+  "created_at_utc": "2026-10-16T13:19:58Z",
   "input_reconstruction": "incident_reconstruction.json",
   "findings": [
     {

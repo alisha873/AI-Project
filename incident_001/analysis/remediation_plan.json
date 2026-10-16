@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "incident_id": "incident_001",
+  "retrieval_methods_used": [
+    "fts5-bm25-v1"
+  ],
+  "production_retriever": "fts5-bm25-v1",
+  "uses_only_production_retriever": true,
+  "planning_requested": false,
+  "grounded_answer_statuses": [],
+  "skipped_findings": [],
+  "nothing_planned_reason": null,
+  "grounded_answer_diagnostics": [],
+  "plans": [],
+  "advisory_only": true,
+  "execution_performed": false,
+  "ground_truth_used": false,
+  "caveats": [
+    "This plan is advisory. Every proposal is a proposal only: nothing was executed, no file or container was changed and no test was launched.",
+    "Hypotheses stay hypotheses. A proposal does not confirm a root cause, and reference passages are general knowledge that neither confirm nor refute what happened in the incident.",
+    "Reference passages come from a small curated CWE/CAPEC subset and cannot be treated as comprehensive Docker, Juice Shop or configuration-hardening guidance.",
+    "Grounding validation checks that identifiers exist and sit in the right category and screens some high-risk wording; it does not prove that a recommendation is correct, sufficient or safe.",
+    "Whether a proposal reduces risk has not been tested; validation belongs to a later phase and its success under tested conditions would not be a universal security guarantee."
+  ]
+}
