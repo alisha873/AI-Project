@@ -1,0 +1,230 @@
+{
+  "format": "autoshield.preregistration.v1",
+  "frozen": {
+    "benchmark": {
+      "format": "autoshield.retrieval_benchmark.v3",
+      "sha256": "31e26a84813783c235cfa899b02d42a1d5eec006e691f2a1825f21b14c144d10"
+    },
+    "cache": {
+      "format": "autoshield.embedding_cache.v1",
+      "index_fingerprint": "3345a6ba5ba6fcc780b3a0a1d136048581433bccaa73cb9f412045027630d5e7"
+    },
+    "corpus": {
+      "chunker": {
+        "version": "char-structure-v1"
+      },
+      "chunks": 247,
+      "documents": 23,
+      "fingerprint": "813692f1fce5a5039a9e29a3ac3bb63cc1bb44b0ce5464d6be13d30cf71a2af5"
+    },
+    "dependencies": {
+      "installed_pins": {
+        "annotated-doc": "0.0.5",
+        "anyio": "4.15.1",
+        "certifi": "2026.7.22",
+        "click": "8.5.0",
+        "cloudpickle": "3.1.2",
+        "colorama": "0.4.6",
+        "filelock": "4.2.0",
+        "fsspec": "2026.9.0",
+        "h11": "0.16.0",
+        "hf-xet": "1.7.0",
+        "httpcore": "1.0.9",
+        "httpx": "0.28.1",
+        "huggingface-hub": "1.33.0",
+        "idna": "3.20",
+        "jinja2": "3.1.6",
+        "joblib": "1.6.0",
+        "markdown-it-py": "4.2.0",
+        "markupsafe": "3.0.4",
+        "mdurl": "0.1.2",
+        "mpmath": "1.3.0",
+        "narwhals": "2.27.1",
+        "networkx": "3.7",
+        "numpy": "2.5.4",
+        "packaging": "26.3",
+        "pygments": "2.21.0",
+        "pyyaml": "6.0.3",
+        "regex": "2026.9.29",
+        "rich": "15.0.0",
+        "safetensors": "0.8.0",
+        "scikit-learn": "1.9.1",
+        "scipy": "1.18.1",
+        "sentence-transformers": "6.1.0",
+        "setuptools": "84.0.0",
+        "shellingham": "1.5.4",
+        "sympy": "1.14.0",
+        "threadpoolctl": "3.7.0",
+        "tokenizers": "0.23.3",
+        "torch": "2.14.1",
+        "tqdm": "4.70.1",
+        "transformers": "5.20.0",
+        "typer": "0.27.3",
+        "typing-extensions": "4.16.0"
+      },
+      "requirements_file": "requirements-embeddings.txt"
+    },
+    "embedding": {
+      "fingerprint": "0af45317a40371bf4eff25512ace4630b9ca714585aa7e63554e9ddfecaea6bf",
+      "identity": {
+        "dimension": 384,
+        "dtype": "float32",
+        "file_digests": [
+          [
+            "1_Pooling/config.json",
+            "d1caf60c96f5fba2157c0c26b76d80818fad6cf0b8eb5e73ec372ff9818eba5c"
+          ],
+          [
+            "config.json",
+            "094f8e891b932f2000c92cfc663bac4c62069f5d8af5b5278c4306aef3084750"
+          ],
+          [
+            "config_sentence_transformers.json",
+            "940d5f50db195fa6e5e6a4f122c095f77880de259d74b14a65779ed48bdd7c56"
+          ],
+          [
+            "model.safetensors",
+            "3c9f31665447c8911517620762200d2245a2518d6e7208acc78cd9db317e21ad"
+          ],
+          [
+            "modules.json",
+            "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf"
+          ],
+          [
+            "sentence_bert_config.json",
+            "84e39fda68ccbff05bfa723ae9c0e70e23e2ec373b76e0f8c6e71af72a693cbf"
+          ],
+          [
+            "special_tokens_map.json",
+            "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3"
+          ],
+          [
+            "tokenizer.json",
+            "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66"
+          ],
+          [
+            "tokenizer_config.json",
+            "9261e7d79b44c8195c1cada2b453e55b00aeb81e907a6664974b4d7776172ab3"
+          ],
+          [
+            "vocab.txt",
+            "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+          ]
+        ],
+        "format": "autoshield.embedding_config.v1",
+        "max_seq_length": 512,
+        "model_id": "BAAI/bge-small-en-v1.5",
+        "model_revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+        "normalize": true,
+        "passage_prefix": "",
+        "pooling": "cls",
+        "query_instruction": "Represent this sentence for searching relevant passages: ",
+        "similarity": "cosine",
+        "weights_sha256": "3c9f31665447c8911517620762200d2245a2518d6e7208acc78cd9db317e21ad"
+      },
+      "runtime_versions": {
+        "huggingface-hub": "1.33.0",
+        "numpy": "2.5.4",
+        "safetensors": "0.8.0",
+        "sentence-transformers": "6.1.0",
+        "tokenizers": "0.23.3",
+        "torch": "2.14.1",
+        "transformers": "5.20.0"
+      }
+    },
+    "evaluation": {
+      "decision_rules": [
+        "Strict labels are primary; strict-plus-lenient is a sensitivity analysis only.",
+        "Report counts of questions answered at rank <= k beside every percentage; no significance claims.",
+        "Behaviour cases are reported separately and never mixed into Recall or MRR; no abstention claim is made because no abstention rule was chosen on development data.",
+        "Systems that lose to the keyword baselines are reported. No setting is changed after any v3 result is seen."
+      ],
+      "label_sets": [
+        "strict (primary)",
+        "strict_plus_lenient (sensitivity)"
+      ],
+      "metrics": [
+        "recall_at_1",
+        "recall_at_3",
+        "recall_at_5",
+        "mrr",
+        "hit_at_k_counts",
+        "full_recall_at_k_counts"
+      ],
+      "systems": [
+        "S1 fts5-bm25-v1",
+        "S2 fts5-bm25-v2 (top2_sum)",
+        "S3 semantic, one ranking over all documents",
+        "S4 semantic, lane-specific (CWE-only cases on the weakness lane, CAPEC-only cases on the attack-pattern lane)",
+        "S5 RRF (k=60) of the two lane rankings of the same semantic retriever"
+      ]
+    },
+    "implementation": {
+      "files": {
+        "knowledge/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "knowledge/chunking.py": "e848664649cdd732a88462b7712f820e9214df2376f9faf4e8b9ff4ca914e102",
+        "knowledge/schema.py": "077d5a7544c129b8ed525a36f5813960b6e72a5b561f561c737cbbb6be89a62c",
+        "knowledge/store.py": "7bb85b04a45784dbaba28f09ae40ca847b1b3c10eb9a923962ae4345e2694f03",
+        "requirements-embeddings.txt": "2848be3fe41230858d5307ca92d04c536d0369a136c70e8e1b2ab8e45f72f813",
+        "retrieval/__init__.py": "a8a06c309983c3b3d435e50cd4c48ac7c49e5d099d946d0e0a16d15daf82d261",
+        "retrieval/benchmark_v2.py": "43347b0e3282d90b4624a292ee5129caf1f333c05ce43da87e5774140bab0a14",
+        "retrieval/benchmark_v3.py": "c355264479fd4c8c1e67c39244211174db9da6ca6126e5665846717c2f79f365",
+        "retrieval/comparison.py": "5086e2cd99004b788f85420e714c2c1039f318623693f287836f342c85615e6b",
+        "retrieval/contract.py": "51ac37cb6b44c5b5c2e7a47a2e49d06e24e3835fbb952bc2af2df7d5b1bebad7",
+        "retrieval/embeddings.py": "34861020de4a733710dde6eff9ed9b7b5d3976ee0949f398a4b97d33ef79cfe5",
+        "retrieval/embeddings_st.py": "344d7ed83c2eaec2e90445da11d9d56305748fed5ebf3eed0fe9503ea6e1731d",
+        "retrieval/evaluation.py": "52e6b9ab02c61f53126ad74ff7e58bccfc1bf55ae4564f86d25f21f6c3ad95de",
+        "retrieval/evaluation_v2.py": "0a56d5d743005e376863954d56fbe04f4a0e8e8bcbf5892b4ffc699fc02737ed",
+        "retrieval/freeze.py": "4eb5db6b6169e13c0821c519fd57a3e8f16a71f02f5cfdcf2c927b04560ae43b",
+        "retrieval/fts5.py": "0456aa5c58991007aaedf9458dba65df5e59324acc62382d64ad7a8027ad6725",
+        "retrieval/fts5_v2.py": "7c5e75c38c5604b4c9af44c019d38cf9d82de39338b13cc3c1209e556f7e802e",
+        "retrieval/lanes.py": "13ce6b166a3d0ad83dccad409a61e66bbc55395ddf90b380d0e3ff141f69fef0",
+        "retrieval/query_builder.py": "6bbd4bd8895d1a9ce567c457297814da6378ca80e83e485c611c176e8bc1abd9",
+        "retrieval/rrf.py": "dfa43afd9cb79ef75763447e16cacc96c1d8aa6eaf95fde07030813a01c62f0f",
+        "retrieval/semantic.py": "11cfdb2f2b407a42c06e4b21f4805d8096b79fd5f5956fdd4e78fac9a1be95cc",
+        "retrieval/vector_cache.py": "9ddba5916e6e403e1825d1dbdf3c0ce68bffe72256b1f194a0aae33a12d2f5ec",
+        "scripts/download_embedding_model.py": "0447f6070e3aed6589fbd8e7e88e86a8320d019c96b461b27a3975aa7bc42960",
+        "scripts/run_semantic_comparison.py": "2be197c6466d6768ba49a0104882dc61c6b507b386fd72422aa5ff7a32b8d581",
+        "scripts/run_semantic_final.py": "80a8cbe238b745ce7083d4496435a3518b978ecaedbbcce87339da07099d01f2"
+      },
+      "fingerprint": "23f82cf70b25b7b4623ce3ffc8c66114b7fff0fdcec6b08f0a22b4775cba80eb"
+    },
+    "retrieval": {
+      "cache_format": "autoshield.embedding_cache.v1",
+      "chunk_to_document_rule": "best_chunk",
+      "chunker_version": "char-structure-v1",
+      "diagnostic_ks": [
+        10
+      ],
+      "fts5_v1": "fts5-bm25-v1",
+      "fts5_v2": "fts5-bm25-v2, default aggregation (top2_sum)",
+      "ks": [
+        1,
+        3,
+        5
+      ],
+      "lane_depth": 100,
+      "lanes": {
+        "attack_pattern": [
+          "attack_pattern"
+        ],
+        "weakness": [
+          "weakness"
+        ]
+      },
+      "max_chunks_per_item": 3,
+      "retrieve_limit": 10,
+      "rrf": {
+        "fusion_level": "source documents, ranks only",
+        "k": 60,
+        "tie_break": "higher rrf; smaller best lane rank; lane order; doc_id"
+      },
+      "similarity": "cosine (dot product of unit vectors, float64)"
+    }
+  },
+  "frozen_at_utc": "2026-10-16T05:12:48Z",
+  "frozen_sha256": "bed5b838b1b6a5de738269e5c1e881bed722e671ac97d70012262c4d24a8ddea",
+  "git_head_informational": "0e5b049b231ce1ea19dd1858f1a3751c36c86ab0",
+  "note": "Written before the final evaluation. The 'frozen' block is compared field by field with the live state; any difference blocks the run. The v3 labels are single-pass AI labels, not blind, not independently reviewed. A 23-document, hand-curated corpus and 30 AI-labelled questions; results do not show generalisation.",
+  "record_sha256": "7e9c50c7cdce107263829157b15bfdea821f9c1dd0b18368d86a9c79b26bb199"
+}

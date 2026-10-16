@@ -1,0 +1,418 @@
+{
+  "format": "autoshield.retrieval_annotation_sheet.v2",
+  "instructions": "Label each question with ALL relevant document IDs from corpus_documents, following ANNOTATION_GUIDE_v2.md. Use an empty list if no document is relevant. Do not run any search system or look at retrieval results first.",
+  "corpus_documents": [
+    {
+      "doc_id": "capec:CAPEC-108",
+      "title": "Command Line Execution through SQL Injection"
+    },
+    {
+      "doc_id": "capec:CAPEC-115",
+      "title": "Authentication Bypass"
+    },
+    {
+      "doc_id": "capec:CAPEC-126",
+      "title": "Path Traversal"
+    },
+    {
+      "doc_id": "capec:CAPEC-137",
+      "title": "Parameter Injection"
+    },
+    {
+      "doc_id": "capec:CAPEC-242",
+      "title": "Code Injection"
+    },
+    {
+      "doc_id": "capec:CAPEC-248",
+      "title": "Command Injection"
+    },
+    {
+      "doc_id": "capec:CAPEC-66",
+      "title": "SQL Injection"
+    },
+    {
+      "doc_id": "capec:CAPEC-664",
+      "title": "Server Side Request Forgery"
+    },
+    {
+      "doc_id": "capec:CAPEC-7",
+      "title": "Blind SQL Injection"
+    },
+    {
+      "doc_id": "capec:CAPEC-88",
+      "title": "OS Command Injection"
+    },
+    {
+      "doc_id": "cwe:CWE-20",
+      "title": "Improper Input Validation"
+    },
+    {
+      "doc_id": "cwe:CWE-22",
+      "title": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+    },
+    {
+      "doc_id": "cwe:CWE-23",
+      "title": "Relative Path Traversal"
+    },
+    {
+      "doc_id": "cwe:CWE-287",
+      "title": "Improper Authentication"
+    },
+    {
+      "doc_id": "cwe:CWE-306",
+      "title": "Missing Authentication for Critical Function"
+    },
+    {
+      "doc_id": "cwe:CWE-74",
+      "title": "Improper Neutralization of Special Elements in Output Used by a Downstream Component ('Injection')"
+    },
+    {
+      "doc_id": "cwe:CWE-77",
+      "title": "Improper Neutralization of Special Elements used in a Command ('Command Injection')"
+    },
+    {
+      "doc_id": "cwe:CWE-78",
+      "title": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+    },
+    {
+      "doc_id": "cwe:CWE-79",
+      "title": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+    },
+    {
+      "doc_id": "cwe:CWE-862",
+      "title": "Missing Authorization"
+    },
+    {
+      "doc_id": "cwe:CWE-89",
+      "title": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
+    },
+    {
+      "doc_id": "cwe:CWE-918",
+      "title": "Server-Side Request Forgery (SSRF)"
+    },
+    {
+      "doc_id": "cwe:CWE-94",
+      "title": "Improper Control of Generation of Code ('Code Injection')"
+    }
+  ],
+  "items": [
+    {
+      "case_id": "RB-001",
+      "question": "A web search endpoint received a request whose message parameter contained a quote followed by an always-true comparison, and it still answered with HTTP 200 and a larger response body than ordinary searches. What describes a database query being assembled unsafely from request input?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-002",
+      "question": "Repeated requests to one parameter differed only by true-or-false conditions appended to the value. The application showed no error text, but response sizes and timing changed according to the condition, as if the database were answering yes-or-no questions.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-003",
+      "question": "File download requests carried repeated parent-directory sequences in the filename parameter, and the server returned a file that is not inside the intended download folder.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-004",
+      "question": "The filename parameter was percent-encoded so that it climbed out of the current directory with dot-dot-slash style steps, aiming at system configuration files rather than the files the page serves.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-005",
+      "question": "An image-import feature accepted a web address from the user, and the server then made an outbound request to a private internal address and to the cloud instance metadata address, returning the fetched content to the requester.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-006",
+      "question": "A parameter value contained a semicolon followed by a shell command, and the web server's process started a child process whose arguments matched that text.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-007",
+      "question": "Text supplied by a user in a template field was evaluated by the application's scripting engine, and the server then ran statements written by the requester inside its own runtime.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-008",
+      "question": "An administrative function responded successfully to requests that carried no session cookie and no credentials at all.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-009",
+      "question": "A signed-in ordinary user retrieved another user's records by changing an identifier in the address, and the server never checked whether that user was permitted to see them.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-010",
+      "question": "A parameter containing an HTML script element was echoed without escaping inside the response page, so it would run in the browser of anyone who opened the crafted link.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-011",
+      "question": "Request parameter values were altered and extra parameters were appended so that the backend processed the request differently from what the page intended.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-012",
+      "question": "Malformed, oversized and special-character values were accepted by many endpoints without any check of their form, length or allowed characters.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-013",
+      "question": "Investigate a suspected SQL injection against the search endpoint: the request contained an OR 1 equals 1 style condition.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-014",
+      "question": "Blind SQL injection is suspected because response timing differs between boolean conditions injected into one parameter.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-015",
+      "question": "The SQL injection appears to have reached the operating system, because commands ran on the database host through a database feature.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-016",
+      "question": "Path traversal attempt: download requests used dot-dot-slash sequences to reach files outside the web root.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-017",
+      "question": "Server-side request forgery is suspected: the application fetched a URL chosen by the requester and returned the response.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-018",
+      "question": "OS command injection in a network diagnostics form: the submitted host value included shell metacharacters.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-019",
+      "question": "Generic command injection: a command string built from request parameters was executed, and the interpreter involved is not yet known.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-020",
+      "question": "Authentication bypass: a protected page loaded without a valid login after the request was altered.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-021",
+      "question": "Reflected cross-site scripting in the search results page: the query value appeared unescaped in the HTML.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB-022",
+      "question": "Special characters were passed unneutralized to some downstream interpreter, and the kind of interpreter is not yet known: a general injection weakness.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-D01",
+      "question": "Before injecting anything, the intruder first inventoried the application's links with a web crawler and captured network traffic to find which inputs feed database queries. What describes that opening exploration step?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-D02",
+      "question": "The database logged an unusually large number of failed or malformed queries that were traced back to user-supplied input.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-D03",
+      "question": "Which advice recommends a vetted library or framework that encodes output, so that user input cannot turn into executable markup inside a page?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-D04",
+      "question": "Which guidance suggests describing acceptable inputs with a formal language and building recognizers, with parsing kept as its own layer between raw input and internal data?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-D05",
+      "question": "CWE-89",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-D06",
+      "question": "cwe-862",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-D07",
+      "question": "CWE\u201179",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H01",
+      "question": "Code supplied through input ran inside the application with access to resources that the sender could not reach directly, and in some cases that code decided who was authenticated. What consequences are documented for this kind of weakness?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H02",
+      "question": "A server fetched addresses chosen by an outsider and thereby acted as a stepping stone to hosts and ports behind a firewall that the outsider could not reach directly. What consequences does the reference material describe?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H03",
+      "question": "Which mitigation advice replaces building queries by joining strings with parameterized queries, prepared statements or similar structured mechanisms that keep data separate from code?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H04",
+      "question": "Which hardening advice says to use library calls or language APIs instead of passing data to an external process or shell, and to run the code inside a jail or sandbox?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H05",
+      "question": "How can a function that should require a proven user identity, yet never asks for one, be found through testing such as manual penetration testing or threat modelling?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H06",
+      "question": "Application or database logs showed near-identical queries whose logical conditions became more complex over time. What do the references say about such indicators?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H07",
+      "question": "Which attack pattern begins by finding a web application feature that accepts user input and retrieves data from the server, then examines the URL format of GET requests?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H08",
+      "question": "The database server's extended stored procedure for running shell commands was enabled and was invoked from injected SQL. What hardening step is recommended?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H09",
+      "question": "Which advice recommends adopting an established authentication framework or library, such as an OWASP security API, rather than writing custom login checks?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H10",
+      "question": "Role-based access control was in place, yet a user could still act against other users holding the same role. Which weakness description warns about this limitation?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H11",
+      "question": "Which weakness is specifically about relative sequences such as dot-dot that resolve outside a restricted directory, as opposed to the general class of restricted-directory escapes?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H12",
+      "question": "Unexpected values supplied to the application made it crash and consume excessive CPU and memory. Which weakness lists denial of service among its consequences?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H13",
+      "question": "Why must an attacker first learn the target's operating system before trying to climb out of a directory, so that the correct file separator is used?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H14",
+      "question": "How does injecting new code into a running program differ from code inclusion, where a reference to a code file is replaced and later loaded by the target?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H15",
+      "question": "As a safeguard for investigating a compromise afterwards, which advice says to write the audit log to a separate host?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H16",
+      "question": "Which mitigation says to allowlist the DNS names or addresses of every service the application must contact, and to verify the response before returning it?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H17",
+      "question": "SSRF",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H18",
+      "question": "XSS",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H19",
+      "question": "CAPEC-126",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H20",
+      "question": "difference between CWE-77 and CWE-78",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-D11",
+      "question": "How should TLS certificates be rotated for a private container registry?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H22",
+      "question": "Which Kubernetes admission controller blocks privileged pods from starting?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H23",
+      "question": "What is the recommended minimum length for user passwords?",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    },
+    {
+      "case_id": "RB2-H24",
+      "question": "Describe how ransomware encrypts files on a backup server.",
+      "reviewer_relevant_doc_ids": null,
+      "reviewer_note": ""
+    }
+  ]
+}

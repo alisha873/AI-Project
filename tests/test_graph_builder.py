@@ -259,3 +259,48 @@ def test_builder_creates_configured_api_database_dependency():
         == {"ip:172.19.0.6", "ip:172.19.0.3"}
         for edge in graph.edges
     )
+
+
+def test_builder_reads_utf8_docker_json_regardless_of_platform_encoding(
+    tmp_path,
+):
+    """Docker JSON is UTF-8. Reading it must not depend on the OS default
+    encoding (Windows uses cp1252, which cannot decode byte 0x9d)."""
+    import json
+
+    from graph.builder import DeterministicGraphBuilder
+
+    incident = tmp_path / "incident_001"
+    (incident / "docker").mkdir(parents=True)
+    (incident / "normalized").mkdir()
+
+    # A curly quote (U+201D) is encoded in UTF-8 as e2 80 9d. Byte 0x9d is
+    # undefined in cp1252, so a default-encoding read fails on Windows.
+    container = {
+        "Id": "abc123",
+        "Name": "/autoshield-api",
+        "Config": {
+            "Image": "example/api:1",
+            "Labels": {"org.opencontainers.image.created": "\u201d2025-09-04"},
+        },
+        "State": {"Status": "running"},
+    }
+    (incident / "docker" / "containers_after_attack.json").write_bytes(
+        json.dumps([container], ensure_ascii=False).encode("utf-8")
+    )
+    (incident / "docker" / "network_after_attack.json").write_bytes(
+        json.dumps({"Name": "caf\u00e9-net"}, ensure_ascii=False).encode("utf-8")
+    )
+    (incident / "normalized" / "events.jsonl").write_bytes(
+        (
+            json.dumps(
+                {"event_id": "e1", "event_type": "note", "attributes": {"text": "\u201d"}},
+                ensure_ascii=False,
+            )
+            + "\n"
+        ).encode("utf-8")
+    )
+
+    graph = DeterministicGraphBuilder().build(incident)
+
+    assert any(node.node_id == "container:autoshield-api" for node in graph.nodes)

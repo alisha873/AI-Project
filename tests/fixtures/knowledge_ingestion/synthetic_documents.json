@@ -1,0 +1,71 @@
+{
+  "format": "autoshield.local_documents.v1",
+  "description": "SYNTHETIC TEST DATA invented for AutoShield software tests. These records are NOT real CWE, CAPEC or OWASP entries and are not an authoritative security corpus. Their identifiers all start with SYNTHETIC-. The all-zero artifact_sha256 is a placeholder: no real artifact exists.",
+  "documents": [
+    {
+      "source": "cwe",
+      "source_id": "SYNTHETIC-0001",
+      "source_version": "synthetic-fixture-v1",
+      "doc_type": "weakness",
+      "title": "[SYNTHETIC TEST DATA] Invented weakness about quokkaflux handling",
+      "content": "SYNTHETIC TEST DATA: invented for software tests; not an authoritative cybersecurity record.\n\nDescription: this invented weakness describes a component that mishandles quokkaflux input. It exists only so that tests have a distinctive term to search for.\n\nConsequences: an invented consequence is that quokkaflux values are accepted without any check. No real software behaves this way.\n\nMitigation: an invented mitigation is to validate every quokkaflux value before use. This sentence only adds length so that the document is split into several chunks.",
+      "source_url": null,
+      "license": "synthetic-test-data (no real source)",
+      "source_modified": null,
+      "references": [],
+      "provenance": {
+        "origin_kind": "bundled_fixture",
+        "artifact_path": "tests/fixtures/knowledge_ingestion/synthetic_documents.json",
+        "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "adapter": "local_json",
+        "adapter_version": "1",
+        "retrieved_at_utc": "2026-10-16T00:00:00Z",
+        "ingested_at_utc": "2026-10-16T00:00:00Z"
+      }
+    },
+    {
+      "source": "capec",
+      "source_id": "SYNTHETIC-0002",
+      "source_version": "synthetic-fixture-v1",
+      "doc_type": "attack_pattern",
+      "title": "[SYNTHETIC TEST DATA] Invented attack pattern about marmotvolt abuse",
+      "content": "SYNTHETIC TEST DATA: invented for software tests; not an authoritative cybersecurity record.\n\nSummary: this invented attack pattern describes abuse of a marmotvolt feature. It is not a description of any real attack technique.\n\nPrerequisites: an invented prerequisite is access to a marmotvolt endpoint.\n\nExecution flow: invented steps are listed here only to give the document some length so that tests can observe several chunks for it.",
+      "license": "synthetic-test-data (no real source)",
+      "references": [
+        {
+          "relation": "CanExploit",
+          "target_source": "cwe",
+          "target_source_id": "SYNTHETIC-0001"
+        }
+      ],
+      "provenance": {
+        "origin_kind": "bundled_fixture",
+        "artifact_path": "tests/fixtures/knowledge_ingestion/synthetic_documents.json",
+        "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "adapter": "local_json",
+        "adapter_version": "1",
+        "retrieved_at_utc": "2026-10-16T00:00:00Z",
+        "ingested_at_utc": "2026-10-16T00:00:00Z"
+      }
+    },
+    {
+      "source": "owasp",
+      "source_id": "SYNTHETIC-0003",
+      "source_version": "synthetic-fixture-v1",
+      "doc_type": "guideline",
+      "title": "[SYNTHETIC TEST DATA] Invented guideline about lemurgrid configuration",
+      "content": "SYNTHETIC TEST DATA: invented for software tests; not an authoritative cybersecurity record.\n\nGuidance: this invented guideline says that lemurgrid settings should be reviewed. It is not real security guidance.\n\nRationale: the rationale is invented and only provides length for the chunker.",
+      "license": "synthetic-test-data (no real source)",
+      "references": [],
+      "provenance": {
+        "origin_kind": "bundled_fixture",
+        "artifact_path": "tests/fixtures/knowledge_ingestion/synthetic_documents.json",
+        "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "adapter": "local_json",
+        "adapter_version": "1",
+        "retrieved_at_utc": "2026-10-16T00:00:00Z",
+        "ingested_at_utc": "2026-10-16T00:00:00Z"
+      }
+    }
+  ]
+}

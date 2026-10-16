@@ -23,7 +23,7 @@ MODEL_DIR = OUTPUT / "models"
 def main():
     assignments = [
         ScenarioSplit.model_validate(item)
-        for item in json.loads((DATA / "gnn_splits.json").read_text())
+        for item in json.loads((DATA / "gnn_splits.json").read_text(encoding="utf-8"))
     ]
 
     graphs, truths = [], []
@@ -31,10 +31,10 @@ def main():
         sid = assignment.scenario_id
         graphs.append(ScenarioGraphRecord.model_validate({
             "scenario_id": sid,
-            "graph": json.loads((DATA / f"{sid}_graph.json").read_text()),
+            "graph": json.loads((DATA / f"{sid}_graph.json").read_text(encoding="utf-8")),
         }))
         truths.append(ScenarioGroundTruth.model_validate(
-            json.loads((DATA / f"{sid}_ground_truth.json").read_text())
+            json.loads((DATA / f"{sid}_ground_truth.json").read_text(encoding="utf-8"))
         ))
 
     graph_by_scenario = {record.scenario_id: record.graph for record in graphs}

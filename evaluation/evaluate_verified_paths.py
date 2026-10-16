@@ -20,7 +20,7 @@ OUT = ROOT / "evaluation/results/verified_path_comparison.json"
 
 
 def load_graph(path: Path):
-    doc = json.loads(path.read_text())
+    doc = json.loads(path.read_text(encoding="utf-8"))
     return AttackGraph.model_validate(doc.get("graph", doc))
 
 
@@ -128,12 +128,12 @@ def main():
     evaluate_case.gcn = base.build_gcn(base.checkpoint_state(MODEL))
 
     # Use the previously recorded, independently documented incident_001 path.
-    incident001_report = json.loads((ROOT / "evaluation/results/attack_path_reconstruction.json").read_text())
+    incident001_report = json.loads((ROOT / "evaluation/results/attack_path_reconstruction.json").read_text(encoding="utf-8"))
     expected001 = incident001_report["ground_truth_path"]
 
     # This second label is specifically an observed HTTP request-routing path,
     # not a lateral-movement or compromise-impact path.
-    gt045 = json.loads((ROOT / "evaluation/results/incident_045_path_ground_truth.json").read_text())
+    gt045 = json.loads((ROOT / "evaluation/results/incident_045_path_ground_truth.json").read_text(encoding="utf-8"))
     expected045 = gt045["ground_truth_path"]
 
     cases = [

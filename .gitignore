@@ -37,6 +37,14 @@ incident_data/
 vector_store/
 embeddings/
 
+# Phase 10 knowledge base: raw downloaded MITRE archives and generated databases
+data/knowledge_sources/raw/
+data/knowledge_db/
+
+# Phase 11C: downloaded embedding model files and the rebuildable derived vector cache
+data/models/
+data/embedding_cache/
+
 # PCAP
 *.pcap
 *.pcapng
@@ -71,3 +79,9 @@ temp/
 !baseline/network/**
 !baseline/system/
 !baseline/system/**
+
+# incident_001 is the reference incident used by the test suite and must be versioned.
+!incident_001/logs/
+!incident_001/logs/**
+!incident_001/network/
+!incident_001/network/**
