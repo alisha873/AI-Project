@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "incident_id": "incident_001",
+  "retrieval_methods_used": [
+    "fts5-bm25-v1"
+  ],
+  "production_retriever": "fts5-bm25-v1",
+  "uses_only_production_retriever": true,
+  "planning_requested": true,
+  "grounded_answer_statuses": [
+    {
+      "finding_index": 0,
+      "status": "answered"
+    }
+  ],
+  "skipped_findings": [],
+  "nothing_planned_reason": null,
+  "grounded_answer_diagnostics": [],
+  "plans": [
+    {
+      "incident_id": "incident_001",
+      "finding_index": 0,
+      "status": "rejected_grounding",
+      "message": "The plan was rejected: 1 grounding issue(s).",
+      "error_kind": null,
+      "llm": "GeminiLLMClient(gemini-3.5-flash-lite)",
+      "request_sent": true,
+      "planner_model_called": true,
+      "plan": null,
+      "validation": {
+        "passed": false,
+        "note": "Validation checks that identifiers exist and sit in the right category, that proposals are honest about missing configuration and risk, and screens some high-risk wording. It does not prove that a recommendation is correct, sufficient or safe.",
+        "issues": [
+          {
+            "code": "unsupported_compromise_claim",
+            "location": "proposals[0].confidence.rationale",
+            "message": "asserts 'successful exploitation'; no event in this input states that outcome"
+          }
+        ]
+      },
+      "raw_response": "{\n  \"schema_version\": \"1.0\",\n  \"incident_id\": \"incident_001\",\n  \"outcome\": \"proposals\",\n  \"insufficient_reason\": \"\",\n  \"proposals\": [\n    {\n      \"title\": \"Parameterize SQL Queries and Validate Input\",\n      \"description\": \"Ensure all database queries use parameterized interfaces or prepared statements, and validate user-controllable input to prevent improper neutralization of special elements in SQL commands.\",\n      \"problem_addressed\": \"Potential SQL injection attempts observed in HTTP request parameters.\",\n      \"affected_area\": {\n        \"state\": \"identified\",\n        \"description\": \"The `/search` and `/api/search` endpoints handled by the application and nginx containers.\"\n      },\n      \"observed_evidence_ids\": [\n        \"application-4\",\n        \"nginx-19\"\n      ],\n      \"hypothesis_ids\": [\n        \"H1\"\n      ],\n      \"configuration_fact_ids\": [\n        \"CFG-3\",\n        \"CFG-12\",\n        \"CFG-15\",\n        \"CFG-19\"\n      ],\n      \"reference_ids\": [\n        \"cwe:CWE-89#0001\",\n        \"capec:CAPEC-7#0000\",\n        \"capec:CAPEC-66#0003\"\n      ],\n      \"rationale\": \"Observed HTTP requests contain SQL-injection-like query strings (`message=%27%20OR%20%271%27%3D%271`), aligning with CWE-89 and CAPEC-7/CAPEC-66 patterns where input strings probe the application's query handling.\",\n      \"reference_support_limits\": \"The cited references describe SQL injection weaknesses and attack techniques conceptually; they do not establish that the application query construction is actually vulnerable in this specific deployment.\",\n      \"severity\": {\n        \"level\": \"high\",\n        \"rationale\": \"SQL injection can lead to unauthorized data access, authentication bypass, or command execution as noted in CWE-89.\"\n      },\n      \"expected_security_effect\": \"Reduces the risk of successful SQL injection by ensuring that user input is treated as data rather than executable query syntax.\",\n      \"operational_side_effects\": [\n        \"Changes to application database query logic may require thorough regression testing.\"\n      ],\n      \"implementation_steps\": [\n        {\n          \"text\": \"Review application code handling `/search` and `/api/search` query parameters to ensure parameterized queries or ORM query builders are used instead of dynamic SQL string concatenation.\",\n          \"origin\": \"general_practice\"\n        },\n        {\n          \"text\": \"Implement strict input validation on user-controllable input fields involved in database queries.\",\n          \"origin\": \"cited_reference\"\n        }\n      ],\n      \"configuration_dependent\": true,\n      \"disruption\": \"medium\",\n      \"reversibility\": \"reversible\",\n      \"preconditions\": [\n        \"Human review of the remediation plan\",\n        \"Access to the application source code repository for review and modification\"\n      ],\n      \"dependencies\": [],\n      \"unresolved_questions\": [\n        \"Whether the application backend currently uses parameterized queries or unsafe string concatenation\",\n        \"Whether the query execution succeeded against the database\"\n      ],\n      \"validation\": {\n        \"procedure\": \"Perform authenticated and unauthenticated code review and run controlled positive/negative test cases against the search endpoints in an authorized test lab.\",\n        \"expected_result\": \"Special SQL characters passed in the search query parameter are safely handled as literal strings without altering the structure of the executed database query.\"\n      },\n      \"confidence\": {\n        \"level\": \"low\",\n        \"rationale\": \"The hypothesis is unconfirmed, as only request patterns were observed without server-side confirmation of unsafe query construction or successful exploitation.\"\n      }\n    }\n  ],\n  \"unresolved_questions\": [\n    \"Are application database queries constructed using safe parameterization mechanisms?\",\n    \"Did the database execute the injected expression successfully?\"\n  ],\n  \"limitations\": [\n    \"Evidence is limited to HTTP request logs showing attempt indicators; no database logs or application source code inspection results were available.\"\n  ]\n}",
+      "raw_response_warning": "raw_response is the model's UNVALIDATED output that was NOT accepted (the plan was rejected). It may be wrong, may contain fabricated or excluded ids and may echo sensitive incident details. Credential-like strings were redacted, nothing else was altered. It is kept only for diagnosis and is not evidence."
+    }
+  ],
+  "advisory_only": true,
+  "execution_performed": false,
+  "ground_truth_used": false,
+  "caveats": [
+    "This plan is advisory. Every proposal is a proposal only: nothing was executed, no file or container was changed and no test was launched.",
+    "Hypotheses stay hypotheses. A proposal does not confirm a root cause, and reference passages are general knowledge that neither confirm nor refute what happened in the incident.",
+    "Reference passages come from a small curated CWE/CAPEC subset and cannot be treated as comprehensive Docker, Juice Shop or configuration-hardening guidance.",
+    "Grounding validation checks that identifiers exist and sit in the right category and screens some high-risk wording; it does not prove that a recommendation is correct, sufficient or safe.",
+    "Whether a proposal reduces risk has not been tested; validation belongs to a later phase and its success under tested conditions would not be a universal security guarantee."
+  ]
+}

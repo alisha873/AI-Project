@@ -1,0 +1,89 @@
+{
+  "assessed_at_utc": "2026-10-23T05:48:49Z",
+  "caller_confidence_ignored": false,
+  "caller_confidence_rejected": false,
+  "claim": "No claim was assessed.",
+  "claim_id": "not_assessed",
+  "confidence_used": false,
+  "contradicting_evidence_ids": [],
+  "decision": "not_evaluated",
+  "eligible_for_downstream": false,
+  "evidence_index": [
+    {
+      "evidence_id": "control_request_succeeds",
+      "exclusion_reason": null,
+      "role": "oracle_condition",
+      "source": "validation_report.oracle.conditions",
+      "used_as": "context"
+    },
+    {
+      "evidence_id": "probe_response_parseable",
+      "exclusion_reason": null,
+      "role": "oracle_condition",
+      "source": "validation_report.oracle.conditions",
+      "used_as": "context"
+    },
+    {
+      "evidence_id": "record_outside_literal_match",
+      "exclusion_reason": null,
+      "role": "oracle_condition",
+      "source": "validation_report.oracle.conditions",
+      "used_as": "context"
+    }
+  ],
+  "evidence_provenance": "dry_run",
+  "evidence_sufficiency": "not_applicable",
+  "execution_mode": "dry-run",
+  "general_security_guarantee": false,
+  "handoff_version": "1.1",
+  "incident_id": "incident_001",
+  "limitations": [
+    "This decision applies only to the named claim, scenario, lab state and conditions. It is not a universal security guarantee and it does not mean residual risk is zero.",
+    "A result that the objective was not observed applies only to the tested conditions. It is not proof that the application is secure or that the objective is impossible.",
+    "A proposed remediation is not an applied remediation. Phase 13 does not apply remediation and does not verify an attestation.",
+    "No numerical confidence score is computed. A caller-supplied confidence value cannot change this decision.",
+    "No check was executed. This is a dry run, not a live security finding."
+  ],
+  "live_evidence": false,
+  "llm_used": false,
+  "missing_evidence": [
+    "No remediation plan was available."
+  ],
+  "network_used": false,
+  "not_usable_reasons": [
+    "status_not_conclusive",
+    "check_not_completed",
+    "not_post_remediation",
+    "remediation_not_attested",
+    "transport_not_live",
+    "legacy_report_without_identity_provenance",
+    "report_not_issued_by_runner"
+  ],
+  "rationale": "No remediation plan was available. Proposed remediation was not executed, and no check was assessed.",
+  "reason_codes": [
+    "validation_not_performed"
+  ],
+  "remediation_application_verified": false,
+  "remediation_effectiveness_proven": false,
+  "scenario_id": "sqli-search-incident-001",
+  "schema_version": "1.0",
+  "security_guarantee": false,
+  "supporting_evidence_ids": [],
+  "transport_kind": "none",
+  "upstream_limitations": [
+    "A validation result describes only the lab state, scenario, request and conditions that were actually tested. It is not a universal security guarantee and it does not mean residual risk is zero.",
+    "A failed or absent attack observation is not proof that the objective is unachievable: other payloads, encodings, endpoints or states were not tested.",
+    "A proposed remediation is not an applied remediation. Phase 13 does not apply remediation; whether and how one was applied is stated by the attestation recorded here and is not verified by Phase 13.",
+    "The free-text validation procedure written by the Phase 12 planner is never interpreted or executed.",
+    "The original objective comes from an operator-side metadata file, not from a model and not from the evaluation answer key. It describes the attack that was generated in the lab, which may not be what a real attacker would try.",
+    "Phase 13A performs no live validation: no check ran, no traffic was sent and nothing here demonstrates that any remediation is effective.",
+    "One probe value and one endpoint: not a survey of SQL-injection techniques.",
+    "The oracle looks at returned records only; it does not detect error-based, blind or second-order injection.",
+    "The definition was extracted by an AI assistant and has had no human review."
+  ],
+  "upstream_plan_status": null,
+  "upstream_reason_code": "remediation_plan_missing",
+  "upstream_status": "not_validated",
+  "usable_as_post_remediation_evidence": false,
+  "validation_run_id": "VAL-incident_001-11e8775f68af"
+}

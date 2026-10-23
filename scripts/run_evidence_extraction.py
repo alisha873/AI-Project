@@ -5,8 +5,24 @@ from pathlib import Path
 
 from agents.evidence_extraction import EvidenceExtractionAgent
 from evidence.context import EvidenceContextBuilder
-from llm.groq import GroqLLMClient
+from llm.gemini import GeminiLLMClient
 from llm.settings import LLMSettings
+
+
+def make_evidence_llm_client(settings: LLMSettings | None = None) -> GeminiLLMClient:
+    """Gemini client for evidence extraction. Does not read or fall back to a Groq key."""
+    settings = settings or LLMSettings()
+    provider = (settings.provider or "gemini").strip().lower()
+    if provider != "gemini":
+        raise ValueError(
+            f"LLM_PROVIDER is {provider!r}. Evidence extraction uses Gemini. "
+            "Set LLM_PROVIDER=gemini or leave it unset. GROQ_API_KEY is not used."
+        )
+    if not settings.gemini_api_key:
+        raise ValueError(
+            "GEMINI_API_KEY is missing. Set it in the local .env file or the environment."
+        )
+    return GeminiLLMClient(api_key=settings.gemini_api_key)
 
 
 def main() -> None:
@@ -14,19 +30,8 @@ def main() -> None:
     incident_dir = project_root / "incident_001"
 
     settings = LLMSettings()
-
-    if settings.provider.lower() != "groq":
-        raise ValueError(
-            "LLM_PROVIDER must be set to 'groq' in .env"
-        )
-
-    api_key = settings.groq_api_key or settings.api_key
-
-    if not api_key:
-        raise ValueError(
-            "GROQ_API_KEY or LLM_API_KEY is missing. "
-            "Check your local .env file."
-        )
+    # Fail on provider/key configuration before any incident file is treated as a model prompt.
+    llm_client = make_evidence_llm_client(settings)
 
     # Load only the controlled evidence context.
     # Ground truth is excluded by EvidenceContextBuilder.
@@ -45,12 +50,6 @@ def main() -> None:
     print(
         "Supporting artifacts available: "
         f"{len(context.evidence_artifacts)}"
-    )
-
-    # Make the real hosted-model call.
-    llm_client = GroqLLMClient(
-    model=settings.model,
-    api_key=api_key,
     )
 
     agent = EvidenceExtractionAgent(llm_client=llm_client)

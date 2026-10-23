@@ -162,8 +162,7 @@ _NEGATION_AFTER = re.compile(
 
 
 def _is_negated(text: str, start: int, end: int | None = None) -> bool:
-    # NOTE: shared with `remediation.text_checks`; its behaviour is relied on there. The validator in this
-    # module uses the stricter sentence-scoped `_is_negated_in_sentence` below.
+    # Used by `_is_negated_in_sentence`. Remediation wording screens call that sentence-scoped helper.
     if _NEGATION_BEFORE.search(text[max(0, start - 70):start]) is not None:
         return True
     return end is not None and _NEGATION_AFTER.match(text[end:end + 60]) is not None

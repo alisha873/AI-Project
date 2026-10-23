@@ -47,6 +47,14 @@ def report_digest(report: ValidationReport) -> str:
     return seals.report_key(report.model_dump(mode="json"))
 
 
+OBSERVATION_GATE_CODES = (
+    "not_an_observation_report",
+    "remediation_claim_present",
+    "post_remediation_state_present",
+    "post_remediation_gate_passed",
+)
+
+
 def evidence_gate_failures(
     report: object, *, tested_state: Literal["post_remediation", "pre_remediation"] = "post_remediation"
 ) -> list[str]:
@@ -70,4 +78,25 @@ def evidence_gate_failures(
         failures.append("identity_not_live_suitable")
     if not seals.is_report_issued(report_digest(report)):
         failures.append("report_not_issued_by_runner")
+    return failures
+
+
+def observation_gate_failures(report: object) -> list[str]:
+    """Why `report` is not a pre-remediation observation.
+
+    Passing the post-remediation gate, carrying proposals, or recording a post-remediation state keeps the
+    report out of this category. An empty list means it is observation evidence only.
+    """
+    if not isinstance(report, ValidationReport):
+        return ["not_an_observation_report", *GATE_REASON_CODES]
+    failures: list[str] = []
+    if report.report_kind != "pre_remediation_observation":
+        failures.append("not_an_observation_report")
+    failures.extend(evidence_gate_failures(report, tested_state="pre_remediation"))
+    if report.remediation.proposals or report.remediation.application.state != "not_applicable":
+        failures.append("remediation_claim_present")
+    if report.lab_state.post_remediation_state_id is not None:
+        failures.append("post_remediation_state_present")
+    if not evidence_gate_failures(report, tested_state="post_remediation"):
+        failures.append("post_remediation_gate_passed")
     return failures

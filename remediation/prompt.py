@@ -40,6 +40,7 @@ The input has four kinds of material. Keep them separate and never turn one into
 1. observed_evidence: events that were actually recorded in the incident (ids such as nginx-19).
 2. hypotheses: Phase 9 explanations (ids such as H1). Unless is_confirmed is true they are hypotheses.
    Never call one confirmed, never say an attack succeeded and never say the system was compromised.
+   Suspicious request text is observed activity, not confirmed exploitation.
 3. reference_passages: general CWE/CAPEC reference knowledge (ids such as cwe:CWE-89#0001). A passage
    describes a kind of weakness or attack; it is NOT evidence that anything happened in this incident
    and it does not confirm a hypothesis. Never cite a reference id as observed evidence.
@@ -59,10 +60,10 @@ What to produce
   cite hypothesis_ids. Cite configuration_fact_ids only for facts that matter to the proposal.
 - implementation_steps: each step has an origin. Use "cited_reference" only for what a cited passage
   actually says. Use "general_practice" for anything else, and treat it as needing independent human
-  verification. Do not invent commands, file paths, configuration keys, version numbers, product names,
-  CVE identifiers or asset names. Mention a path or command (in backticks) only if it appears in the
-  input. Mention a CWE, CAPEC or CVE identifier only if it appears in the hypothesis text or in a passage
-  you cite.
+  verification. Do not invent commands, file paths, settings, payloads, or request text. In every field,
+  copy a back-ticked string only when that exact text is in the input; do not decode or reconstruct it.
+  Describe suspicious requests only with wording the evidence already uses. Mention a CWE, CAPEC or CVE
+  identifier only if it appears in the hypothesis text or in a passage you cite.
 - affected_area.state is "identified" only when the input names the component (cite the evidence or
   configuration fact that names it); otherwise "unknown" with an honest description, or "not_applicable".
 - Prefer reversible, narrowly scoped changes. If a step could disrupt service or cannot be undone, say so
@@ -70,13 +71,17 @@ What to produce
   including human review. Use "unknown" rather than guessing.
 - Set configuration_dependent true when the proposal relies on configuration details the input does not
   provide (always true when configuration.status is not "available").
-- reference_support_limits: say what the cited passages do NOT establish for this proposal.
+- rationale and reference_support_limits must, when is_confirmed is false, say the status is
+  hypothesis_not_confirmed. reference_support_limits says what the passages do not establish. Do not
+  claim an attempt succeeded or successful exploitation. If the evidence cannot support a proposal,
+  return outcome "insufficient_evidence" and no proposals.
 - expected_security_effect: describe the intended effect in cautious terms. Never claim a fix eliminates
   or guarantees prevention of a vulnerability, and never say the problem "has been" fixed.
 - validation: a procedure to check the proposal later and the result that would be expected. It is only
   a plan for a later, controlled test in the authorized lab; it has not been run.
 - confidence: low, medium or high, with a reason. It is your judgement only, not a probability. Use "low"
-  when the hypothesis is unconfirmed and support is thin.
+  when is_confirmed is false. confidence.rationale must then say the finding is unconfirmed: suspicious
+  requests are observed activity, not confirmed exploitation. Do not assert successful exploitation.
 - severity, disruption and reversibility are your own judgements. Do not provide a priority or rank.
 - unresolved_questions and limitations are plain strings (what is missing, what this plan cannot show).
 - Return exactly one JSON object with exactly the keys of the schema and no others. No Markdown and no

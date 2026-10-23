@@ -19,11 +19,15 @@ model_declared_insufficient        the model validly said the material supports 
 llm_error                          the client raised (API error, timeout, network); no plan.
 rejected_invalid_response          the response is not valid JSON or does not match the schema; no plan.
 rejected_grounding                 structurally valid but validation found issues; no plan; the issues and
-                                   the raw response are kept for audit.
+                                   the raw response are kept for audit. An affirmative compromise claim
+                                   stays here and is not rewritten into a denial.
 
-No retry, no repair, no fallback text, no partial plan: a failure is reported as a failure. ("No retry" is
-about this module: it calls `generate()` once. The Groq SDK underneath may itself re-send a request after a
-timeout, 408, 409, 429 or 5xx; see `llm.groq.GroqLLMClient`.)
+`generate()` is called once. There is no second model call and no partial plan. The one local exception is
+a compromise phrase the model already denied: when the finding is unconfirmed and every issue is that
+kind of phrase, the denied sentence is shortened to one `hypothesis_not_confirmed` statement and the
+unchanged grounding check runs again. If that shortened text still fails, the proposals are dropped and
+the result is an insufficient-evidence plan. ("No retry" is about this module. The Groq SDK underneath
+may itself re-send a request after a timeout, 408, 409, 429 or 5xx; see `llm.groq.GroqLLMClient`.)
 
 Derived by code, never by the model: the proposal ID (content hash of the validated draft), the priority
 rank and basis, the linked hypotheses with their Phase 9 status, the reference provenance and the
@@ -57,6 +61,7 @@ from remediation.grounding import InvalidPlanError, PlanValidation, parse_plan, 
 from remediation.inputs import PlannerInput, linked_hypotheses
 from remediation.priority import rank_proposals
 from remediation.prompt import SYSTEM_PROMPT, build_user_prompt, plan_json_schema
+from remediation.qualify import qualify_denied_compromise
 
 PlanStatus = Literal[
     "planned",
@@ -68,6 +73,8 @@ PlanStatus = Literal[
 ]
 
 MODEL_DECLARED_INSUFFICIENT = "model_declared_insufficient"
+# Not a claim the model made. Used only when a denied compromise sentence still fails after shortening.
+DENIED_COMPROMISE_NOT_USABLE = "denied_compromise_not_usable"
 _MAX_ERROR_CHARS = 300
 _SECRET_PATTERNS = (
     re.compile(r"gsk_[A-Za-z0-9_\-]+"),
@@ -263,6 +270,11 @@ def _assemble(
 # PUBLIC API
 # ============================================================
 
+def _finding_unconfirmed(planner_input: PlannerInput) -> bool:
+    hypotheses = planner_input.context.hypotheses
+    return bool(hypotheses) and all(not item.is_confirmed for item in hypotheses)
+
+
 def plan_remediation(planner_input: PlannerInput, llm_client: LLMClient) -> RemediationPlanResult:
     """Generate and validate one remediation plan; see the module docstring for the statuses."""
     if not isinstance(planner_input, PlannerInput):
@@ -321,6 +333,46 @@ def plan_remediation(planner_input: PlannerInput, llm_client: LLMClient) -> Reme
 
     validation = validate_plan(draft, planner_input)
     if not validation.passed:
+        qualified = qualify_denied_compromise(draft, validation) if _finding_unconfirmed(planner_input) else None
+        if qualified is not None:
+            recheck = validate_plan(qualified, planner_input)
+            if recheck.passed:
+                plan = _assemble(
+                    planner_input, [], _build_proposals(planner_input, list(qualified.proposals)),
+                    list(qualified.unresolved_questions), list(qualified.limitations),
+                )
+                return RemediationPlanResult(
+                    status="planned",
+                    message=(
+                        "The plan passed grounding validation after a denied compromise sentence was "
+                        "shortened to a hypothesis_not_confirmed statement. The claim was not inverted, "
+                        "the finding was not marked confirmed, and raw_response is the original model text. "
+                        "This does not prove that any proposal is correct or safe."
+                    ),
+                    plan=plan, validation=recheck, raw_response=raw, llm=llm, **base,
+                )
+            plan = _assemble(
+                planner_input,
+                [InsufficiencyReason(
+                    code=DENIED_COMPROMISE_NOT_USABLE,
+                    message=(
+                        "A compromise phrase was already denied, but the shortened wording still failed "
+                        "grounding. The proposals were dropped. The claim was not rewritten into a different claim."
+                    ),
+                )],
+                [],
+                [],
+                [],
+            )
+            return RemediationPlanResult(
+                status="model_declared_insufficient",
+                message=(
+                    "No proposal was accepted. The model denied a compromise outcome, but the shortened "
+                    "wording still failed grounding, so the result is insufficient_evidence. The model did "
+                    "not itself declare the material insufficient, and the claim was not inverted."
+                ),
+                plan=plan, validation=recheck, raw_response=raw, llm=llm, **base,
+            )
         return RemediationPlanResult(
             status="rejected_grounding",
             message=f"The plan was rejected: {len(validation.issues)} grounding issue(s).",

@@ -401,6 +401,10 @@ class TestSentenceScopedNegation:
         # a negating verb over a list (the wording the Phase 9 rationale itself uses)
         "This supports an injection-attempt hypothesis but does not establish vulnerable server-side "
         "query construction, successful exploitation, or database access.",
+        # The same rationale as a second sentence, which is how a model copies a Phase 9 finding.
+        "One or more normalized events contain SQL-injection-like request syntax. This supports an "
+        "injection-attempt hypothesis but does not establish vulnerable server-side query construction, "
+        "successful exploitation, or database access.",
         "The evidence does not establish that the request reached the database or that successful "
         "exploitation occurred.",
         "There is no evidence of data exfiltration, privilege escalation, or successful exploitation.",

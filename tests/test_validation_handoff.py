@@ -26,7 +26,8 @@ def handoff_of(data: dict) -> Phase14Handoff:
 def test_the_handoff_has_exactly_the_documented_fields():
     assert set(Phase14Handoff.model_fields) == {
         "handoff_version", "contract_version", "validation_run_id", "incident_id",
-        "status", "reason_code", "usable_as_post_remediation_evidence", "not_usable_reasons",
+        "status", "reason_code", "usable_as_post_remediation_evidence",
+        "usable_as_pre_remediation_observation", "not_usable_reasons",
         "identity_source_id", "identity_independently_verified", "identity_live_suitable",
         "scenario_id", "scenario_definition_sha256", "oracle_id", "tested_state",
         "pre_remediation_state_id", "post_remediation_state_id", "requested_origin",

@@ -6,12 +6,286 @@
   ],
   "production_retriever": "fts5-bm25-v1",
   "uses_only_production_retriever": true,
-  "planning_requested": false,
-  "grounded_answer_statuses": [],
+  "planning_requested": true,
+  "grounded_answer_statuses": [
+    {
+      "finding_index": 0,
+      "status": "answered"
+    }
+  ],
   "skipped_findings": [],
   "nothing_planned_reason": null,
   "grounded_answer_diagnostics": [],
-  "plans": [],
+  "plans": [
+    {
+      "incident_id": "incident_001",
+      "finding_index": 0,
+      "status": "planned",
+      "message": "The plan passed grounding validation (this does not prove that any proposal is correct or safe).",
+      "error_kind": null,
+      "llm": "GeminiLLMClient(gemini-3.5-flash-lite)",
+      "request_sent": true,
+      "planner_model_called": true,
+      "plan": {
+        "schema_version": "1.0",
+        "incident_id": "incident_001",
+        "finding_index": 0,
+        "outcome": "proposals",
+        "insufficient_reasons": [],
+        "proposals": [
+          {
+            "title": "Review Input Handling and Parameterized Queries for Search Endpoints",
+            "description": "Inspect application code handling search queries to ensure proper neutralization of special elements and adherence to parameterized query patterns.",
+            "problem_addressed": "Potential vulnerability to SQL injection via user-supplied search parameters.",
+            "affected_area": {
+              "state": "identified",
+              "description": "The search route `/search` and `/api/search` handled by services associated with nginx and application components."
+            },
+            "observed_evidence_ids": [
+              "application-4",
+              "nginx-19"
+            ],
+            "hypothesis_ids": [
+              "H1"
+            ],
+            "configuration_fact_ids": [
+              "CFG-3",
+              "CFG-12"
+            ],
+            "reference_ids": [
+              "cwe:CWE-89#0001",
+              "capec:CAPEC-7#0000"
+            ],
+            "rationale": "Observed request queries matching SQL injection syntax patterns (`message=%27%20OR%20%271%27%3D%271`) against search paths suggest probing or attack attempts against database-backed endpoints.",
+            "reference_support_limits": "The cited references describe the general mechanism and risks of SQL injection and blind SQL injection, but do not confirm that the application in this incident is vulnerable or that exploitation succeeded.",
+            "severity": {
+              "level": "medium",
+              "rationale": "Potential for unauthorized data access if query construction is unsafe, though exploitation remains unconfirmed."
+            },
+            "expected_security_effect": "Reduces the risk of unauthorized database queries by ensuring all user input is properly neutralized or parameterized.",
+            "operational_side_effects": [
+              "Code changes require thorough testing to prevent regression in search functionality."
+            ],
+            "implementation_steps": [
+              {
+                "text": "Audit source code handling query parameters on search routes to ensure use of parameterized queries or prepared statements.",
+                "origin": "general_practice"
+              },
+              {
+                "text": "Ensure proper neutralization of special elements used in SQL commands.",
+                "origin": "cited_reference"
+              }
+            ],
+            "configuration_dependent": true,
+            "disruption": "low",
+            "reversibility": "reversible",
+            "preconditions": [
+              "Human review of the remediation plan",
+              "Access to application source code repository"
+            ],
+            "dependencies": [],
+            "unresolved_questions": [
+              "Are backend database queries constructed using safe parameterization?",
+              "Did the observed requests result in unauthorized data access?"
+            ],
+            "validation": {
+              "procedure": "Perform code review and automated static analysis on search endpoint handlers, followed by parameterized query checks in a test environment.",
+              "expected_result": "Search inputs are processed exclusively via parameterized interfaces without direct string concatenation."
+            },
+            "confidence": {
+              "level": "low",
+              "rationale": "The hypothesis is unconfirmed and support relies on attempt indicators rather than proof of vulnerability."
+            },
+            "proposal_id": "REM-incident_001-F0-cda807226a52",
+            "priority_rank": 1,
+            "priority_basis": {
+              "evidence_linkage": "incident_linked",
+              "severity": "medium",
+              "disruption": "low",
+              "reversibility": "reversible",
+              "ordering_rule": "Proposals are ordered by, in turn: (1) evidence linkage, incident_linked before general_hardening; (2) severity, high before medium before low before unknown; (3) disruption, low before medium before high before unknown; (4) reversibility, reversible before partially_reversible before unknown before irreversible; (5) the order in which the model returned them."
+            },
+            "linked_hypotheses": [
+              {
+                "hypothesis_id": "H1",
+                "status": "hypothesis_not_confirmed",
+                "is_confirmed": false,
+                "basis": "inferred_hypothesis"
+              }
+            ],
+            "references": [
+              {
+                "reference_id": "cwe:CWE-89#0001",
+                "doc_id": "cwe:CWE-89",
+                "chunk_id": "cwe:CWE-89#0001",
+                "ordinal": 1,
+                "char_start": 1046,
+                "char_end": 2191,
+                "retrieval_rank": 5,
+                "source": "cwe",
+                "source_id": "CWE-89",
+                "source_version": "4.20",
+                "doc_type": "weakness",
+                "title": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+                "source_url": "https://cwe.mitre.org/data/definitions/89.html",
+                "license": "MITRE CWE Terms of Use: https://cwe.mitre.org/about/termsofuse.html. Copyright © 2006–2026, The MITRE Corporation. CWE™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+                "chunk_sha256": "af691c6957926984a2c4fd64b3a06d6e49a08f08c9a1cb35750a443eebd6ed38",
+                "document_content_sha256": "fd67057247e84d20e0e6ccdbbb60ea6d23a8956dddf356d64a8a8e8e00c02ed4",
+                "provenance": {
+                  "origin_kind": "local_file",
+                  "artifact_path": "cwec_v4.20.xml.zip",
+                  "artifact_sha256": "3976f599e5e5200219a3108bb896d06e2a88fbb293369e1883cb423a5e9d7d50",
+                  "adapter": "mitre_cwe",
+                  "adapter_version": "mitre-cwe-1",
+                  "retrieved_at_utc": "2026-10-15T22:53:27Z",
+                  "ingested_at_utc": "2026-10-15T22:53:30Z"
+                },
+                "relevance_label": "relevant",
+                "basis": "general_reference_knowledge"
+              },
+              {
+                "reference_id": "capec:CAPEC-7#0000",
+                "doc_id": "capec:CAPEC-7",
+                "chunk_id": "capec:CAPEC-7#0000",
+                "ordinal": 0,
+                "char_start": 0,
+                "char_end": 1040,
+                "retrieval_rank": 2,
+                "source": "capec",
+                "source_id": "CAPEC-7",
+                "source_version": "3.9",
+                "doc_type": "attack_pattern",
+                "title": "Blind SQL Injection",
+                "source_url": "https://capec.mitre.org/data/definitions/7.html",
+                "license": "MITRE CAPEC Terms of Use: https://capec.mitre.org/about/termsofuse.html. Copyright © 2007–2026, The MITRE Corporation. CAPEC™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+                "chunk_sha256": "6f3e3a311415b001d5ecf9013751521f7c4338f7f608ab15c1e4e3b67fa31e9b",
+                "document_content_sha256": "11190216462a7bb0d18031b908c7947454b6a88ae30d047c1e19ecd251055876",
+                "provenance": {
+                  "origin_kind": "local_file",
+                  "artifact_path": "capec_v3.9.zip",
+                  "artifact_sha256": "c56527f3d64b7164fcdae73c1a7545ee6e83b1150546c07a93339b1543a3041d",
+                  "adapter": "mitre_capec",
+                  "adapter_version": "mitre-capec-1",
+                  "retrieved_at_utc": "2026-10-15T22:53:30Z",
+                  "ingested_at_utc": "2026-10-15T22:53:30Z"
+                },
+                "relevance_label": "relevant",
+                "basis": "general_reference_knowledge"
+              }
+            ],
+            "status": "proposed",
+            "executed": false,
+            "human_review_required": true
+          }
+        ],
+        "unresolved_questions": [
+          "Whether backend database queries executed successfully with injected parameters."
+        ],
+        "limitations": [
+          "Remediation proposals are advisory only and require human review."
+        ],
+        "input_summary": {
+          "retriever": "fts5-bm25-v1",
+          "is_production_retriever": true,
+          "observed_evidence_ids": [
+            "application-4",
+            "nginx-19"
+          ],
+          "unresolved_evidence_ids": [],
+          "hypotheses": [
+            {
+              "hypothesis_id": "H1",
+              "status": "hypothesis_not_confirmed",
+              "is_confirmed": false,
+              "basis": "inferred_hypothesis"
+            }
+          ],
+          "usable_reference_ids": [
+            "capec:CAPEC-7#0000",
+            "capec:CAPEC-66#0003",
+            "cwe:CWE-89#0001"
+          ],
+          "excluded_references": [
+            {
+              "reference_id": "capec:CAPEC-108#0002",
+              "label": "not_relevant"
+            },
+            {
+              "reference_id": "capec:CAPEC-664#0002",
+              "label": "not_relevant"
+            },
+            {
+              "reference_id": "capec:CAPEC-248#0000",
+              "label": "not_relevant"
+            },
+            {
+              "reference_id": "cwe:CWE-79#0002",
+              "label": "not_relevant"
+            },
+            {
+              "reference_id": "cwe:CWE-20#0021",
+              "label": "unclear"
+            },
+            {
+              "reference_id": "cwe:CWE-918#0002",
+              "label": "not_relevant"
+            },
+            {
+              "reference_id": "cwe:CWE-862#0009",
+              "label": "not_relevant"
+            }
+          ],
+          "relevance_source": "validated_phase_11d_answer",
+          "configuration_status": "available",
+          "configuration_fact_ids": [
+            "CFG-1",
+            "CFG-2",
+            "CFG-3",
+            "CFG-4",
+            "CFG-5",
+            "CFG-6",
+            "CFG-7",
+            "CFG-8",
+            "CFG-9",
+            "CFG-10",
+            "CFG-11",
+            "CFG-12",
+            "CFG-13",
+            "CFG-14",
+            "CFG-15",
+            "CFG-16",
+            "CFG-17",
+            "CFG-18",
+            "CFG-19",
+            "CFG-20"
+          ],
+          "configuration_conflicts": []
+        },
+        "priority_criteria": [
+          "priority_rank is an ORDINAL position under a fixed, documented rule; it is not a risk score, a probability or a measured exposure.",
+          "Proposals are ordered by, in turn: (1) evidence linkage, incident_linked before general_hardening; (2) severity, high before medium before low before unknown; (3) disruption, low before medium before high before unknown; (4) reversibility, reversible before partially_reversible before unknown before irreversible; (5) the order in which the model returned them.",
+          "The severity, disruption and reversibility ratings are the model's own, uncalibrated judgements. The evidence linkage is computed from the citations: a proposal is incident_linked only if it cites at least one observed evidence id."
+        ],
+        "confidence_meaning": "Confidence is the model's own ordinal judgement (low, medium, high) of how well the cited incident evidence, hypotheses, configuration facts and reference passages support THIS proposal. It is not a probability, it is not calibrated against any measurement, and it says nothing about whether the proposal would work. 'high' is refused by validation unless a linked hypothesis is confirmed and configuration facts are available; 'medium' needs at least one step stated by a cited reference.",
+        "caveats": [
+          "This plan is advisory. Every proposal is a proposal only: nothing was executed, no file or container was changed and no test was launched.",
+          "Hypotheses stay hypotheses. A proposal does not confirm a root cause, and reference passages are general knowledge that neither confirm nor refute what happened in the incident.",
+          "Reference passages come from a small curated CWE/CAPEC subset and cannot be treated as comprehensive Docker, Juice Shop or configuration-hardening guidance.",
+          "Grounding validation checks that identifiers exist and sit in the right category and screens some high-risk wording; it does not prove that a recommendation is correct, sufficient or safe.",
+          "Whether a proposal reduces risk has not been tested; validation belongs to a later phase and its success under tested conditions would not be a universal security guarantee."
+        ],
+        "advisory_only": true,
+        "execution_performed": false,
+        "ground_truth_used": false
+      },
+      "validation": {
+        "passed": true,
+        "note": "Validation checks that identifiers exist and sit in the right category, that proposals are honest about missing configuration and risk, and screens some high-risk wording. It does not prove that a recommendation is correct, sufficient or safe.",
+        "issues": []
+      },
+      "raw_response": "{\n  \"schema_version\": \"1.0\",\n  \"incident_id\": \"incident_001\",\n  \"outcome\": \"proposals\",\n  \"insufficient_reason\": \"\",\n  \"proposals\": [\n    {\n      \"title\": \"Review Input Handling and Parameterized Queries for Search Endpoints\",\n      \"description\": \"Inspect application code handling search queries to ensure proper neutralization of special elements and adherence to parameterized query patterns.\",\n      \"problem_addressed\": \"Potential vulnerability to SQL injection via user-supplied search parameters.\",\n      \"affected_area\": {\n        \"state\": \"identified\",\n        \"description\": \"The search route `/search` and `/api/search` handled by services associated with nginx and application components.\"\n      },\n      \"observed_evidence_ids\": [\n        \"application-4\",\n        \"nginx-19\"\n      ],\n      \"hypothesis_ids\": [\n        \"H1\"\n      ],\n      \"configuration_fact_ids\": [\n        \"CFG-3\",\n        \"CFG-12\"\n      ],\n      \"reference_ids\": [\n        \"cwe:CWE-89#0001\",\n        \"capec:CAPEC-7#0000\"\n      ],\n      \"rationale\": \"Observed request queries matching SQL injection syntax patterns (`message=%27%20OR%20%271%27%3D%271`) against search paths suggest probing or attack attempts against database-backed endpoints.\",\n      \"reference_support_limits\": \"The cited references describe the general mechanism and risks of SQL injection and blind SQL injection, but do not confirm that the application in this incident is vulnerable or that exploitation succeeded.\",\n      \"severity\": {\n        \"level\": \"medium\",\n        \"rationale\": \"Potential for unauthorized data access if query construction is unsafe, though exploitation remains unconfirmed.\"\n      },\n      \"expected_security_effect\": \"Reduces the risk of unauthorized database queries by ensuring all user input is properly neutralized or parameterized.\",\n      \"operational_side_effects\": [\n        \"Code changes require thorough testing to prevent regression in search functionality.\"\n      ],\n      \"implementation_steps\": [\n        {\n          \"text\": \"Audit source code handling query parameters on search routes to ensure use of parameterized queries or prepared statements.\",\n          \"origin\": \"general_practice\"\n        },\n        {\n          \"text\": \"Ensure proper neutralization of special elements used in SQL commands.\",\n          \"origin\": \"cited_reference\"\n        }\n      ],\n      \"configuration_dependent\": true,\n      \"disruption\": \"low\",\n      \"reversibility\": \"reversible\",\n      \"preconditions\": [\n        \"Human review of the remediation plan\",\n        \"Access to application source code repository\"\n      ],\n      \"dependencies\": [],\n      \"unresolved_questions\": [\n        \"Are backend database queries constructed using safe parameterization?\",\n        \"Did the observed requests result in unauthorized data access?\"\n      ],\n      \"validation\": {\n        \"procedure\": \"Perform code review and automated static analysis on search endpoint handlers, followed by parameterized query checks in a test environment.\",\n        \"expected_result\": \"Search inputs are processed exclusively via parameterized interfaces without direct string concatenation.\"\n      },\n      \"confidence\": {\n        \"level\": \"low\",\n        \"rationale\": \"The hypothesis is unconfirmed and support relies on attempt indicators rather than proof of vulnerability.\"\n      }\n    }\n  ],\n  \"unresolved_questions\": [\n    \"Whether backend database queries executed successfully with injected parameters.\"\n  ],\n  \"limitations\": [\n    \"Remediation proposals are advisory only and require human review.\"\n  ]\n}"
+    }
+  ],
   "advisory_only": true,
   "execution_performed": false,
   "ground_truth_used": false,

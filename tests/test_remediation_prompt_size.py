@@ -166,7 +166,8 @@ def test_the_real_incident_001_request_is_smaller(real_store):
     assert len(new) <= 14_000                   # regression guard for the user message (was 18,610 characters)
     # the strict output schema still goes out unchanged, and the system prompt stays within its recorded size
     assert hashlib.sha256(json.dumps(plan_json_schema(), sort_keys=True).encode()).hexdigest() == PLAN_SCHEMA_SHA256
-    assert len(SYSTEM_PROMPT) <= 4_600
+    # 4600 was the earlier ceiling. The payload and attempt-success instructions raised it to this length.
+    assert len(SYSTEM_PROMPT) <= 4_931
 
 
 # ------------------------------------------------------------
@@ -298,7 +299,9 @@ def test_the_new_system_prompt_sentence_describes_the_layout_and_keeps_every_rul
     for phrase in ("facts_by_subject", "fact_columns", "source_sets", "basis_of_every_fact",
                    "ADVISORY ONLY", "every proposal needs human review", "untrusted data",
                    "configured\n   relationships, not observed activity", "Never call one confirmed",
-                   "Do not invent commands", "Never claim a fix eliminates",
+                   "not confirmed exploitation", "Do not assert successful exploitation",
+                   "Do not invent commands", "do not decode", "hypothesis_not_confirmed",
+                   "claim an attempt succeeded", "Never claim a fix eliminates",
                    "exactly the keys of the schema", "has not been run"):
         assert phrase in SYSTEM_PROMPT, phrase
 

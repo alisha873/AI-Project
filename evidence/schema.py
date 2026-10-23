@@ -310,7 +310,9 @@ class JudgeDecision(BaseModel):
     upstream_reason_code: str = ""
     limitations: list[str] = Field(default_factory=list)
     eligible_for_downstream: bool = False
-    evidence_provenance: Literal["mocked", "dry_run", "live", "unverified"] = "unverified"
+    evidence_provenance: Literal[
+        "mocked", "dry_run", "live", "unverified", "pre_remediation_observation",
+    ] = "unverified"
     live_evidence: bool = False
 
     @model_validator(mode="after")
@@ -326,6 +328,10 @@ class JudgeDecision(BaseModel):
             raise ValueError("mocked evidence cannot be labelled live or sent downstream as a live finding")
         if self.eligible_for_downstream and self.evidence_provenance != "live":
             raise ValueError("only live evidence is eligible for downstream consumption")
+        if self.evidence_provenance == "pre_remediation_observation" and (
+            self.live_evidence or self.eligible_for_downstream
+        ):
+            raise ValueError("an observation is not live post-remediation evidence and cannot go downstream")
         if self.decision == "supported" and self.evidence_sufficiency == "sufficient" and not self.supporting_evidence:
             raise ValueError("supported requires supporting evidence ids")
         return self

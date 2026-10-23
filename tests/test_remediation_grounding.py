@@ -264,6 +264,26 @@ def test_hedged_statements_about_impact_are_allowed(text):
     assert "unsupported_compromise_claim" not in codes_for(problem_addressed=text)
 
 
+def test_confidence_rationale_cannot_assert_successful_exploitation():
+    """The live incident_001 failure: an unconfirmed finding whose confidence text asserts exploitation."""
+    result = check(single(confidence={
+        "level": "low",
+        "rationale": "The requests show successful exploitation of the search endpoint.",
+    }))
+    matches = [issue for issue in result.issues if issue.code == "unsupported_compromise_claim"]
+    assert len(matches) == 1
+    assert matches[0].location == "proposals[0].confidence.rationale"
+    assert "successful exploitation" in matches[0].message
+
+
+def test_a_confidence_rationale_that_preserves_uncertainty_passes():
+    rationale = (
+        "The observed requests contain suspicious SQL-injection-like syntax. "
+        "The hypothesis is unconfirmed, and the events do not establish successful exploitation."
+    )
+    assert check(single(confidence={"level": "low", "rationale": rationale})).passed
+
+
 def test_confirmation_is_allowed_only_when_phase_9_confirmed_it():
     from tests.rag_helpers import HYPOTHESIS, build_context, root_cause_doc
     from tests.remediation_helpers import answered, configuration
@@ -348,6 +368,37 @@ def test_paths_that_occur_in_the_supplied_material_are_allowed():
 def test_an_invented_affected_asset_path_is_rejected():
     area = {"state": "identified", "description": "The component at /srv/legacy/search.py (event application-4)."}
     assert "ungrounded_literal" in codes_for(affected_area=area)
+
+
+def test_a_decoded_sql_payload_in_the_rationale_is_rejected():
+    """The live incident_001 failure: the recorded query is percent-encoded, so a decoded payload is invented."""
+    result = check(single(rationale="The search query was `' OR '1'='1`, which is suspicious."))
+    matches = [issue for issue in result.issues if issue.code == "ungrounded_literal"]
+    assert len(matches) == 1
+    assert matches[0].location == "proposals[0].rationale"
+    assert "' OR '1'='1" in matches[0].message
+
+
+def test_reference_support_limits_cannot_claim_the_attempt_succeeded():
+    result = check(single(reference_support_limits="The cited pattern shows the attempt succeeded."))
+    matches = [issue for issue in result.issues if issue.code == "unsupported_compromise_claim"]
+    assert len(matches) == 1
+    assert matches[0].location == "proposals[0].reference_support_limits"
+    assert "attempt succeeded" in matches[0].message
+
+
+def test_rationale_and_reference_limits_may_keep_the_finding_unconfirmed():
+    result = check(single(
+        rationale=(
+            "The events contain SQL-injection-like request syntax. The finding status is "
+            "hypothesis_not_confirmed, and the events do not establish successful exploitation."
+        ),
+        reference_support_limits=(
+            "The passage describes a weakness class. The finding status is hypothesis_not_confirmed, "
+            "and the passage does not establish that an attempt succeeded."
+        ),
+    ))
+    assert result.passed
 
 
 # ------------------------------------------------------------

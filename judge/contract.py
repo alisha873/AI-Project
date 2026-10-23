@@ -26,6 +26,9 @@ live        The Phase 13 evidence gate accepted the report as post-remediation e
             does not accept reports, so normal operation does not produce this value.
 unverified  A check was recorded, but it is not a labelled simulation and it did not pass the evidence gate.
             It is not live evidence.
+pre_remediation_observation
+            The observation gate accepted a live pre-remediation observation. This is not post-remediation
+            evidence, not a security finding, and not eligible for downstream remediation decisions.
 """
 
 from __future__ import annotations
@@ -45,7 +48,9 @@ JUDGE_SCHEMA_VERSION = "1.0"
 Decision = Literal["supported", "not_supported", "inconclusive", "blocked", "not_evaluated"]
 DECISIONS = ("supported", "not_supported", "inconclusive", "blocked", "not_evaluated")
 
-Provenance = Literal["mocked", "dry_run", "live", "unverified"]
+Provenance = Literal[
+    "mocked", "dry_run", "live", "unverified", "pre_remediation_observation",
+]
 Sufficiency = Literal["sufficient", "insufficient", "not_applicable"]
 EvidenceRole = Literal[
     "validation_observation",
@@ -58,8 +63,16 @@ EvidenceRole = Literal[
 ]
 UsedAs = Literal["supporting", "contradicting", "excluded", "context"]
 
-ExecutionMode = Literal["dry-run", "live-refused-opt-in", "live-refused-target", "live-refused-origin", "live"]
-EXECUTION_MODES = ("dry-run", "live-refused-opt-in", "live-refused-target", "live-refused-origin", "live")
+ExecutionMode = Literal[
+    "dry-run", "live-refused-opt-in", "live-refused-target", "live-refused-origin", "live",
+    "observation-refused-opt-in", "observation-refused-target", "observation-refused-origin",
+    "observation-blocked", "observation",
+]
+EXECUTION_MODES = (
+    "dry-run", "live-refused-opt-in", "live-refused-target", "live-refused-origin", "live",
+    "observation-refused-opt-in", "observation-refused-target", "observation-refused-origin",
+    "observation-blocked", "observation",
+)
 
 # Machine-readable reasons the judge itself assigns. These are not Phase 13 reason codes.
 JudgeReason = Literal[
@@ -83,6 +96,7 @@ JudgeReason = Literal[
     "proposal_not_executed",
     "attestation_not_verified",
     "mocked_simulation",
+    "pre_remediation_observation",
 ]
 
 CLAIM_OBJECTIVE_OBSERVED = "objective_observed_under_tested_conditions"
@@ -159,6 +173,7 @@ class JudgeAssessment(_Strict):
     upstream_plan_status: Identifier | None = None
     handoff_version: Identifier | None = None
     usable_as_post_remediation_evidence: bool = False
+    usable_as_pre_remediation_observation: bool = False
     not_usable_reasons: list[Identifier] = []
     transport_kind: Identifier | None = None
     execution_mode: ExecutionMode | None = None
@@ -204,9 +219,24 @@ class JudgeAssessment(_Strict):
                 raise ValueError("live provenance requires the phase 13 evidence gate")
             if self.not_usable_reasons:
                 raise ValueError("live evidence has no not-usable reasons")
+            if self.usable_as_pre_remediation_observation:
+                raise ValueError("live post-remediation evidence is not an observation report")
+        elif self.evidence_provenance == "pre_remediation_observation":
+            if self.live_evidence or self.eligible_for_downstream:
+                raise ValueError("an observation cannot be labelled live or sent downstream")
+            if not self.usable_as_pre_remediation_observation:
+                raise ValueError("observation provenance requires the observation gate")
+            if self.usable_as_post_remediation_evidence:
+                raise ValueError("an observation is not post-remediation evidence")
+            if self.decision == "supported" and self.claim_id not in (
+                CLAIM_OBJECTIVE_OBSERVED, CLAIM_OBJECTIVE_NOT_OBSERVED,
+            ):
+                raise ValueError("observation evidence can support only the tested-conditions objective claims")
         else:
             if self.live_evidence or self.eligible_for_downstream:
                 raise ValueError("only live evidence can be labelled live or sent downstream")
+            if self.usable_as_pre_remediation_observation:
+                raise ValueError("observation evidence uses observation provenance")
         if self.evidence_provenance == "mocked" and self.live_evidence:
             raise ValueError("mocked evidence cannot be labelled live")
         if self.usable_as_post_remediation_evidence and self.evidence_provenance != "live":
@@ -219,8 +249,8 @@ class JudgeAssessment(_Strict):
         if self.decision in ("supported", "not_supported"):
             if self.evidence_sufficiency != "sufficient":
                 raise ValueError(f"{self.decision} requires sufficient evidence")
-            if self.evidence_provenance not in ("mocked", "live"):
-                raise ValueError(f"{self.decision} requires mocked or live provenance")
+            if self.evidence_provenance not in ("mocked", "live", "pre_remediation_observation"):
+                raise ValueError(f"{self.decision} requires mocked, live, or observation provenance")
         elif self.decision == "inconclusive":
             if self.evidence_sufficiency != "insufficient":
                 raise ValueError("inconclusive evidence is insufficient")

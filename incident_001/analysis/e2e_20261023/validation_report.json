@@ -1,0 +1,178 @@
+{
+  "contract_version": "1.0",
+  "validation_run_id": "VAL-incident_001-11e8775f68af",
+  "incident_id": "incident_001",
+  "scenario": {
+    "scenario_id": "sqli-search-incident-001",
+    "registered": true,
+    "definition_version": "1.0",
+    "definition_sha256": "a752e891856a1ac50ff9467f43995036c691840207fa70415f14c224eb0f7601",
+    "family": "sql_injection",
+    "review_status": "pending_human_review",
+    "eligible_for_execution": false,
+    "ambiguity_codes": [
+      "oracle_not_specified_by_source",
+      "wire_encoding_unspecified",
+      "control_value_unspecified",
+      "entry_point_is_a_candidate_only",
+      "source_records_the_generated_attack"
+    ]
+  },
+  "objective": {
+    "summary": "Check whether a search request carrying the original SQL-injection-shaped text can still make the search return records beyond the legitimate search match.",
+    "source_kind": "operator_metadata_file",
+    "source_ref": "incident_001/metadata/attack_request.txt",
+    "source_sha256": "5a6331396a7ea3843e825e14270fda43c50b03f0ad8986970d88cf93f3347a70",
+    "obtained_by": "manual_reading_of_candidate_source_by_ai_assistant",
+    "ground_truth_consulted": false
+  },
+  "target": {
+    "method": "GET",
+    "path": "/api/search",
+    "parameter": "message",
+    "entry_service": "autoshield-nginx",
+    "target_service": "autoshield-api",
+    "data_service": "autoshield-postgres",
+    "requested_origin": null,
+    "lab_identity_verified": false
+  },
+  "lab_state": {
+    "tested_state": "not_tested",
+    "pre_remediation_state_id": null,
+    "post_remediation_state_id": null
+  },
+  "remediation": {
+    "proposals": [],
+    "application": {
+      "state": "unknown",
+      "attestation_id": null,
+      "attested_by": null,
+      "applied_proposal_ids": [],
+      "verified_by_phase13": false
+    },
+    "applied_by_phase13": false
+  },
+  "status": "not_validated",
+  "reason_code": "remediation_plan_missing",
+  "oracle": {
+    "oracle_id": "sqli-search-record-set-oracle",
+    "oracle_version": "1.0",
+    "conditions": [
+      {
+        "condition_id": "control_request_succeeds",
+        "result": "not_evaluated"
+      },
+      {
+        "condition_id": "probe_response_parseable",
+        "result": "not_evaluated"
+      },
+      {
+        "condition_id": "record_outside_literal_match",
+        "result": "not_evaluated"
+      }
+    ]
+  },
+  "execution": {
+    "attempted": false,
+    "completed": false,
+    "requests_sent": 0,
+    "runner_id": null,
+    "transport": null,
+    "transport_kind": "none",
+    "started_at_utc": null,
+    "finished_at_utc": null
+  },
+  "evidence": [],
+  "scope": {
+    "policy_version": "1.0",
+    "scope_conditions_met": false,
+    "execution_permitted": false,
+    "reason_codes": [
+      "no_approved_lab",
+      "target_missing",
+      "scenario_not_eligible",
+      "lab_identity_missing",
+      "operator_authorization_missing",
+      "execution_disabled"
+    ]
+  },
+  "preconditions": [
+    {
+      "precondition": "plan_usable",
+      "satisfied": false,
+      "evaluated": true,
+      "reason_code": "remediation_plan_missing",
+      "detail": "No remediation plan result was supplied."
+    },
+    {
+      "precondition": "incident_matches_plan",
+      "satisfied": false,
+      "evaluated": false,
+      "reason_code": null,
+      "detail": "Not evaluated: there is no usable plan."
+    },
+    {
+      "precondition": "scenario_known",
+      "satisfied": true,
+      "evaluated": true,
+      "reason_code": null,
+      "detail": "The scenario is registered."
+    },
+    {
+      "precondition": "scenario_eligible",
+      "satisfied": false,
+      "evaluated": true,
+      "reason_code": "scenario_not_eligible",
+      "detail": "The scenario is not approved for execution (review status 'pending_human_review'; open blocking ambiguities: 5)."
+    },
+    {
+      "precondition": "remediation_application_attested",
+      "satisfied": false,
+      "evaluated": false,
+      "reason_code": null,
+      "detail": "Not evaluated: there is no usable plan."
+    },
+    {
+      "precondition": "scope_conditions_met",
+      "satisfied": false,
+      "evaluated": true,
+      "reason_code": "scope_policy_denied",
+      "detail": "The scope policy denied: no_approved_lab, target_missing, scenario_not_eligible, lab_identity_missing, operator_authorization_missing."
+    },
+    {
+      "precondition": "live_execution_available",
+      "satisfied": false,
+      "evaluated": true,
+      "reason_code": "execution_not_implemented_phase_13a",
+      "detail": "Live validation is not implemented in Phase 13A; nothing is executed."
+    }
+  ],
+  "upstream": {
+    "plan_result_status": null,
+    "plan_outcome": null,
+    "plan_schema_version": null,
+    "finding_index": null,
+    "hypotheses": []
+  },
+  "limitations": [
+    "A validation result describes only the lab state, scenario, request and conditions that were actually tested. It is not a universal security guarantee and it does not mean residual risk is zero.",
+    "A failed or absent attack observation is not proof that the objective is unachievable: other payloads, encodings, endpoints or states were not tested.",
+    "A proposed remediation is not an applied remediation. Phase 13 does not apply remediation; whether and how one was applied is stated by the attestation recorded here and is not verified by Phase 13.",
+    "The free-text validation procedure written by the Phase 12 planner is never interpreted or executed.",
+    "The original objective comes from an operator-side metadata file, not from a model and not from the evaluation answer key. It describes the attack that was generated in the lab, which may not be what a real attacker would try.",
+    "Phase 13A performs no live validation: no check ran, no traffic was sent and nothing here demonstrates that any remediation is effective.",
+    "One probe value and one endpoint: not a survey of SQL-injection techniques.",
+    "The oracle looks at returned records only; it does not detect error-based, blind or second-order injection.",
+    "The definition was extracted by an AI assistant and has had no human review."
+  ],
+  "validity_conditions": [
+    "No check ran, so this report is valid only as a statement of WHY no validation result exists.",
+    "It reflects the inputs supplied at that time; any change to the plan, scenario, attestation or scope configuration requires a new report."
+  ],
+  "identity": null,
+  "remediation_effectiveness_proven": false,
+  "general_security_guarantee": false,
+  "ground_truth_used": false,
+  "llm_used": false,
+  "execution_mode": "dry-run"
+}

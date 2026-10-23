@@ -149,6 +149,17 @@ class LLMSettings(BaseSettings):
         default="",
         validation_alias="GROQ_API_KEY",
     )
+    # Gemini Developer API key. This is not a fallback for GROQ_API_KEY or LLM_API_KEY.
+    gemini_api_key: str = Field(
+        default="",
+        validation_alias="GEMINI_API_KEY",
+    )
+    # Optional Gemini model override. Blank means the Gemini client uses gemini-3.5-flash-lite.
+    # LLM_MODEL is the Groq client's model and is intentionally not reused here.
+    gemini_model: str = Field(
+        default="",
+        validation_alias="GEMINI_MODEL",
+    )
 
     model_config = SettingsConfigDict(
         env_prefix="LLM_",

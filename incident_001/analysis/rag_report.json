@@ -6,7 +6,7 @@
   ],
   "production_retriever": "fts5-bm25-v1",
   "uses_only_production_retriever": true,
-  "generation_requested": false,
+  "generation_requested": true,
   "skipped_findings": [],
   "contexts": [
     {
@@ -421,7 +421,533 @@
       "schema_version": "1.0"
     }
   ],
-  "answers": [],
+  "answers": [
+    {
+      "context": {
+        "incident_id": "incident_001",
+        "finding_index": 0,
+        "retriever": "fts5-bm25-v1",
+        "is_production_retriever": true,
+        "retrieval_status": "ok",
+        "possibly_incomplete": false,
+        "backend_query": "\"CWE-89\" OR \"sql injection\" OR \"sql\" OR \"injection\" OR \"contains\" OR \"like\" OR \"syntax\" OR \"search\" OR \"api\" OR \"contain\" OR \"request\" OR \"supports\" OR \"attempt\" OR \"establish\" OR \"vulnerable\" OR \"server\" OR \"side\" OR \"query\" OR \"construction\" OR \"successful\" OR \"exploitation\" OR \"database\" OR \"access\" OR \"application\" OR \"source\" OR \"evidence\" OR \"showing\" OR \"unsafe\" OR \"handling\" OR \"correlated\" OR \"logs\" OR \"demonstrating\" OR \"executed\" OR \"response\" OR \"tied\" OR \"identifier\"",
+        "dropped_terms": [],
+        "query_notes": [],
+        "query_text": "potential sql injection (CWE-89 hypothesis)\nEvent contains SQL-injection-like syntax in /search.\nEvent contains SQL-injection-like syntax in /api/search.\nOne or more normalized events contain SQL-injection-like request syntax. This supports an injection-attempt hypothesis but does not establish vulnerable server-side query construction, successful exploitation, or database access.\napplication source or query-construction evidence showing unsafe SQL handling\ncorrelated application/database logs demonstrating the query was executed\nrequest-to-response evidence tied to the same event or request identifier",
+        "query_phrases": [
+          "sql injection"
+        ],
+        "query_omitted_fields": [],
+        "observed_evidence": [
+          {
+            "evidence_id": "application-4",
+            "event": {
+              "timestamp": "2026-10-09T11:07:46.240160Z",
+              "source": "application",
+              "event_type": "http_request",
+              "action": "GET /search",
+              "source_entity": "172.19.0.7",
+              "destination_entity": null,
+              "stage_label": "exploitation_attempt_indicator",
+              "interpretation_status": "attempt_indicator_observed_success_unconfirmed"
+            },
+            "request": {
+              "method": "GET",
+              "path": "/search",
+              "query": "message=%27%20OR%20%271%27%3D%271",
+              "status": "200",
+              "upstream": null,
+              "upstream_status": null,
+              "request_id": null
+            },
+            "claim_ids": [
+              "claim_001"
+            ],
+            "claim_statements": [
+              "Event application-4 contains SQL-injection-like syntax in /search."
+            ],
+            "claim_limitations": [
+              "A request pattern alone does not prove successful exploitation or unsafe query construction."
+            ],
+            "basis": "observed"
+          },
+          {
+            "evidence_id": "nginx-19",
+            "event": {
+              "timestamp": "2026-10-09T11:07:46.241152Z",
+              "source": "nginx",
+              "event_type": "http_request",
+              "action": "GET /api/search",
+              "source_entity": "192.168.65.1",
+              "destination_entity": "172.19.0.6",
+              "stage_label": "exploitation_attempt_indicator",
+              "interpretation_status": "attempt_indicator_observed_success_unconfirmed"
+            },
+            "request": {
+              "method": "GET",
+              "path": "/api/search",
+              "query": "message=%27%20OR%20%271%27%3D%271",
+              "status": "200",
+              "upstream": "172.19.0.6:8000",
+              "upstream_status": "200",
+              "request_id": null
+            },
+            "claim_ids": [
+              "claim_002"
+            ],
+            "claim_statements": [
+              "Event nginx-19 contains SQL-injection-like syntax in /api/search."
+            ],
+            "claim_limitations": [
+              "A request pattern alone does not prove successful exploitation or unsafe query construction."
+            ],
+            "basis": "observed"
+          }
+        ],
+        "unresolved_evidence_ids": [],
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "finding_index": 0,
+            "status": "hypothesis_not_confirmed",
+            "is_confirmed": false,
+            "vulnerability_type": "potential_sql_injection (CWE-89 hypothesis)",
+            "root_cause": null,
+            "affected_component": null,
+            "rationale": "One or more normalized events contain SQL-injection-like request syntax. This supports an injection-attempt hypothesis but does not establish vulnerable server-side query construction, successful exploitation, or database access.",
+            "evidence_needed_to_confirm": [
+              "application source or query-construction evidence showing unsafe SQL handling",
+              "correlated application/database logs demonstrating the query was executed",
+              "request-to-response evidence tied to the same event or request identifier"
+            ],
+            "supporting_evidence_ids": [
+              "application-4",
+              "nginx-19"
+            ],
+            "basis": "inferred_hypothesis"
+          }
+        ],
+        "references": [
+          {
+            "reference_id": "capec:CAPEC-108#0002",
+            "doc_id": "capec:CAPEC-108",
+            "chunk_id": "capec:CAPEC-108#0002",
+            "ordinal": 2,
+            "char_start": 1334,
+            "char_end": 2313,
+            "text": "ck is succeeding.\n\n## Resources Required\n- None: No specialized resources are required to execute this type of attack.\n\n## Execution Flow\n- Step 1 [Explore]: [Probe for SQL Injection vulnerability] The attacker injects SQL syntax into user-controllable data inputs to search unfiltered execution of the SQL syntax in a query.\n- Step 2 [Exploit]: [Achieve arbitrary command execution through SQL Injection with the MSSQL_xp_cmdshell directive] The attacker leverages a SQL Injection attack to inject shell code to be executed by leveraging the xp_cmdshell directive.\n- Step 3 [Exploit]: [Inject malicious data in the database] Leverage SQL injection to inject data in the database that could later be used to achieve command injection if ever used as a command line argument\n- Step 4 [Exploit]: [Trigger command line execution with injected arguments] The attacker causes execution of command line functionality which leverages previously injected database content as arguments.\n\n",
+            "document_rank": 1,
+            "chunk_score": 20.054442003123608,
+            "source": "capec",
+            "source_id": "CAPEC-108",
+            "source_version": "3.9",
+            "doc_type": "attack_pattern",
+            "title": "Command Line Execution through SQL Injection",
+            "source_url": "https://capec.mitre.org/data/definitions/108.html",
+            "license": "MITRE CAPEC Terms of Use: https://capec.mitre.org/about/termsofuse.html. Copyright © 2007–2026, The MITRE Corporation. CAPEC™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+            "chunk_sha256": "b2878aba397d39a7ab921c6918b6e699a2fe0c646592c53d93f7d064eb9aab7f",
+            "document_content_sha256": "8951b7be3ca37d460ad816f219d4320d9e73e880c172ae68b5af4081c6c8b650",
+            "provenance": {
+              "origin_kind": "local_file",
+              "artifact_path": "capec_v3.9.zip",
+              "artifact_sha256": "c56527f3d64b7164fcdae73c1a7545ee6e83b1150546c07a93339b1543a3041d",
+              "adapter": "mitre_capec",
+              "adapter_version": "mitre-capec-1",
+              "retrieved_at_utc": "2026-10-15T22:53:30Z",
+              "ingested_at_utc": "2026-10-15T22:53:30Z"
+            },
+            "basis": "general_reference_knowledge"
+          },
+          {
+            "reference_id": "capec:CAPEC-7#0000",
+            "doc_id": "capec:CAPEC-7",
+            "chunk_id": "capec:CAPEC-7#0000",
+            "ordinal": 0,
+            "char_start": 0,
+            "char_end": 1040,
+            "text": "# CAPEC-7: Blind SQL Injection\n\nStatus: Draft\nAbstraction: Detailed\n\n## Description\nBlind SQL Injection results from an insufficient mitigation for SQL Injection. Although suppressing database error messages are considered best practice, the suppression alone is not sufficient to prevent SQL Injection. Blind SQL Injection is a form of SQL Injection that overcomes the lack of error messages. Without the error messages that facilitate SQL Injection, the adversary constructs input strings that probe the target through simple Boolean SQL expressions. The adversary can determine if the syntax and structure of the injection was successful based on whether the query was executed or not. Applied iteratively, the adversary determines how and where the target is vulnerable to SQL Injection.\n\n## Likelihood of Attack\nHigh\n\n## Typical Severity\nHigh\n\n## Prerequisites\n- SQL queries used by the application to store, retrieve or modify data.\n- User-controllable input that is not properly validated by the application as part of SQL queries.\n\n",
+            "document_rank": 2,
+            "chunk_score": 19.438819870536882,
+            "source": "capec",
+            "source_id": "CAPEC-7",
+            "source_version": "3.9",
+            "doc_type": "attack_pattern",
+            "title": "Blind SQL Injection",
+            "source_url": "https://capec.mitre.org/data/definitions/7.html",
+            "license": "MITRE CAPEC Terms of Use: https://capec.mitre.org/about/termsofuse.html. Copyright © 2007–2026, The MITRE Corporation. CAPEC™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+            "chunk_sha256": "6f3e3a311415b001d5ecf9013751521f7c4338f7f608ab15c1e4e3b67fa31e9b",
+            "document_content_sha256": "11190216462a7bb0d18031b908c7947454b6a88ae30d047c1e19ecd251055876",
+            "provenance": {
+              "origin_kind": "local_file",
+              "artifact_path": "capec_v3.9.zip",
+              "artifact_sha256": "c56527f3d64b7164fcdae73c1a7545ee6e83b1150546c07a93339b1543a3041d",
+              "adapter": "mitre_capec",
+              "adapter_version": "mitre-capec-1",
+              "retrieved_at_utc": "2026-10-15T22:53:30Z",
+              "ingested_at_utc": "2026-10-15T22:53:30Z"
+            },
+            "basis": "general_reference_knowledge"
+          },
+          {
+            "reference_id": "capec:CAPEC-664#0002",
+            "doc_id": "capec:CAPEC-664",
+            "chunk_id": "capec:CAPEC-664#0002",
+            "ordinal": 2,
+            "char_start": 1500,
+            "char_end": 2657,
+            "text": "oS through them.\n\n## Resources Required\n- [None] No specialized resources are required to execute this type of attack.\n\n## Execution Flow\n- Step 1 [Explore]: [Find target application] Find target web application that accepts a user input and retrieves data from the server\n- Step 2 [Experiment]: [Examine existing application requests] Examine HTTP/GET requests to view the URL query format. Adversaries test to see if this type of attack is possible through weaknesses in an application's protection to Server Side Request Forgery\n  - Technique: Attempt manipulating the URL to retrieve an error response/code from the server to determine if URL/request validation is done.\n  - Technique: Use a list of XSS probe strings to specify as parameters to known URLs. If possible, use probe strings with unique identifiers.\n  - Technique: Create a GET request with a common server file path such as /etc/passwd as a parameter and examine output.\n- Step 3 [Exploit]: [Malicious request] Adversary crafts a malicious URL request that assumes the privilege level of the server to query internal or external network services and sends the request to the application\n\n",
+            "document_rank": 3,
+            "chunk_score": 19.23267034201089,
+            "source": "capec",
+            "source_id": "CAPEC-664",
+            "source_version": "3.9",
+            "doc_type": "attack_pattern",
+            "title": "Server Side Request Forgery",
+            "source_url": "https://capec.mitre.org/data/definitions/664.html",
+            "license": "MITRE CAPEC Terms of Use: https://capec.mitre.org/about/termsofuse.html. Copyright © 2007–2026, The MITRE Corporation. CAPEC™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+            "chunk_sha256": "44fb96a09ab0cca2b33270c0a7f70af43953cb2b0d454ae2440fae87a6ee673b",
+            "document_content_sha256": "4709e45f4f97e6b2842d0c73c44c41a059e9bca8d6b780946d27fb42aa9b6ad9",
+            "provenance": {
+              "origin_kind": "local_file",
+              "artifact_path": "capec_v3.9.zip",
+              "artifact_sha256": "c56527f3d64b7164fcdae73c1a7545ee6e83b1150546c07a93339b1543a3041d",
+              "adapter": "mitre_capec",
+              "adapter_version": "mitre-capec-1",
+              "retrieved_at_utc": "2026-10-15T22:53:30Z",
+              "ingested_at_utc": "2026-10-15T22:53:30Z"
+            },
+            "basis": "general_reference_knowledge"
+          },
+          {
+            "reference_id": "capec:CAPEC-66#0003",
+            "doc_id": "capec:CAPEC-66",
+            "chunk_id": "capec:CAPEC-66#0003",
+            "ordinal": 3,
+            "char_start": 2706,
+            "char_end": 3826,
+            "text": " such as Tamper Data, TamperIE, WebScarab,etc. to modify HTTP POST parameters, hidden fields, non-freeform fields, etc.\n  - Technique: Use network-level packet injection tools such as netcat to inject input\n  - Technique: Use modified client (modified by reverse engineering) to inject input.\n- Step 3 [Experiment]: [Experiment with SQL Injection vulnerabilities] After determining that a given input is vulnerable to SQL Injection, hypothesize what the underlying query looks like. Iteratively try to add logic to the query to extract information from the database, or to modify or delete information in the database.\n  - Technique: Use public resources such as \"SQL Injection Cheat Sheet\" at http://ferruh.mavituna.com/makale/sql-injection-cheatsheet/, and try different approaches for adding logic to SQL queries.\n  - Technique: Add logic to query, and use detailed error messages from the server to debug the query. For example, if adding a single quote to a query causes an error message, try : \"' OR 1=1; --\", or something else that would syntactically complete a hypothesized query. Iteratively refine the query.\n",
+            "document_rank": 4,
+            "chunk_score": 18.35971205928019,
+            "source": "capec",
+            "source_id": "CAPEC-66",
+            "source_version": "3.9",
+            "doc_type": "attack_pattern",
+            "title": "SQL Injection",
+            "source_url": "https://capec.mitre.org/data/definitions/66.html",
+            "license": "MITRE CAPEC Terms of Use: https://capec.mitre.org/about/termsofuse.html. Copyright © 2007–2026, The MITRE Corporation. CAPEC™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+            "chunk_sha256": "9d2da357dffa7418799f607bbe6c7b85879ccc369d7c0d20c96c2eb32c3a5f79",
+            "document_content_sha256": "efd23ff3badd94d2b4d8889c3a98dfc5ffbf7770b5f0dabd454ec76d0a867b4e",
+            "provenance": {
+              "origin_kind": "local_file",
+              "artifact_path": "capec_v3.9.zip",
+              "artifact_sha256": "c56527f3d64b7164fcdae73c1a7545ee6e83b1150546c07a93339b1543a3041d",
+              "adapter": "mitre_capec",
+              "adapter_version": "mitre-capec-1",
+              "retrieved_at_utc": "2026-10-15T22:53:30Z",
+              "ingested_at_utc": "2026-10-15T22:53:30Z"
+            },
+            "basis": "general_reference_knowledge"
+          },
+          {
+            "reference_id": "cwe:CWE-89#0001",
+            "doc_id": "cwe:CWE-89",
+            "chunk_id": "cwe:CWE-89#0001",
+            "ordinal": 1,
+            "char_start": 1046,
+            "char_end": 2191,
+            "text": "fic (Undetermined)\n- Language: SQL (Often)\n- Technology: Database Server (Undetermined)\n\n## Likelihood of Exploit\nHigh\n\n## Common Consequences\n- Scope: Confidentiality, Integrity, Availability | Impact: Execute Unauthorized Code or Commands | Note: Adversaries could execute system commands, typically by changing the SQL statement to redirect output to a file that can then be executed.\n- Scope: Confidentiality | Impact: Read Application Data | Note: Since SQL databases generally hold sensitive data, loss of confidentiality is a frequent problem with SQL injection vulnerabilities.\n- Scope: Authentication | Impact: Gain Privileges or Assume Identity; Bypass Protection Mechanism | Note: If poor SQL commands are used to check user names and passwords or perform other kinds of authentication, it may be possible to connect to the product as another user with no previous knowledge of the password.\n- Scope: Access Control | Impact: Bypass Protection Mechanism | Note: If authorization information is held in a SQL database, it may be possible to change this information through the successful exploitation of a SQL injection vulnerability.\n",
+            "document_rank": 5,
+            "chunk_score": 18.227892300374567,
+            "source": "cwe",
+            "source_id": "CWE-89",
+            "source_version": "4.20",
+            "doc_type": "weakness",
+            "title": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+            "source_url": "https://cwe.mitre.org/data/definitions/89.html",
+            "license": "MITRE CWE Terms of Use: https://cwe.mitre.org/about/termsofuse.html. Copyright © 2006–2026, The MITRE Corporation. CWE™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+            "chunk_sha256": "af691c6957926984a2c4fd64b3a06d6e49a08f08c9a1cb35750a443eebd6ed38",
+            "document_content_sha256": "fd67057247e84d20e0e6ccdbbb60ea6d23a8956dddf356d64a8a8e8e00c02ed4",
+            "provenance": {
+              "origin_kind": "local_file",
+              "artifact_path": "cwec_v4.20.xml.zip",
+              "artifact_sha256": "3976f599e5e5200219a3108bb896d06e2a88fbb293369e1883cb423a5e9d7d50",
+              "adapter": "mitre_cwe",
+              "adapter_version": "mitre-cwe-1",
+              "retrieved_at_utc": "2026-10-15T22:53:27Z",
+              "ingested_at_utc": "2026-10-15T22:53:30Z"
+            },
+            "basis": "general_reference_knowledge"
+          },
+          {
+            "reference_id": "capec:CAPEC-248#0000",
+            "doc_id": "capec:CAPEC-248",
+            "chunk_id": "capec:CAPEC-248#0000",
+            "ordinal": 0,
+            "char_start": 0,
+            "char_end": 958,
+            "text": "# CAPEC-248: Command Injection\n\nStatus: Stable\nAbstraction: Meta\n\n## Description\nAn adversary looking to execute a command of their choosing, injects new items into an existing command thus modifying interpretation away from what was intended. Commands in this context are often standalone strings that are interpreted by a downstream component and cause specific responses. This type of attack is possible when untrusted values are used to build these command strings. Weaknesses in input validation or command construction can enable the attack and lead to successful exploitation.\n\n## Likelihood of Attack\nMedium\n\n## Typical Severity\nHigh\n\n## Prerequisites\n- The target application must accept input from the user and then use this input in the construction of commands to be executed. In virtually all cases, this is some form of string input that is concatenated to a constant string defined by the application to form the full command to be executed.\n\n",
+            "document_rank": 6,
+            "chunk_score": 14.149495959709073,
+            "source": "capec",
+            "source_id": "CAPEC-248",
+            "source_version": "3.9",
+            "doc_type": "attack_pattern",
+            "title": "Command Injection",
+            "source_url": "https://capec.mitre.org/data/definitions/248.html",
+            "license": "MITRE CAPEC Terms of Use: https://capec.mitre.org/about/termsofuse.html. Copyright © 2007–2026, The MITRE Corporation. CAPEC™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+            "chunk_sha256": "724f33ba47646c7e2745a8978d4b7bec6d370da7c919566a94630cd0265d57ac",
+            "document_content_sha256": "bc89513cd3f865622bfcf85452d018a5d1f8b209c3467dbbad17cdaeb26e402f",
+            "provenance": {
+              "origin_kind": "local_file",
+              "artifact_path": "capec_v3.9.zip",
+              "artifact_sha256": "c56527f3d64b7164fcdae73c1a7545ee6e83b1150546c07a93339b1543a3041d",
+              "adapter": "mitre_capec",
+              "adapter_version": "mitre-capec-1",
+              "retrieved_at_utc": "2026-10-15T22:53:30Z",
+              "ingested_at_utc": "2026-10-15T22:53:30Z"
+            },
+            "basis": "general_reference_knowledge"
+          },
+          {
+            "reference_id": "cwe:CWE-79#0002",
+            "doc_id": "cwe:CWE-79",
+            "chunk_id": "cwe:CWE-79#0002",
+            "ordinal": 2,
+            "char_start": 1301,
+            "char_end": 2383,
+            "text": "omain can be thought of as all resources the browser is storing for the user's interactions with this particular site.\n\n## Alternate Terms\n- XSS: A common abbreviation for Cross-Site Scripting.\n- HTML Injection: Used as a synonym of stored (Type 2) XSS.\n- Reflected XSS / Non-Persistent XSS / Type 1 XSS: Used when a server application reads data directly from the HTTP request and reflects it back in the HTTP response.\n- Stored XSS / Persistent XSS / Type 2 XSS: Used when a server-side application stores dangerous data in a database, message forum, visitor log, or other trusted data store. At a later time, the dangerous data is subsequently read back into the application and included in dynamic content.\n- DOM-Based XSS / Type 0 XSS: Used when a client-side application performs the injection of XSS into the page by manipulating the Domain Object Model (DOM).\n- CSS: In the early years after initial discovery of XSS, \"CSS\" was a commonly-used acronym. However, this would cause confusion with \"Cascading Style Sheets,\" so usage of this acronym has declined significantly.\n\n",
+            "document_rank": 7,
+            "chunk_score": 11.65763562379288,
+            "source": "cwe",
+            "source_id": "CWE-79",
+            "source_version": "4.20",
+            "doc_type": "weakness",
+            "title": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+            "source_url": "https://cwe.mitre.org/data/definitions/79.html",
+            "license": "MITRE CWE Terms of Use: https://cwe.mitre.org/about/termsofuse.html. Copyright © 2006–2026, The MITRE Corporation. CWE™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+            "chunk_sha256": "79b4b645fc484136516d32d500a3c0d00f576ddbf0344949fbed2fb390825573",
+            "document_content_sha256": "e95b4dd81b5bc28fdd3d42305808eb3ce8e1639fe94286ecf55663d72f59281c",
+            "provenance": {
+              "origin_kind": "local_file",
+              "artifact_path": "cwec_v4.20.xml.zip",
+              "artifact_sha256": "3976f599e5e5200219a3108bb896d06e2a88fbb293369e1883cb423a5e9d7d50",
+              "adapter": "mitre_cwe",
+              "adapter_version": "mitre-cwe-1",
+              "retrieved_at_utc": "2026-10-15T22:53:27Z",
+              "ingested_at_utc": "2026-10-15T22:53:30Z"
+            },
+            "basis": "general_reference_knowledge"
+          },
+          {
+            "reference_id": "cwe:CWE-20#0021",
+            "doc_id": "cwe:CWE-20",
+            "chunk_id": "cwe:CWE-20#0021",
+            "ordinal": 21,
+            "char_start": 18139,
+            "char_end": 19264,
+            "text": "ht reduce the risk of SQL injection, but it would produce incorrect behavior because the wrong name would be recorded.\n\n## References\n- REF-6: Seven Pernicious Kingdoms: A Taxonomy of Software Security Errors (Katrina Tsipenyuk; Brian Chess; Gary McGraw)\n- REF-166: Input Validation with ESAPI - Very Important (Jim Manico)\n- REF-45: OWASP Enterprise Security API (ESAPI) Project (OWASP)\n- REF-168: Hacking Exposed Web Applications, Second Edition (Joel Scambray; Mike Shema; Caleb Sima), Input Validation Attacks\n- REF-48: Input validation or output filtering, which is better? (Jeremiah Grossman)\n- REF-170: The importance of input validation (Kevin Beaver)\n- REF-7: Writing Secure Code (Michael Howard; David LeBlanc), Chapter 10, \"All Input Is Evil!\" Page 341\n- REF-1109: LANGSEC: Language-theoretic Security\n- REF-1110: LangSec: Recognition, Validation, and Compositional Correctness for Real World Security\n- REF-1111: Curing the Vulnerable Parser: Design Patterns for Secure Input Handling (Sergey Bratus; Lars Hermerschmidt; Sven M. Hallberg; Michael E. Locasto; Falcon D. Momot; Meredith L. Patterson; Anna Shubina)\n",
+            "document_rank": 8,
+            "chunk_score": 11.24304957663463,
+            "source": "cwe",
+            "source_id": "CWE-20",
+            "source_version": "4.20",
+            "doc_type": "weakness",
+            "title": "Improper Input Validation",
+            "source_url": "https://cwe.mitre.org/data/definitions/20.html",
+            "license": "MITRE CWE Terms of Use: https://cwe.mitre.org/about/termsofuse.html. Copyright © 2006–2026, The MITRE Corporation. CWE™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+            "chunk_sha256": "9f990d6fff49964d07fb186375de7569137463a69e6c716c198eacea8c0dec99",
+            "document_content_sha256": "e67abd892e78f5e228611b45608d9d1ac7987a3b5cbe68476d71bfef1a74a7bd",
+            "provenance": {
+              "origin_kind": "local_file",
+              "artifact_path": "cwec_v4.20.xml.zip",
+              "artifact_sha256": "3976f599e5e5200219a3108bb896d06e2a88fbb293369e1883cb423a5e9d7d50",
+              "adapter": "mitre_cwe",
+              "adapter_version": "mitre-cwe-1",
+              "retrieved_at_utc": "2026-10-15T22:53:27Z",
+              "ingested_at_utc": "2026-10-15T22:53:30Z"
+            },
+            "basis": "general_reference_knowledge"
+          },
+          {
+            "reference_id": "cwe:CWE-918#0002",
+            "doc_id": "cwe:CWE-918",
+            "chunk_id": "cwe:CWE-918#0002",
+            "ordinal": 2,
+            "char_start": 1285,
+            "char_end": 2129,
+            "text": " or use other protocols such as gopher:// or tftp://, which may provide greater control over the contents of requests.\n\n## Detection Methods\n- Automated Static Analysis (effectiveness: High): Automated static analysis, commonly referred to as Static Application Security Testing (SAST), can find some instances of this weakness by analyzing source code (or binary/compiled code) without having to execute it. Typically, this is done by building a model of data flow and control flow, then searching for potentially-vulnerable patterns that connect \"sources\" (origins of input) with \"sinks\" (destinations where the data interacts with external components, a lower layer such as the OS, etc.)\n\n## Relationships\n- ChildOf CWE-441 (view 1000, ordinal Primary)\n- ChildOf CWE-610 (view 1003, ordinal Primary)\n\n## Related Attack Patterns\n- CAPEC-664\n\n",
+            "document_rank": 9,
+            "chunk_score": 10.578156965863759,
+            "source": "cwe",
+            "source_id": "CWE-918",
+            "source_version": "4.20",
+            "doc_type": "weakness",
+            "title": "Server-Side Request Forgery (SSRF)",
+            "source_url": "https://cwe.mitre.org/data/definitions/918.html",
+            "license": "MITRE CWE Terms of Use: https://cwe.mitre.org/about/termsofuse.html. Copyright © 2006–2026, The MITRE Corporation. CWE™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+            "chunk_sha256": "c7e62d4e2ac5615e03450c3a7a8ba603ef9c55b3bfd254e0e99876664da28d92",
+            "document_content_sha256": "e107bc17d75b9a52b98e8e8cc43000d76f1ab7e57258b9363ca49be425d1ccd1",
+            "provenance": {
+              "origin_kind": "local_file",
+              "artifact_path": "cwec_v4.20.xml.zip",
+              "artifact_sha256": "3976f599e5e5200219a3108bb896d06e2a88fbb293369e1883cb423a5e9d7d50",
+              "adapter": "mitre_cwe",
+              "adapter_version": "mitre-cwe-1",
+              "retrieved_at_utc": "2026-10-15T22:53:27Z",
+              "ingested_at_utc": "2026-10-15T22:53:30Z"
+            },
+            "basis": "general_reference_knowledge"
+          },
+          {
+            "reference_id": "cwe:CWE-862#0009",
+            "doc_id": "cwe:CWE-862",
+            "chunk_id": "cwe:CWE-862#0009",
+            "ordinal": 9,
+            "char_start": 6392,
+            "char_end": 7454,
+            "text": "(IEEE 1028 standard) (can apply to requirements, design, source code, etc.) - Formal Methods / Correct-By-Construction\n\n## Potential Mitigations\n- [Architecture and Design] Divide the product into anonymous, normal, privileged, and administrative areas. Reduce the attack surface by carefully mapping roles with data and functionality. Use role-based access control (RBAC) [REF-229] to enforce the roles at the appropriate boundaries. Note that this approach may not protect against horizontal authorization, i.e., it will not protect a user from attacking others with the same role.\n- [Architecture and Design] Ensure that access control checks are performed related to the business logic. These checks may be different than the access control checks that are applied to more generic resources such as files, connections, processes, memory, and database records. For example, a database may restrict access for medical records to a specific database user, but each record might only be intended to be accessible to the patient and the patient's doctor [REF-7].\n",
+            "document_rank": 10,
+            "chunk_score": 9.072576941140976,
+            "source": "cwe",
+            "source_id": "CWE-862",
+            "source_version": "4.20",
+            "doc_type": "weakness",
+            "title": "Missing Authorization",
+            "source_url": "https://cwe.mitre.org/data/definitions/862.html",
+            "license": "MITRE CWE Terms of Use: https://cwe.mitre.org/about/termsofuse.html. Copyright © 2006–2026, The MITRE Corporation. CWE™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+            "chunk_sha256": "97478a035cd70d9249ddfd932bcb8dd576891217f97ce42b400961e217049134",
+            "document_content_sha256": "be580cae2c83a55626c1ef264e4c0aaee841a96623e19d5879739409a04af315",
+            "provenance": {
+              "origin_kind": "local_file",
+              "artifact_path": "cwec_v4.20.xml.zip",
+              "artifact_sha256": "3976f599e5e5200219a3108bb896d06e2a88fbb293369e1883cb423a5e9d7d50",
+              "adapter": "mitre_cwe",
+              "adapter_version": "mitre-cwe-1",
+              "retrieved_at_utc": "2026-10-15T22:53:27Z",
+              "ingested_at_utc": "2026-10-15T22:53:30Z"
+            },
+            "basis": "general_reference_knowledge"
+          }
+        ],
+        "omitted_documents": 0,
+        "omitted_chunks": 61,
+        "meaning": "Retrieved items are reference knowledge from a security corpus. They do not confirm an incident's root-cause hypothesis, and an absent item does not refute it.",
+        "schema_version": "1.0"
+      },
+      "status": "answered",
+      "message": "The answer passed citation validation (this does not prove every statement is entailed).",
+      "answer": {
+        "schema_version": "1.0",
+        "incident_id": "incident_001",
+        "observed_evidence": [
+          {
+            "statement": "An HTTP GET request was observed on path /search with query message=%27%20OR%20%271%27%3D%271 and response status 200.",
+            "evidence_ids": [
+              "application-4"
+            ]
+          },
+          {
+            "statement": "An HTTP GET request was observed on path /api/search with query message=%27%20OR%20%271%27%3D%271, status 200, upstream 172.19.0.6:8000, and upstream status 200.",
+            "evidence_ids": [
+              "nginx-19"
+            ]
+          }
+        ],
+        "hypotheses": [
+          {
+            "hypothesis_id": "H1",
+            "statement": "The normalized events contain SQL-injection-like request syntax, supporting a potential SQL injection hypothesis under CWE-89, but do not establish vulnerable server-side query construction or successful exploitation.",
+            "status": "hypothesis_only",
+            "evidence_ids": [
+              "application-4",
+              "nginx-19"
+            ],
+            "reference_ids": [
+              "cwe:CWE-89#0001",
+              "capec:CAPEC-66#0003"
+            ]
+          }
+        ],
+        "reference_guidance": [
+          {
+            "statement": "Blind SQL injection overcomes the lack of error messages by using simple Boolean SQL expressions to probe whether the query was executed.",
+            "reference_ids": [
+              "capec:CAPEC-7#0000"
+            ]
+          },
+          {
+            "statement": "SQL injection can involve adding logic to a query using single quotes and SQL operators like OR to complete a hypothesized query syntactically.",
+            "reference_ids": [
+              "capec:CAPEC-66#0003"
+            ]
+          },
+          {
+            "statement": "SQL injection weaknesses can lead to consequences such as unauthorized code execution, reading application data, bypassing authentication, or bypassing access controls.",
+            "reference_ids": [
+              "cwe:CWE-89#0001"
+            ]
+          }
+        ],
+        "reference_relevance": [
+          {
+            "reference_id": "capec:CAPEC-108#0002",
+            "assessment": "not_relevant"
+          },
+          {
+            "reference_id": "capec:CAPEC-7#0000",
+            "assessment": "relevant"
+          },
+          {
+            "reference_id": "capec:CAPEC-664#0002",
+            "assessment": "not_relevant"
+          },
+          {
+            "reference_id": "capec:CAPEC-66#0003",
+            "assessment": "relevant"
+          },
+          {
+            "reference_id": "cwe:CWE-89#0001",
+            "assessment": "relevant"
+          },
+          {
+            "reference_id": "capec:CAPEC-248#0000",
+            "assessment": "not_relevant"
+          },
+          {
+            "reference_id": "cwe:CWE-79#0002",
+            "assessment": "not_relevant"
+          },
+          {
+            "reference_id": "cwe:CWE-20#0021",
+            "assessment": "unclear"
+          },
+          {
+            "reference_id": "cwe:CWE-918#0002",
+            "assessment": "not_relevant"
+          },
+          {
+            "reference_id": "cwe:CWE-862#0009",
+            "assessment": "not_relevant"
+          }
+        ],
+        "evidence_gaps": [
+          "Application source code or query-construction logs showing unsafe SQL handling.",
+          "Correlated database execution logs demonstrating whether the injected query was processed by a database."
+        ],
+        "limitations": [
+          "Observed request patterns alone do not prove successful exploitation, data access, or unsafe server-side query construction."
+        ]
+      },
+      "validation": {
+        "passed": true,
+        "issues": [],
+        "note": "Validation checks that citations exist, belong to this context and sit in the right category, and screens a few high-risk statement patterns. It does not prove that a statement is entailed by its citations or that a passage is relevant."
+      },
+      "raw_response": "{\n  \"schema_version\": \"1.0\",\n  \"incident_id\": \"incident_001\",\n  \"observed_evidence\": [\n    {\n      \"statement\": \"An HTTP GET request was observed on path /search with query message=%27%20OR%20%271%27%3D%271 and response status 200.\",\n      \"evidence_ids\": [\n        \"application-4\"\n      ]\n    },\n    {\n      \"statement\": \"An HTTP GET request was observed on path /api/search with query message=%27%20OR%20%271%27%3D%271, status 200, upstream 172.19.0.6:8000, and upstream status 200.\",\n      \"evidence_ids\": [\n        \"nginx-19\"\n      ]\n    }\n  ],\n  \"hypotheses\": [\n    {\n      \"hypothesis_id\": \"H1\",\n      \"statement\": \"The normalized events contain SQL-injection-like request syntax, supporting a potential SQL injection hypothesis under CWE-89, but do not establish vulnerable server-side query construction or successful exploitation.\",\n      \"status\": \"hypothesis_only\",\n      \"evidence_ids\": [\n        \"application-4\",\n        \"nginx-19\"\n      ],\n      \"reference_ids\": [\n        \"cwe:CWE-89#0001\",\n        \"capec:CAPEC-66#0003\"\n      ]\n    }\n  ],\n  \"reference_guidance\": [\n    {\n      \"statement\": \"Blind SQL injection overcomes the lack of error messages by using simple Boolean SQL expressions to probe whether the query was executed.\",\n      \"reference_ids\": [\n        \"capec:CAPEC-7#0000\"\n      ]\n    },\n    {\n      \"statement\": \"SQL injection can involve adding logic to a query using single quotes and SQL operators like OR to complete a hypothesized query syntactically.\",\n      \"reference_ids\": [\n        \"capec:CAPEC-66#0003\"\n      ]\n    },\n    {\n      \"statement\": \"SQL injection weaknesses can lead to consequences such as unauthorized code execution, reading application data, bypassing authentication, or bypassing access controls.\",\n      \"reference_ids\": [\n        \"cwe:CWE-89#0001\"\n      ]\n    }\n  ],\n  \"reference_relevance\": [\n    {\n      \"reference_id\": \"capec:CAPEC-108#0002\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"capec:CAPEC-7#0000\",\n      \"assessment\": \"relevant\"\n    },\n    {\n      \"reference_id\": \"capec:CAPEC-664#0002\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"capec:CAPEC-66#0003\",\n      \"assessment\": \"relevant\"\n    },\n    {\n      \"reference_id\": \"cwe:CWE-89#0001\",\n      \"assessment\": \"relevant\"\n    },\n    {\n      \"reference_id\": \"capec:CAPEC-248#0000\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"cwe:CWE-79#0002\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"cwe:CWE-20#0021\",\n      \"assessment\": \"unclear\"\n    },\n    {\n      \"reference_id\": \"cwe:CWE-918#0002\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"cwe:CWE-862#0009\",\n      \"assessment\": \"not_relevant\"\n    }\n  ],\n  \"evidence_gaps\": [\n    \"Application source code or query-construction logs showing unsafe SQL handling.\",\n    \"Correlated database execution logs demonstrating whether the injected query was processed by a database.\"\n  ],\n  \"limitations\": [\n    \"Observed request patterns alone do not prove successful exploitation, data access, or unsafe server-side query construction.\"\n  ]\n}",
+      "llm": "GeminiLLMClient(gemini-3.5-flash-lite)",
+      "request_sent": true
+    }
+  ],
   "ground_truth_used": false,
   "caveats": [
     "Retrieved passages are general reference knowledge from a small curated CWE/CAPEC subset; they do not confirm the incident hypothesis and an absent passage does not refute it.",

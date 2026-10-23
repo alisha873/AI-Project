@@ -42,6 +42,7 @@ from validation.contract import (
     CONCLUSIVE_STATUSES,
     CONTRACT_VERSION_IDENTITY,
     REASONS_BY_STATUS,
+    ApplicationRecord,
     IdentityProvenance,
     STANDARD_LIMITATIONS,
     ConditionRecord,
@@ -49,8 +50,10 @@ from validation.contract import (
     LabStateRecord,
     ObservationEvidence,
     OracleRecord,
+    PreconditionFinding,
     RemediationRecord,
     ScopeRecord,
+    UpstreamRecord,
     ValidationReport,
 )
 from validation.oracle import ClassifierRegistry, OracleClassifier, OracleOutcome, default_classifiers
@@ -65,8 +68,8 @@ from validation.orchestrator import (
     target_record,
 )
 from validation.probe_requests import ProbeRequest, build_baseline_requests, build_probe_requests, check_constructible
-from validation.scenario import ScenarioDefinition, ScenarioRegistry, default_registry
-from validation.scope import ScopeDecision, ScopePolicy, issued_identity_for
+from validation.scenario import SQLI_SCENARIO_ID, ScenarioDefinition, ScenarioRegistry, default_registry
+from validation.scope import ScopeDecision, ScopePolicy, ScopeRequest, issued_identity_for
 from validation.inputs import assess_attestation, intake_plan
 from validation.transport import TransportResponse, ValidationTransport
 
@@ -75,6 +78,8 @@ from validation.transport import TransportResponse, ValidationTransport
 LIVE_TRANSPORT_ENABLED = False
 
 RUNNER_ID = "autoshield-validation-runner-13b1"
+OBSERVATION_RUNNER_ID = "autoshield-pre-remediation-observation"
+REQUIRED_OBSERVATION_BASELINES = ("hello", "security", "autoshield")
 
 SIMULATION_STATEMENT = (
     "SIMULATION: this result came from a deterministic in-memory fake transport. It says nothing about any real "
@@ -390,6 +395,288 @@ def _execute(assessment: Assessment, transport: ValidationTransport, classifiers
         limitations=limitations,
         validity_conditions=validity,
     )
-    # The ONLY place a report is issued: `validation.evidence_gate` accepts no report the runner did not produce.
+    # Reports are issued only from this module, and only for a check that ran.
     seals.issue_report(report_digest(report))
     return report
+
+
+# ------------------------------------------------------------------
+# pre-remediation observation (does not change the post-remediation path above)
+# ------------------------------------------------------------------
+
+OBSERVATION_NOTE = (
+    "This report is a pre-remediation observation of the Incident 1 baseline sequence. "
+    "The reviewed control value is procedure metadata and is not sent. "
+    "The report does not show that remediation was applied or that it worked, and it does not confirm "
+    "the historical incident."
+)
+
+
+def _obs_finding(name: str, ok: bool, detail: str, reason: str | None = None,
+                 evaluated: bool = True) -> PreconditionFinding:
+    return PreconditionFinding(
+        precondition=name, satisfied=ok, evaluated=evaluated,
+        reason_code=None if ok or not evaluated else reason, detail=detail,
+    )
+
+
+def _observation_baseline_problem(scenario: ScenarioDefinition) -> str | None:
+    """None when this scenario is the Incident 1 baseline sequence and its requests can be built."""
+    terms = tuple(item.term for item in scenario.probe.baseline_searches)
+    if scenario.scenario_id != SQLI_SCENARIO_ID or terms != REQUIRED_OBSERVATION_BASELINES:
+        return "observation_baselines_required"
+    if check_constructible(scenario) is not None:
+        return "observation_baselines_required"
+    return None
+
+
+def _observation_run_id(incident_id: str, scenario_ref, origin: str | None) -> str:
+    material = "|".join((
+        "pre_remediation_observation", incident_id, scenario_ref.scenario_id,
+        scenario_ref.definition_sha256 or "", origin or "",
+    ))
+    digest = hashlib.sha256(material.encode("utf-8")).hexdigest()[:12]
+    return f"OBS-{incident_id}-{digest}"
+
+
+def run_pre_remediation_observation(
+    request: ValidationRequest,
+    registry: ScenarioRegistry | None = None,
+    policy: ScopePolicy | None = None,
+    transport: object = None,
+    *,
+    classifiers: ClassifierRegistry | None = None,
+    clock: Clock | None = None,
+    runner_id: str = OBSERVATION_RUNNER_ID,
+    live_opt_in: bool = False,
+) -> ValidationReport:
+    """Observe the Incident 1 baseline sequence. Sends nothing unless every observation gate holds.
+
+    A plan result or an application attestation is refused before any send. The post-remediation runner is
+    not used. `control_value` must already be fixed on an eligible scenario so the procedure digest is
+    complete, and this function does not transmit it.
+    """
+    if not isinstance(request, ValidationRequest):
+        raise ValidationRequestError("request must be a ValidationRequest")
+    registry = registry if registry is not None else default_registry()
+    policy = policy if policy is not None else ScopePolicy()
+    classifiers = classifiers if classifiers is not None else default_classifiers()
+    clock = clock or _utc_clock
+    now = clock()
+    if not isinstance(now, datetime) or now.tzinfo is None:
+        raise ValidationRequestError("clock must return a timezone-aware datetime")
+
+    scenario = registry.get(request.scenario_id)
+    forbidden = {runner_id}
+    if request.authorization is not None:
+        forbidden.add(request.authorization.operator_id)
+    forbidden.discard("")
+    decision = policy.evaluate(ScopeRequest(
+        target_url=request.target_url, scenario=scenario, incident_id=request.incident_id,
+        identity=request.lab_identity, authorization=request.authorization,
+        now=now, forbidden_verifier_ids=tuple(sorted(forbidden)),
+        require_live_suitable_identity=bool(
+            getattr(transport, "kind", None) == "live" and _live_allowed(live_opt_in=live_opt_in)
+        ),
+    ))
+    findings = _observation_findings(
+        request, scenario, decision, transport, classifiers, live_opt_in=live_opt_in,
+    )
+    scenario_ref = _observation_scenario_ref(request.scenario_id, scenario)
+    if not all(item.satisfied for item in findings):
+        return _observation_not_attempted(request, scenario, scenario_ref, decision, findings)
+
+    assert scenario is not None and decision.origin is not None
+    assert request.lab_identity is not None and request.lab_identity.lab_state_id is not None
+    return _execute_observation(
+        request, scenario, scenario_ref, decision, findings, transport, classifiers, clock, runner_id, now,
+    )
+
+
+def _observation_findings(request, scenario, decision, transport, classifiers, *,
+                         live_opt_in: bool) -> list[PreconditionFinding]:
+    findings: list[PreconditionFinding] = []
+    claim = request.plan_result is not None or request.application is not None
+    findings.append(_obs_finding(
+        "remediation_not_claimed", not claim,
+        "No remediation plan or application attestation was supplied." if not claim
+        else "A remediation plan or application attestation was supplied, so no observation is run.",
+        "remediation_claim_present",
+    ))
+    known = scenario is not None
+    findings.append(_obs_finding(
+        "scenario_known", known,
+        "The scenario is registered." if known else "The scenario id is not in the registry.",
+        "scenario_unknown",
+    ))
+    if scenario is None:
+        findings.append(_obs_finding(
+            "scenario_eligible", False, "Not evaluated: the scenario is unknown.", evaluated=False,
+        ))
+        findings.append(_obs_finding(
+            "baseline_sequence_ready", False, "Not evaluated: the scenario is unknown.", evaluated=False,
+        ))
+    else:
+        eligible = scenario.eligible_for_execution
+        findings.append(_obs_finding(
+            "scenario_eligible", eligible,
+            "The scenario is approved and has no open blocking ambiguity." if eligible
+            else "The scenario is not approved for execution (review status "
+                 f"{scenario.review.status!r}; open blocking ambiguities: "
+                 f"{len(scenario.open_blocking_ambiguities())}).",
+            "scenario_not_eligible",
+        ))
+        if eligible:
+            problem = _observation_baseline_problem(scenario)
+            if problem is None and classifiers.get(scenario.oracle) is None:
+                problem = "observation_baselines_required"
+            findings.append(_obs_finding(
+                "baseline_sequence_ready", problem is None,
+                "The Incident 1 baseline sequence can be built." if problem is None
+                else "The scenario is not the Incident 1 baseline sequence.",
+                problem,
+            ))
+        else:
+            findings.append(_obs_finding(
+                "baseline_sequence_ready", False,
+                "Not evaluated: the scenario is not eligible.", evaluated=False,
+            ))
+    scope_ok = decision.scope_conditions_met
+    denied = ", ".join(code for code in decision.reason_codes if code != "execution_disabled")
+    findings.append(_obs_finding(
+        "scope_conditions_met", scope_ok,
+        "The scope policy found the target, scenario, lab identity and authorization in order." if scope_ok
+        else f"The scope policy denied: {denied}.",
+        "scope_policy_denied",
+    ))
+    if scope_ok:
+        state_id = None if request.lab_identity is None else request.lab_identity.lab_state_id
+        findings.append(_obs_finding(
+            "lab_state_identified", state_id is not None,
+            "The verified lab identity includes a lab-state id." if state_id is not None
+            else "The verified lab identity has no lab-state id, so the pre-remediation state is unknown.",
+            "lab_state_missing",
+        ))
+    else:
+        findings.append(_obs_finding(
+            "lab_state_identified", False, "Not evaluated: the scope policy did not accept the target.",
+            evaluated=False,
+        ))
+    live_ok, live_detail, live_reason = _live_gate(transport, live_opt_in=live_opt_in)(decision)
+    findings.append(_obs_finding(
+        "live_execution_available", live_ok, live_detail, live_reason or None,
+    ))
+    return findings
+
+
+def _observation_scenario_ref(scenario_id: str, scenario: ScenarioDefinition | None):
+    from validation.orchestrator import _scenario_reference
+    return _scenario_reference(scenario_id, scenario)
+
+
+def _observation_not_attempted(request, scenario, scenario_ref, decision, findings) -> ValidationReport:
+    first = next(item for item in findings if not item.satisfied)
+    input_names = {
+        "remediation_not_claimed", "scenario_known", "scenario_eligible", "baseline_sequence_ready",
+    }
+    status = "not_validated" if first.precondition in input_names else "blocked"
+    limitations = [*STANDARD_LIMITATIONS, OBSERVATION_NOTE, PHASE_13B1_NOTE]
+    if scenario is not None:
+        limitations.extend(scenario.limitations)
+    return ValidationReport(
+        validation_run_id=_observation_run_id(request.incident_id, scenario_ref, decision.origin),
+        incident_id=request.incident_id,
+        scenario=scenario_ref,
+        objective=None if scenario is None else objective_record(scenario),
+        target=None if scenario is None else target_record(scenario, decision.origin, verified=False),
+        lab_state=LabStateRecord(),
+        remediation=RemediationRecord(proposals=[], application=ApplicationRecord(state="not_applicable")),
+        status=status,
+        reason_code=first.reason_code,
+        oracle=None if scenario is None else OracleRecord(
+            oracle_id=scenario.oracle.oracle_id, oracle_version=scenario.oracle.version,
+            conditions=[ConditionRecord(condition_id=c.condition_id) for c in scenario.oracle.conditions],
+        ),
+        execution=ExecutionRecord(),
+        evidence=[],
+        scope=ScopeRecord(
+            policy_version=decision.policy_version, scope_conditions_met=decision.scope_conditions_met,
+            execution_permitted=False, reason_codes=list(decision.reason_codes),
+        ),
+        preconditions=findings,
+        upstream=UpstreamRecord(),
+        limitations=limitations,
+        validity_conditions=[
+            "No check ran, so this report is valid only as a statement of why no observation exists.",
+        ],
+        report_kind="pre_remediation_observation",
+    )
+
+
+def _execute_observation(request, scenario, scenario_ref, decision, findings, transport, classifiers,
+                         clock, runner_id, now) -> ValidationReport:
+    classifier = classifiers.get(scenario.oracle)
+    assert classifier is not None
+    pair = build_probe_requests(scenario, decision.origin)
+    run_id = f"{_observation_run_id(request.incident_id, scenario_ref, decision.origin)}-{transport.kind}"
+    started = _stamp(now)
+    evidence, outcome, sent, completed, finished = _execute_baselines(
+        transport, scenario, decision.origin, pair.probe, classifier, run_id, clock,
+    )
+    limitations = [*STANDARD_LIMITATIONS, OBSERVATION_NOTE, BASELINE_CHECK_SCOPE_LIMITATION, *scenario.limitations]
+    validity = [
+        "Valid only for the pre-remediation lab state the identity check observed. "
+        "No remediation was applied or attested.",
+        "Valid only for the scenario definition, oracle version and request encoding recorded in this report.",
+        "The reviewed control value was not sent.",
+    ]
+    if transport.kind == "fake":
+        limitations.insert(0, SIMULATION_STATEMENT)
+        validity.insert(0, SIMULATION_STATEMENT)
+    report = ValidationReport(
+        contract_version=CONTRACT_VERSION_IDENTITY,
+        identity=_identity_provenance_from(request.lab_identity, now),
+        validation_run_id=run_id,
+        incident_id=request.incident_id,
+        scenario=scenario_ref,
+        objective=objective_record(scenario),
+        target=target_record(scenario, decision.origin, verified=True),
+        lab_state=LabStateRecord(
+            tested_state="pre_remediation",
+            pre_remediation_state_id=request.lab_identity.lab_state_id,
+        ),
+        remediation=RemediationRecord(proposals=[], application=ApplicationRecord(state="not_applicable")),
+        status=outcome.status,
+        reason_code=outcome.reason_code,
+        oracle=OracleRecord(
+            oracle_id=scenario.oracle.oracle_id, oracle_version=scenario.oracle.version,
+            conditions=outcome.conditions,
+        ),
+        execution=ExecutionRecord(
+            attempted=True, completed=completed, requests_sent=sent, runner_id=runner_id,
+            transport=transport.transport_id, transport_kind=transport.kind,
+            started_at_utc=started, finished_at_utc=finished,
+        ),
+        evidence=evidence,
+        scope=ScopeRecord(
+            policy_version=decision.policy_version, scope_conditions_met=True,
+            execution_permitted=True, reason_codes=list(decision.reason_codes),
+        ),
+        preconditions=findings,
+        upstream=UpstreamRecord(),
+        limitations=limitations,
+        validity_conditions=validity,
+        report_kind="pre_remediation_observation",
+    )
+    seals.issue_report(report_digest(report))
+    return report
+
+
+def _identity_provenance_from(evidence, now: datetime):
+    issued = issued_identity_for(evidence, now)
+    assert issued is not None
+    return IdentityProvenance(
+        source_id=issued.source_id, observed_at_utc=issued.observed_at_utc, checked_at_utc=_stamp(now),
+        lab_state_id=evidence.lab_state_id, live_suitable=issued.live_suitable,
+        authoritative_registry=issued.authoritative,
+    )

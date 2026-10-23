@@ -13,7 +13,9 @@ a clause that explicitly frames it as a possibility or an open question: if, whe
 might, could, would, possible, potential, suspect, hypothesis, unconfirmed, unknown, unclear. The clause
 is the text since the last comma, full stop, semicolon or colon. This is a keyword window, not
 understanding: "the database was breached, which may be unconfirmed" is rejected (the hedge comes
-after), and a hedge word in the same clause can excuse an unrelated claim. Success claims are NOT
+after), and a hedge word in the same clause can excuse an unrelated claim. A negating verb also covers
+a list in the same sentence ("does not confirm that the code is vulnerable or that exploitation
+succeeded"). It does not cover a later contrasting clause or another sentence. Success claims are NOT
 excused by hedging words (a hedged "this will prevent all attacks" is still an overclaim); only explicit
 negation ("this does not guarantee that ...") excuses them.
 
@@ -39,7 +41,7 @@ from rag.citations import (
     _PATH_RE,
     _REFERENCE_TOKEN_RE,
     _identifiers,
-    _is_negated,
+    _is_negated_in_sentence,
 )
 
 CONFIG_TOKEN_RE = re.compile(r"\bCFG-[0-9]+\b")
@@ -164,7 +166,10 @@ def configuration_tokens(text: str) -> set[str]:
 
 
 def _negated(text: str, start: int, end: int | None = None) -> bool:
-    if _is_negated(text, start, end):
+    # Sentence-scoped, including a negating verb over a list ("does not confirm that A or that B").
+    # A hedge in another sentence or a later contrasting clause does not count. The extra window below
+    # only adds remediation-specific negating verbs such as "does not guarantee".
+    if _is_negated_in_sentence(text, start, end):
         return True
     return _EXTRA_NEGATION_BEFORE.search(text[max(0, start - 40):start]) is not None
 

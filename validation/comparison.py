@@ -94,6 +94,7 @@ NOT_COMPARABLE_REASONS = (
     "transport_kinds_differ",
     "timestamps_missing",
     "baseline_not_before_post",
+    "observation_is_not_remediation_evidence",
 )
 NOT_RUN_STATUSES = ("not_validated", "blocked")
 
@@ -176,6 +177,11 @@ def _moment(value: str | None) -> datetime | None:
 
 def _structural_problems(base: ValidationReport, post: ValidationReport) -> list[str]:
     problems: list[str] = []
+    if (
+        base.report_kind == "pre_remediation_observation"
+        or post.report_kind == "pre_remediation_observation"
+    ):
+        problems.append("observation_is_not_remediation_evidence")
     if base.validation_run_id == post.validation_run_id:
         problems.append("same_run")
     if base.incident_id != post.incident_id:

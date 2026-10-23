@@ -29,7 +29,7 @@ import json
 from typing import Literal
 
 from validation.contract import Identifier, Text, ValidationReport, _Strict
-from validation.evidence_gate import evidence_gate_failures
+from validation.evidence_gate import evidence_gate_failures, observation_gate_failures
 
 # 1.1 (Phase 13B.3): usability also needs identity provenance and runner issuance; adds the three identity fields
 # and the reason list. 1.0 handoffs are not produced any more and are not reinterpreted.
@@ -46,7 +46,10 @@ class Phase14Handoff(_Strict):
     status: Identifier
     reason_code: Identifier
     usable_as_post_remediation_evidence: bool
-    # Why it is not usable (empty only when usable); stable codes from `validation.evidence_gate`.
+    # True only for a runner-issued live pre-remediation observation with no remediation claim.
+    # It does not make the report post-remediation evidence.
+    usable_as_pre_remediation_observation: bool = False
+    # Why it is not usable as post-remediation evidence (empty only when that flag is true).
     not_usable_reasons: list[Identifier]
 
     # how the lab identity behind a check was established (None when no check ran or for a 1.0 report)
@@ -123,6 +126,7 @@ def build_phase14_handoff(report: ValidationReport) -> Phase14Handoff:
         status=report.status,
         reason_code=report.reason_code,
         usable_as_post_remediation_evidence=not gate_failures,
+        usable_as_pre_remediation_observation=not observation_gate_failures(report),
         scenario_id=report.scenario.scenario_id,
         scenario_definition_sha256=report.scenario.definition_sha256,
         oracle_id=report.oracle.oracle_id if report.oracle else None,

@@ -88,7 +88,11 @@ class TestAnswered:
     def test_the_system_prompt_states_the_grounding_rules(self):
         for phrase in ("untrusted data", "observed_evidence", "hypotheses", "reference_guidance",
                        "not_relevant", "Do not fill the gap with outside knowledge",
-                       "never call it confirmed", "Never invent"):
+                       "never call it confirmed", "Never invent",
+                       'assessment for it is exactly "relevant"',
+                       "supported by the retrieved text of the relevant passages",
+                       'use the words "does not establish" or',
+                       'Do not rewrite that denial as "without establishing"'):
             assert phrase in SYSTEM_PROMPT, phrase
 
     def test_a_model_may_mark_everything_irrelevant_and_give_no_guidance(self, context):
@@ -172,6 +176,44 @@ class TestRejected:
         llm = FakeLLM("not json", as_json(good_answer(context)))
         result = generate_grounded_answer(context, llm)
         assert result.status == "rejected_invalid_response" and len(llm.calls) == 1
+
+    def test_guidance_that_cites_a_not_relevant_reference_is_rejected(self, context):
+        answer = good_answer(context)
+        cited = answer["reference_guidance"][0]["reference_ids"][0]
+        for entry in answer["reference_relevance"]:
+            if entry["reference_id"] == cited:
+                entry["assessment"] = "not_relevant"
+        result = generate_grounded_answer(context, FakeLLM(as_json(answer)))
+        assert result.status == "rejected_citations" and result.answer is None
+        assert result.validation is not None and not result.validation.passed
+        assert "not_relevant_reference_cited" in result.validation.codes
+        assert any(cited in issue.message for issue in result.validation.issues)
+
+    def test_a_valid_answer_cites_only_relevant_references(self, context):
+        answer = good_answer(context)
+        relevant = {
+            entry["reference_id"]
+            for entry in answer["reference_relevance"]
+            if entry["assessment"] == "relevant"
+        }
+        cited = {ref for item in answer["reference_guidance"] for ref in item["reference_ids"]}
+        assert cited and cited <= relevant
+        result = generate_grounded_answer(context, FakeLLM(as_json(answer)))
+        assert result.status == "answered" and result.validation.passed and result.validation.issues == ()
+        assert result.answer["reference_guidance"][0]["reference_ids"] == answer["reference_guidance"][0]["reference_ids"]
+
+    def test_an_invalid_answer_stays_rejected_when_a_later_response_would_pass(self, context):
+        invalid = good_answer(context)
+        cited = invalid["reference_guidance"][0]["reference_ids"][0]
+        for entry in invalid["reference_relevance"]:
+            if entry["reference_id"] == cited:
+                entry["assessment"] = "not_relevant"
+        llm = FakeLLM(as_json(invalid), as_json(good_answer(context)))
+        result = generate_grounded_answer(context, llm)
+        assert len(llm.calls) == 1
+        assert result.status == "rejected_citations" and result.answer is None
+        assert result.validation is not None and not result.validation.passed
+        assert "not_relevant_reference_cited" in result.validation.codes
 
     def test_a_provider_failure_is_reported_with_a_short_message_only(self, context):
         secret = "Authorization: Bearer sk-SECRET " + "x" * 2000

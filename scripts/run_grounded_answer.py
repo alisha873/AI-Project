@@ -12,10 +12,10 @@ By default this builds the context ONLY (no language model is called, no key is 
         -> deterministic queries -> FTS5 v1 keyword retrieval (the production baseline)
         -> a structured context with document ids, chunk ids, provenance and retrieved text.
 
-Add `--provider groq` or `--provider ollama` to also generate an answer through the existing LLM
-clients (`llm/groq.py` needs a key in `.env`; `llm/ollama.py` needs a local Ollama server). The answer is
-accepted only if citation validation passes; otherwise it is reported as rejected. Neither provider
-was called while this script was written; only mocked responses were tested.
+Add `--provider gemini` to generate an answer through `llm/gemini.py` (model `gemini-3.5-flash-lite`,
+key `GEMINI_API_KEY` in the git-ignored `.env`). `--provider groq` and `--provider ollama` remain
+explicit alternatives. The answer is accepted only if citation validation passes; otherwise it is
+reported as rejected. A missing Gemini key is an error and does not fall back to Groq.
 
 Knowledge base: by default the 23 curated pinned MITRE records are built into a private IN-MEMORY
 store from the archives in data/knowledge_sources/raw (like scripts.run_retrieval_baseline); pass
@@ -71,8 +71,9 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--cwe-archive", type=Path, default=DEFAULT_CWE)
     parser.add_argument("--capec-archive", type=Path, default=DEFAULT_CAPEC)
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
-    parser.add_argument("--provider", choices=("none", "groq", "ollama"), default="none",
-                        help="language-model provider; 'none' (default) builds the context only")
+    parser.add_argument("--provider", choices=("none", "gemini", "groq", "ollama"), default="none",
+                        help="language-model provider; 'none' (default) builds the context only; "
+                             "'gemini' is the hosted provider")
     parser.add_argument("--model", help="model name override for the provider")
     parser.add_argument("--max-documents", type=int, default=ContextLimits().max_documents)
     parser.add_argument("--max-chunks-per-document", type=int, default=ContextLimits().max_chunks_per_document)
@@ -87,6 +88,10 @@ def make_llm_client(provider: str, model: str | None) -> LLMClient | None:
     """None for 'none'. The provider modules are imported lazily so the default path needs neither."""
     if provider == "none":
         return None
+    if provider == "gemini":
+        from llm.gemini import GeminiLLMClient
+
+        return GeminiLLMClient(model=model)
     if provider == "groq":
         from llm.groq import GroqLLMClient
 

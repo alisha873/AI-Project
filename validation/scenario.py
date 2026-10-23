@@ -129,7 +129,11 @@ class ProbeSpec(_Strict):
     # exactly one parameter, with no headers beyond what a transport adds on its own.
     wire_encoding: Literal["unspecified", "percent_encoded_utf8_query"] = "unspecified"
     control_description: Text
-    # The concrete benign control value. None until a reviewer supplies one; request construction needs it.
+    # The concrete benign control value for the single-control fallback (a scenario with no baseline searches).
+    # None until a reviewer supplies one. It is part of the procedure digest, so changing it invalidates approvals.
+    # The Incident 1 baseline path does not send this value: hello, security and autoshield are the controls that
+    # are actually transmitted. Request construction still requires it so an approved scenario cannot leave the
+    # fallback unspecified. This file does not choose a value, and the built-in scenario stays ineligible.
     control_value: Text | None = None
 
 

@@ -60,10 +60,10 @@ def test_stages_endpoint_hides_the_raw_command():
 
 def test_default_config_is_safe_and_bounds_requests(monkeypatch):
     config = m._dashboard_llm_config()
-    assert config["provider"] == "none"               # no model by default
+    assert config["provider"] == "gemini"             # hosted stages use Gemini unless overridden
     assert config["max_retries"] == "0"               # dashboard disables SDK re-sends by default
     assert config["token_budget"] == "" and config["max_passage_chars"] == ""
-    assert config["tpm_limit"] == ""                  # unset -> the client's default-on per-minute budget
+    assert config["tpm_limit"] == ""                  # unset -> Gemini does not assume an 8000 TPM cap
 
 
 def test_an_invalid_provider_falls_back_to_none(monkeypatch):
@@ -89,13 +89,14 @@ def test_subprocess_env_maps_the_knobs_and_adds_no_secret(monkeypatch):
     assert env["LLM_TPM_LIMIT"] == "16000"
     assert env["PYTHONPATH"]
     # the helper never invents a credential
-    assert "GROQ_API_KEY" not in {k for k in env if k not in __import__("os").environ}
+    added = {k for k in env if k not in __import__("os").environ}
+    assert "GROQ_API_KEY" not in added and "GEMINI_API_KEY" not in added
 
 
 def test_blank_retries_keeps_the_library_default(monkeypatch):
     monkeypatch.setenv("AUTOSHIELD_LLM_MAX_RETRIES", "")
     env = m._subprocess_env(m._dashboard_llm_config())
-    assert "LLM_MAX_RETRIES" not in env            # nothing forced -> GroqLLMClient keeps the SDK default (2)
+    assert "LLM_MAX_RETRIES" not in env            # nothing forced -> the selected client keeps its own default
 
 
 # -------------------------------------------------------------- actionable hints

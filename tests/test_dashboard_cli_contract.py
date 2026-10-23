@@ -20,14 +20,14 @@ from scripts import run_grounded_answer, run_remediation_plan
 
 # The argument shape used by the dashboard for its "rag" and "remediation" stages (provider and output
 # path are substituted at run time; the incident id is validated by the dashboard as incident_NNN).
-DASHBOARD_ARGV = ["incident_001", "--provider", "groq", "--output", "analysis/report.json"]
+DASHBOARD_ARGV = ["incident_001", "--provider", "gemini", "--output", "analysis/report.json"]
 
 
 def test_the_dashboard_argument_shape_is_accepted_by_both_clis():
     for module in (run_grounded_answer, run_remediation_plan):
         args = module._parser().parse_args(DASHBOARD_ARGV)
         assert args.incident_id == "incident_001"
-        assert args.provider == "groq"
+        assert args.provider == "gemini"
         assert str(args.output).replace("\\", "/") == "analysis/report.json"
         assert args.model is None                       # the dashboard never overrides the model
 
@@ -43,7 +43,9 @@ def test_the_cli_defaults_the_dashboard_inherits_are_the_grounded_answer_default
 
 
 def test_the_default_provider_without_the_flag_is_no_model_call():
-    # The dashboard falls back to --provider none when AUTOSHIELD_LLM_PROVIDER is unset or invalid.
+    # These CLIs stay context-only unless --provider is passed. The dashboard passes gemini explicitly
+    # for the remediation stage and none for the retrieval preview. An invalid dashboard provider
+    # falls back to none, not to groq.
     for module in (run_grounded_answer, run_remediation_plan):
         assert module._parser().parse_args(["incident_001"]).provider == "none"
         assert module._parser().parse_args(["incident_001", "--provider", "none"]).provider == "none"

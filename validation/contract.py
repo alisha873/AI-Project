@@ -68,6 +68,8 @@ REASONS_BY_STATUS: dict[str, tuple[str, ...]] = {
         "scenario_unknown",
         "scenario_not_eligible",
         "remediation_application_not_attested",
+        "remediation_claim_present",
+        "observation_baselines_required",
     ),
     "blocked": (
         "scope_policy_denied",
@@ -75,6 +77,7 @@ REASONS_BY_STATUS: dict[str, tuple[str, ...]] = {
         "execution_not_enabled",
         "live_transport_not_enabled",
         "transport_unavailable",
+        "lab_state_missing",
     ),
     "inconclusive": (
         "lab_unreachable",
@@ -103,6 +106,19 @@ PRECONDITIONS = (
 )
 INPUT_PRECONDITIONS = PRECONDITIONS[:5]
 PERMISSION_PRECONDITIONS = PRECONDITIONS[5:]
+# A separate list for pre-remediation observation. It is not part of PRECONDITIONS, so the post-remediation
+# order (plan, then attestation, then scope) is unchanged.
+OBSERVATION_PRECONDITIONS = (
+    "remediation_not_claimed",
+    "scenario_known",
+    "scenario_eligible",
+    "baseline_sequence_ready",
+    "scope_conditions_met",
+    "lab_state_identified",
+    "live_execution_available",
+)
+OBSERVATION_INPUT_PRECONDITIONS = OBSERVATION_PRECONDITIONS[:4]
+OBSERVATION_PERMISSION_PRECONDITIONS = OBSERVATION_PRECONDITIONS[4:]
 Precondition = Literal[
     "plan_usable",
     "incident_matches_plan",
@@ -111,7 +127,11 @@ Precondition = Literal[
     "remediation_application_attested",
     "scope_conditions_met",
     "live_execution_available",
+    "remediation_not_claimed",
+    "baseline_sequence_ready",
+    "lab_state_identified",
 ]
+ReportKind = Literal["post_remediation_validation", "pre_remediation_observation"]
 
 TransportKind = Literal["none", "fake", "live"]
 TestedState = Literal["not_tested", "unknown", "pre_remediation", "post_remediation"]
@@ -427,6 +447,9 @@ class ValidationReport(_Strict):
     validity_conditions: list[Text]
     # Revision 1.1 only: how the identity behind a check that ran was established. Always None in revision 1.0.
     identity: IdentityProvenance | None = None
+    # Default keeps every existing post-remediation report valid. Observation reports set the other kind and
+    # cannot satisfy the post-remediation plan and attestation gates by leaving them out.
+    report_kind: ReportKind = "post_remediation_validation"
     # constants: Phase 13 never does any of these, so the report can never say it did
     remediation_effectiveness_proven: Literal[False] = False
     general_security_guarantee: Literal[False] = False
@@ -439,6 +462,7 @@ class ValidationReport(_Strict):
             raise ValueError(f"reason code {self.reason_code!r} is not allowed for status {self.status!r}")
         if not self.limitations:
             raise ValueError("a report must state its limitations")
+        self._check_report_kind()
         if self.status in NOT_ATTEMPTED_STATUSES:
             self._check_not_attempted()
         else:
@@ -456,6 +480,31 @@ class ValidationReport(_Strict):
                 raise ValueError("a report that ran nothing has no identity provenance")
         return self
 
+    def _check_report_kind(self) -> None:
+        """Keep observation reports from wearing a post-remediation shape, and the reverse."""
+        names = [item.precondition for item in self.preconditions]
+        observation_names = {"remediation_not_claimed", "baseline_sequence_ready", "lab_state_identified"}
+        if self.report_kind != "pre_remediation_observation":
+            if observation_names.intersection(names):
+                raise ValueError("observation preconditions belong only to an observation report")
+            return
+        if names != list(OBSERVATION_PRECONDITIONS):
+            raise ValueError("an observation report records the observation preconditions in order")
+        if self.remediation.proposals:
+            raise ValueError("an observation report carries no remediation proposals")
+        if self.remediation.application.state != "not_applicable":
+            raise ValueError("an observation report does not record a remediation application")
+        if self.lab_state.post_remediation_state_id is not None:
+            raise ValueError("an observation report has no post-remediation state")
+        if self.upstream.plan_result_status is not None or self.upstream.plan_outcome is not None:
+            raise ValueError("an observation report does not carry a remediation plan")
+        if self.upstream.hypotheses:
+            raise ValueError("an observation report does not carry remediation hypotheses")
+        if not self.execution.attempted and (
+            self.lab_state.pre_remediation_state_id is not None
+        ):
+            raise ValueError("an observation that did not run records no lab-state id")
+
     def _check_not_attempted(self) -> None:
         if self.execution.attempted or self.evidence or self.lab_state.tested_state != "not_tested":
             raise ValueError(f"{self.status} means nothing ran: no execution, no evidence, no tested state")
@@ -466,7 +515,12 @@ class ValidationReport(_Strict):
         unmet = [item for item in self.preconditions if not item.satisfied]
         if not unmet or not unmet[0].evaluated or unmet[0].reason_code != self.reason_code:
             raise ValueError("the reason code must be that of the first unmet precondition")
-        input_unmet = any(item.precondition in INPUT_PRECONDITIONS for item in unmet)
+        input_names = (
+            OBSERVATION_INPUT_PRECONDITIONS
+            if self.report_kind == "pre_remediation_observation"
+            else INPUT_PRECONDITIONS
+        )
+        input_unmet = any(item.precondition in input_names for item in unmet)
         if self.status == "not_validated" and not input_unmet:
             raise ValueError("not_validated needs an unmet input precondition")
         if self.status == "blocked" and input_unmet:
@@ -481,6 +535,8 @@ class ValidationReport(_Strict):
             raise ValueError("a check can only have run if every precondition was met")
         if self.target is None or not self.target.lab_identity_verified:
             raise ValueError("a check can only have run against a verified lab identity")
+        if self.report_kind == "pre_remediation_observation" and self.lab_state.tested_state != "pre_remediation":
+            raise ValueError("an observation that ran records the pre-remediation state")
         if self.status == "inconclusive":
             return
         # a conclusive result: it must be complete, evidenced and tied to a known lab state

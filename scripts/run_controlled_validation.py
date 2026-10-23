@@ -30,7 +30,7 @@ if str(_REPO_ROOT) not in sys.path:
 
 from validation.inputs import RemediationApplicationAttestation  # noqa: E402
 from validation.orchestrator import ValidationRequest, build_validation_report  # noqa: E402
-from validation.runner import run_controlled_validation  # noqa: E402
+from validation.runner import run_controlled_validation, run_pre_remediation_observation  # noqa: E402
 from validation.scenario import SQLI_SCENARIO_ID, default_registry  # noqa: E402
 from validation.scope import LabIdentityEvidence, OperatorAuthorization, ScopePolicy  # noqa: E402
 from validation_live.opt_in import live_opt_in_granted  # noqa: E402
@@ -58,6 +58,11 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--i-accept-authorized-live-validation", action="store_true",
         help="acknowledgement half of the live opt-in; not a substitute for reviewer approval",
+    )
+    parser.add_argument(
+        "--pre-remediation-observation", action="store_true",
+        help="request a pre-remediation observation (still requires the live opt-in and every gate; "
+             "sends nothing until those gates pass)",
     )
     return parser
 
@@ -90,6 +95,30 @@ def _build_request(args: argparse.Namespace) -> ValidationRequest:
     )
 
 
+def _run_observation(args: argparse.Namespace, request, registry, policy):
+    """Observation CLI. The scope policy stays execution-disabled. Nothing is sent from this entry point
+    until a future operator-configured policy and the other human gates exist."""
+    if not args.live or not live_opt_in_granted(acknowledgement=args.i_accept_authorized_live_validation):
+        report = run_pre_remediation_observation(request, registry, policy, None, live_opt_in=False)
+        return report, "observation-refused-opt-in"
+    from validation.scope import normalized_origin, parse_target_origin
+    from validation_live.http_transport import LiveHttpTransport, LiveTransportConfigError
+
+    origin = parse_target_origin(args.target) if args.target else None
+    if origin is None:
+        report = run_pre_remediation_observation(request, registry, policy, None, live_opt_in=False)
+        return report, "observation-refused-target"
+    try:
+        transport = LiveHttpTransport(normalized_origin(*origin))
+    except LiveTransportConfigError:
+        report = run_pre_remediation_observation(request, registry, policy, None, live_opt_in=False)
+        return report, "observation-refused-origin"
+    report = run_pre_remediation_observation(
+        request, registry, policy, transport, live_opt_in=True,
+    )
+    return report, "observation" if report.execution.attempted else "observation-blocked"
+
+
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     if not _INCIDENT_RE.fullmatch(args.incident_id):
@@ -100,7 +129,9 @@ def main(argv: list[str] | None = None) -> int:
     registry = default_registry()
     policy = ScopePolicy()  # deny by default; an operator-configured policy is a future, explicit step
 
-    if not args.live:
+    if args.pre_remediation_observation:
+        report, mode = _run_observation(args, request, registry, policy)
+    elif not args.live:
         report = build_validation_report(request, registry, policy)
         mode = "dry-run"
     elif not live_opt_in_granted(acknowledgement=args.i_accept_authorized_live_validation):

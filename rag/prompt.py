@@ -86,12 +86,22 @@ Rules:
   uncertain: assess it "not_relevant" or "unclear" instead.
   Retrieval is keyword-based and may return passages that do not fit the incident. Mark those
   "not_relevant" and do not use them for guidance or hypotheses.
-- If reference_passages is empty, or none is relevant, return an empty reference_guidance array.
+- Citation consistency: reference_guidance may cite a reference_id only when that same answer's
+  reference_relevance assessment for it is exactly "relevant". A reference_id assessed
+  "not_relevant" or "unclear" must not appear in reference_guidance. Do not cite it in
+  hypotheses either when the assessment is "not_relevant". Each guidance statement must be
+  supported by the retrieved text of the relevant passages it cites. Do not add facts that
+  those passages do not state.
+- If reference_passages is empty, or none is assessed "relevant", return an empty
+  reference_guidance array.
   Do not fill the gap with outside knowledge or memory. Say so in limitations.
 - Mention a CWE, CAPEC or CVE identifier only if it appears in the supplied hypothesis text or in
   a passage you cite.
 - Do not state or imply successful exploitation, data access, data exfiltration, privilege
-  escalation or compromise unless an observed event says so explicitly. Do not turn
+  escalation or compromise unless an observed event says so explicitly. When you deny such an
+  outcome, keep the denial in the same sentence and use the words "does not establish" or
+  "no evidence of". Do not rewrite that denial as "without establishing": a sentence that only
+  says "without establishing successful exploitation" is rejected. Do not turn
   correlation into attribution. Do not give remediation steps beyond what a cited passage says.
 - Describe HTTP methods, paths and status codes only as they appear in the cited events.
 - evidence_gaps and limitations are plain strings (what is missing, what this answer cannot show).
@@ -270,7 +280,13 @@ def build_user_prompt(context: GroundedContext, *, max_characters_per_passage: i
             "Produce the grounded answer JSON described in the system message from the "
             "context below. Keep observed evidence, hypotheses and reference guidance separate. "
             "Copy every identifier exactly as supplied, and assess every reference_id listed in "
-            "reference_ids_to_assess."
+            "reference_ids_to_assess. In reference_guidance, cite only reference_ids you assess "
+            "as \"relevant\". Do not cite a reference_id you assess as \"not_relevant\" or "
+            "\"unclear\". If none are relevant, reference_guidance is an empty array. Each "
+            "guidance statement must be supported by the retrieved text of the passages it cites. "
+            "If a supplied hypothesis denies an outcome, restate that denial with "
+            "\"does not establish\" or \"no evidence of\" in the same sentence. "
+            "Do not write \"without establishing\"."
         ),
         "context": context_for_prompt(context, max_characters_per_passage=max_characters_per_passage),
     }

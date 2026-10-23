@@ -33,7 +33,10 @@ ROOT = Path(__file__).resolve().parents[1]
 # These knobs make the multi-stage run consistent and bound the number of provider requests. They are
 # read once, from the environment, and are logged (without secrets) at the start of a run.
 #
-# * AUTOSHIELD_LLM_PROVIDER     none | groq | ollama  (default none: no model is called anywhere)
+# * AUTOSHIELD_LLM_PROVIDER     none | gemini | groq | ollama
+#                               (default gemini: narrative synthesis and the remediation stage call Gemini.
+#                               The RAG stage stays --provider none and does not call a model. groq is an
+#                               explicit override only; an unknown value falls back to none, never to groq.)
 # * AUTOSHIELD_LLM_MAX_RETRIES  SDK re-send count for one call (default "0" here: the dashboard can fire
 #                               several calls per minute, so its subprocesses disable the SDK's own
 #                               re-sends to avoid multiplying provider requests. The library default is
@@ -42,15 +45,15 @@ ROOT = Path(__file__).resolve().parents[1]
 # * AUTOSHIELD_LLM_TOKEN_BUDGET pre-send PER-REQUEST token budget (default unset: no per-request size cap
 #                               beyond the TPM budget below). Set e.g. "8000" to also refuse an oversized
 #                               single prompt before sending.
-# * AUTOSHIELD_LLM_TPM_LIMIT    per-MINUTE token budget shared across a subprocess's calls (default unset: the
-#                               client's built-in default, the recorded ~8000 Groq ceiling; see PROJECT_STATUS).
-#                               Set "0" to disable. This bounds a burst of calls in one minute.
+# * AUTOSHIELD_LLM_TPM_LIMIT    per-MINUTE token budget forwarded as LLM_TPM_LIMIT (default unset). The Gemini
+#                               client does not assume Groq's recorded 8,000 tokens/minute ceiling. Set a
+#                               number only for a limit verified on the configured account, or "0" to disable.
 # * AUTOSHIELD_MAX_PASSAGE_CHARS shorten each reference passage in the prompt (default unset: full text).
 
 
 def _dashboard_llm_config() -> dict[str, str]:
-    provider = os.environ.get("AUTOSHIELD_LLM_PROVIDER", "none").strip().lower()
-    if provider not in {"none", "groq", "ollama"}:
+    provider = os.environ.get("AUTOSHIELD_LLM_PROVIDER", "gemini").strip().lower()
+    if provider not in {"none", "gemini", "groq", "ollama"}:
         provider = "none"
     return {
         "provider": provider,
@@ -244,7 +247,7 @@ def start_run(body: StartRequest):
     RUNS[run_id] = {
         "run_id": run_id, "incident_id": body.incident_id, "status": "queued",
         "created_at": timestamp(), "events": [], "current_stage": None,
-        "llm_provider": os.environ.get("AUTOSHIELD_LLM_PROVIDER", "none"),
+        "llm_provider": os.environ.get("AUTOSHIELD_LLM_PROVIDER", "gemini"),
     }
     return {"run_id": run_id, "incident_id": body.incident_id, "status": "queued"}
 

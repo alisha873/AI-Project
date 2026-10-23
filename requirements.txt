@@ -18,5 +18,6 @@ orjson
 
 requests
 groq
+google-genai>=2.3.0
 
 torch

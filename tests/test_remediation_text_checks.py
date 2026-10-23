@@ -65,6 +65,10 @@ CAUTIOUS_COMPROMISE = [
     "Injection weaknesses can expose data if present; presence here is unconfirmed.",
     "The attack surface is reduced.",
     "The hypothesis has not been confirmed and no breach is established.",
+    # A negating verb over a list. The high-impact phrase is not the first item, so a two-word window misses it.
+    "The citations do not confirm that the code is vulnerable or that exploitation succeeded.",
+    "This supports an injection-attempt hypothesis but does not establish vulnerable server-side "
+    "query construction, successful exploitation, or database access.",
 ]
 
 
@@ -190,6 +194,15 @@ def test_unsafe_claims_in_nested_and_plan_level_text_are_rejected_too():
     plan = good_plan(make_input(), good_proposal())
     plan["limitations"] = ["The database was breached."]
     assert "unsupported_compromise_claim" in validate_plan(parse_plan(json.dumps(plan)), make_input()).codes
+
+
+def test_a_negated_list_does_not_reject_a_plan_and_an_affirmative_claim_still_does():
+    cautious = (
+        "Citations describe a weakness, but do not confirm that the code is vulnerable "
+        "or that exploitation succeeded."
+    )
+    assert _codes(reference_support_limits=cautious) == []
+    assert "unsupported_compromise_claim" in _codes(reference_support_limits="Exploitation succeeded.")
 
 
 def test_cautious_wording_does_not_reject_an_otherwise_valid_plan():

@@ -19,8 +19,9 @@ rejected_citations                parsed, but validation found issues; `answer` 
                                   are in `validation`. The raw response is kept for audit only.
 
 No retry, no repair and no fallback text: a rejected answer is reported as rejected. ("No retry" is about
-this module: it calls `generate()` once. The Groq SDK underneath may itself re-send a request after a
-timeout, 408, 409, 429 or 5xx; see `llm.groq.GroqLLMClient`.)
+this module: it calls `generate()` once. A provider SDK may still re-send that one call. The Gemini client
+sends it once unless `LLM_MAX_RETRIES` asks for extra submissions, and those are limited to transient
+failures. The Groq client, if selected explicitly, still uses the Groq SDK's own retry count.)
 
 Irrelevant retrieval
 --------------------

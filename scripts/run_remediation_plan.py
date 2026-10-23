@@ -3,7 +3,7 @@ Phase 12: propose evidence-grounded remediations for an analysed incident (ADVIS
 
 Example (Windows, from the repository root):
 
-    .\\.venv\\Scripts\\python.exe -m scripts.run_remediation_plan incident_001 --provider groq --output evaluation/results/incident_001_remediation_plan_live.json
+    .\\.venv\\Scripts\\python.exe -m scripts.run_remediation_plan incident_001 --provider gemini --output evaluation/results/incident_001_remediation_plan_live.json
 
 What it does, per usable finding:
 
@@ -12,9 +12,10 @@ What it does, per usable finding:
         -> remediation plan (one model call) -> grounding validation
 
 With `--provider none` (the default) NO language model is called and nothing is planned: the command only
-confirms that the analysis files can be read and the retrieval context built. With `--provider groq` or
-`--provider ollama` the existing LLM clients are used (Groq needs a key in the git-ignored `.env`); each
-finding costs two calls (grounded answer, then plan). A plan is accepted only if grounding validation passes.
+confirms that the analysis files can be read and the retrieval context built. With `--provider gemini`
+the Gemini client is used (`GEMINI_API_KEY` in the git-ignored `.env`; there is no fallback to Groq).
+`--provider groq` and `--provider ollama` remain explicit alternatives. Each finding costs two calls
+(grounded answer, then plan). A plan is accepted only if grounding validation passes.
 
 Nothing is executed: no file or container is changed and no test is launched. The knowledge base is built
 in memory from the pinned archives (like scripts.run_grounded_answer) unless `--database` is given. Nothing
@@ -64,8 +65,9 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--cwe-archive", type=Path, default=DEFAULT_CWE)
     parser.add_argument("--capec-archive", type=Path, default=DEFAULT_CAPEC)
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
-    parser.add_argument("--provider", choices=("none", "groq", "ollama"), default="none",
-                        help="language-model provider; 'none' (default) calls no model and plans nothing")
+    parser.add_argument("--provider", choices=("none", "gemini", "groq", "ollama"), default="none",
+                        help="language-model provider; 'none' (default) calls no model and plans nothing; "
+                             "'gemini' is the hosted provider")
     parser.add_argument("--model", help="model name override for the provider")
     parser.add_argument("--max-documents", type=int, default=ContextLimits().max_documents)
     parser.add_argument("--max-chunks-per-document", type=int, default=ContextLimits().max_chunks_per_document)

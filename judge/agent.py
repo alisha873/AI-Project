@@ -57,6 +57,11 @@ _PROVENANCE_LIMITATION = {
         "The Phase 13 evidence gate accepted this report as post-remediation evidence. "
         "The conclusion is still limited to the tested conditions."
     ),
+    "pre_remediation_observation": (
+        "This is a pre-remediation observation of one reviewed request sequence. "
+        "It is not evidence that remediation was applied or that it worked, and it does not show that "
+        "the application is secure."
+    ),
 }
 _NOT_VALIDATED = {
     "remediation_plan_missing": "No remediation plan was available.",
@@ -68,6 +73,10 @@ _NOT_VALIDATED = {
     "scenario_unknown": "The scenario is not registered.",
     "scenario_not_eligible": "The scenario is not eligible for execution.",
     "remediation_application_not_attested": "Remediation application was not attested. The proposals were not executed.",
+    "remediation_claim_present": (
+        "A remediation plan or application attestation was supplied. The observation was not run."
+    ),
+    "observation_baselines_required": "The scenario does not carry the Incident 1 baseline sequence.",
 }
 _ROLE_EXCLUSION = {
     "hypothesis": "hypothesis_is_not_observed_evidence",
@@ -420,6 +429,21 @@ class JudgeAgent:
         if chosen == CLAIM_REMEDIATION_APPLIED:
             attested = report.remediation.application.state == "independently_attested"
             proposal_ids = [proposal.proposal_id for proposal in report.remediation.proposals]
+            if not proposal_ids and not attested:
+                return self._finish(
+                    **dict(common, claim_id=chosen),
+                    decision="not_supported",
+                    sufficiency="sufficient",
+                    rationale=(
+                        "No remediation proposal was supplied and none was attested as applied. "
+                        "Phase 13 does not apply remediation. This observation is not evidence that "
+                        "remediation was applied."
+                    ),
+                    reason_codes=["proposal_not_executed"],
+                    rows=rows,
+                    contradicting=observations,
+                    extra_limitations=extra,
+                )
             if attested:
                 return self._finish(
                     **dict(common, claim_id=chosen),
@@ -530,10 +554,13 @@ class JudgeAgent:
         codes = list(reason_codes)
         if provenance == "mocked" and "mocked_simulation" not in codes:
             codes.append("mocked_simulation")
+        if provenance == "pre_remediation_observation" and "pre_remediation_observation" not in codes:
+            codes.append("pre_remediation_observation")
         records = _assign(rows, supporting or [], contradicting or [], exclusion_overrides or {})
         limitations = [*_BASE_LIMITATIONS, _PROVENANCE_LIMITATION[provenance], *_sensitive_notes(report)]
         limitations.extend(extra_limitations or [])
         usable = bool(handoff.usable_as_post_remediation_evidence)
+        observation = bool(handoff.usable_as_pre_remediation_observation)
         eligible = provenance == "live" and decision in ("supported", "not_supported") and sufficiency == "sufficient"
         return JudgeAssessment(
             assessed_at_utc=_stamp(self.clock),
@@ -555,6 +582,7 @@ class JudgeAgent:
             upstream_plan_status=report.upstream.plan_result_status,
             handoff_version=handoff.handoff_version,
             usable_as_post_remediation_evidence=usable,
+            usable_as_pre_remediation_observation=observation,
             not_usable_reasons=list(handoff.not_usable_reasons),
             transport_kind=report.execution.transport_kind,
             execution_mode=execution_mode,
@@ -601,6 +629,9 @@ class JudgeAgent:
             upstream_plan_status=report.upstream.plan_result_status if report is not None else None,
             handoff_version=handoff.handoff_version if handoff is not None else None,
             usable_as_post_remediation_evidence=bool(handoff and handoff.usable_as_post_remediation_evidence),
+            usable_as_pre_remediation_observation=bool(
+                handoff and handoff.usable_as_pre_remediation_observation
+            ),
             not_usable_reasons=list(handoff.not_usable_reasons) if handoff is not None else [],
             transport_kind=report.execution.transport_kind if report is not None else None,
             execution_mode=execution_mode,
@@ -673,6 +704,8 @@ def _cited(value: list[str] | None) -> list[str] | None:
 def _provenance(report: ValidationReport, handoff) -> str:
     if handoff.usable_as_post_remediation_evidence and report.execution.transport_kind == "live":
         return "live"
+    if handoff.usable_as_pre_remediation_observation and report.execution.transport_kind == "live":
+        return "pre_remediation_observation"
     if report.execution.transport_kind == "fake":
         return "mocked"
     if report.execution.transport_kind == "none" or not report.execution.attempted:
@@ -685,8 +718,10 @@ def _mode_conflict(report: ValidationReport, mode: str) -> bool:
         return report.execution.attempted or report.execution.transport_kind != "none"
     if mode == "live":
         return report.execution.transport_kind != "live"
-    if mode.startswith("live-refused"):
+    if mode.startswith("live-refused") or mode.startswith("observation-refused") or mode == "observation-blocked":
         return report.execution.attempted
+    if mode == "observation":
+        return report.execution.transport_kind != "live"
     return False
 
 
