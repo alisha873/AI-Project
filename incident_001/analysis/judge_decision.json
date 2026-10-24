@@ -1,5 +1,5 @@
 {
-  "assessed_at_utc": "2026-10-23T05:48:49Z",
+  "assessed_at_utc": "2026-10-24T17:06:06Z",
   "caller_confidence_ignored": false,
   "caller_confidence_rejected": false,
   "claim": "No claim was assessed.",
@@ -47,7 +47,7 @@
   "live_evidence": false,
   "llm_used": false,
   "missing_evidence": [
-    "No remediation plan was available."
+    "The planner did not have enough context to produce a plan."
   ],
   "network_used": false,
   "not_usable_reasons": [
@@ -59,7 +59,7 @@
     "legacy_report_without_identity_provenance",
     "report_not_issued_by_runner"
   ],
-  "rationale": "No remediation plan was available. Proposed remediation was not executed, and no check was assessed.",
+  "rationale": "The planner did not have enough context to produce a plan. Upstream plan status: model_declared_insufficient. Proposed remediation was not executed, and no check was assessed.",
   "reason_codes": [
     "validation_not_performed"
   ],
@@ -81,9 +81,10 @@
     "The oracle looks at returned records only; it does not detect error-based, blind or second-order injection.",
     "The definition was extracted by an AI assistant and has had no human review."
   ],
-  "upstream_plan_status": null,
-  "upstream_reason_code": "remediation_plan_missing",
+  "upstream_plan_status": "model_declared_insufficient",
+  "upstream_reason_code": "remediation_plan_insufficient_context",
   "upstream_status": "not_validated",
   "usable_as_post_remediation_evidence": false,
-  "validation_run_id": "VAL-incident_001-11e8775f68af"
+  "usable_as_pre_remediation_observation": false,
+  "validation_run_id": "VAL-incident_001-dd8685235605"
 }

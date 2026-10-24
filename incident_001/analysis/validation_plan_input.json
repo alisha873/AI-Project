@@ -1,0 +1,130 @@
+{
+  "incident_id": "incident_001",
+  "finding_index": 0,
+  "status": "model_declared_insufficient",
+  "message": "The model reported that the supplied material does not support a remediation proposal.",
+  "error_kind": null,
+  "llm": "GeminiLLMClient(gemini-3.5-flash-lite)",
+  "request_sent": true,
+  "planner_model_called": true,
+  "plan": {
+    "schema_version": "1.0",
+    "incident_id": "incident_001",
+    "finding_index": 0,
+    "outcome": "insufficient_evidence",
+    "insufficient_reasons": [
+      {
+        "code": "model_declared_insufficient",
+        "message": "The incident contains only observed exploitation attempt indicators with SQL-injection-like syntax in request paths and queries (application-4, nginx-19) and an unconfirmed hypothesis (H1). There is no confirmed server-side vulnerability, successful exploitation, or query construction evidence, so concrete remediation implementation steps cannot be safely designed or targeted."
+      }
+    ],
+    "proposals": [],
+    "unresolved_questions": [
+      "Were the queries observed in application-4 and nginx-19 processed by vulnerable database-handling code?",
+      "Did the requests result in unauthorized data access or execution of unintended SQL commands?"
+    ],
+    "limitations": [
+      "Observed HTTP request patterns alone do not establish successful exploitation or vulnerability.",
+      "Hypothesis H1 remains unconfirmed."
+    ],
+    "input_summary": {
+      "retriever": "fts5-bm25-v1",
+      "is_production_retriever": true,
+      "observed_evidence_ids": [
+        "application-4",
+        "nginx-19"
+      ],
+      "unresolved_evidence_ids": [],
+      "hypotheses": [
+        {
+          "hypothesis_id": "H1",
+          "status": "hypothesis_not_confirmed",
+          "is_confirmed": false,
+          "basis": "inferred_hypothesis"
+        }
+      ],
+      "usable_reference_ids": [
+        "capec:CAPEC-7#0000",
+        "capec:CAPEC-66#0003",
+        "cwe:CWE-89#0001"
+      ],
+      "excluded_references": [
+        {
+          "reference_id": "capec:CAPEC-108#0002",
+          "label": "not_relevant"
+        },
+        {
+          "reference_id": "capec:CAPEC-664#0002",
+          "label": "not_relevant"
+        },
+        {
+          "reference_id": "capec:CAPEC-248#0000",
+          "label": "not_relevant"
+        },
+        {
+          "reference_id": "cwe:CWE-79#0002",
+          "label": "not_relevant"
+        },
+        {
+          "reference_id": "cwe:CWE-20#0021",
+          "label": "not_relevant"
+        },
+        {
+          "reference_id": "cwe:CWE-918#0002",
+          "label": "not_relevant"
+        },
+        {
+          "reference_id": "cwe:CWE-862#0009",
+          "label": "not_relevant"
+        }
+      ],
+      "relevance_source": "validated_phase_11d_answer",
+      "configuration_status": "available",
+      "configuration_fact_ids": [
+        "CFG-1",
+        "CFG-2",
+        "CFG-3",
+        "CFG-4",
+        "CFG-5",
+        "CFG-6",
+        "CFG-7",
+        "CFG-8",
+        "CFG-9",
+        "CFG-10",
+        "CFG-11",
+        "CFG-12",
+        "CFG-13",
+        "CFG-14",
+        "CFG-15",
+        "CFG-16",
+        "CFG-17",
+        "CFG-18",
+        "CFG-19",
+        "CFG-20"
+      ],
+      "configuration_conflicts": []
+    },
+    "priority_criteria": [
+      "priority_rank is an ORDINAL position under a fixed, documented rule; it is not a risk score, a probability or a measured exposure.",
+      "Proposals are ordered by, in turn: (1) evidence linkage, incident_linked before general_hardening; (2) severity, high before medium before low before unknown; (3) disruption, low before medium before high before unknown; (4) reversibility, reversible before partially_reversible before unknown before irreversible; (5) the order in which the model returned them.",
+      "The severity, disruption and reversibility ratings are the model's own, uncalibrated judgements. The evidence linkage is computed from the citations: a proposal is incident_linked only if it cites at least one observed evidence id."
+    ],
+    "confidence_meaning": "Confidence is the model's own ordinal judgement (low, medium, high) of how well the cited incident evidence, hypotheses, configuration facts and reference passages support THIS proposal. It is not a probability, it is not calibrated against any measurement, and it says nothing about whether the proposal would work. 'high' is refused by validation unless a linked hypothesis is confirmed and configuration facts are available; 'medium' needs at least one step stated by a cited reference.",
+    "caveats": [
+      "This plan is advisory. Every proposal is a proposal only: nothing was executed, no file or container was changed and no test was launched.",
+      "Hypotheses stay hypotheses. A proposal does not confirm a root cause, and reference passages are general knowledge that neither confirm nor refute what happened in the incident.",
+      "Reference passages come from a small curated CWE/CAPEC subset and cannot be treated as comprehensive Docker, Juice Shop or configuration-hardening guidance.",
+      "Grounding validation checks that identifiers exist and sit in the right category and screens some high-risk wording; it does not prove that a recommendation is correct, sufficient or safe.",
+      "Whether a proposal reduces risk has not been tested; validation belongs to a later phase and its success under tested conditions would not be a universal security guarantee."
+    ],
+    "advisory_only": true,
+    "execution_performed": false,
+    "ground_truth_used": false
+  },
+  "validation": {
+    "passed": true,
+    "note": "Validation checks that identifiers exist and sit in the right category, that proposals are honest about missing configuration and risk, and screens some high-risk wording. It does not prove that a recommendation is correct, sufficient or safe.",
+    "issues": []
+  },
+  "raw_response": "{\n  \"schema_version\": \"1.0\",\n  \"incident_id\": \"incident_001\",\n  \"outcome\": \"insufficient_evidence\",\n  \"insufficient_reason\": \"The incident contains only observed exploitation attempt indicators with SQL-injection-like syntax in request paths and queries (application-4, nginx-19) and an unconfirmed hypothesis (H1). There is no confirmed server-side vulnerability, successful exploitation, or query construction evidence, so concrete remediation implementation steps cannot be safely designed or targeted.\",\n  \"proposals\": [],\n  \"unresolved_questions\": [\n    \"Were the queries observed in application-4 and nginx-19 processed by vulnerable database-handling code?\",\n    \"Did the requests result in unauthorized data access or execution of unintended SQL commands?\"\n  ],\n  \"limitations\": [\n    \"Observed HTTP request patterns alone do not establish successful exploitation or vulnerability.\",\n    \"Hypothesis H1 remains unconfirmed.\"\n  ]\n}"
+}

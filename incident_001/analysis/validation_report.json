@@ -1,6 +1,6 @@
 {
   "contract_version": "1.0",
-  "validation_run_id": "VAL-incident_001-11e8775f68af",
+  "validation_run_id": "VAL-incident_001-dd8685235605",
   "incident_id": "incident_001",
   "scenario": {
     "scenario_id": "sqli-search-incident-001",
@@ -53,7 +53,7 @@
     "applied_by_phase13": false
   },
   "status": "not_validated",
-  "reason_code": "remediation_plan_missing",
+  "reason_code": "remediation_plan_insufficient_context",
   "oracle": {
     "oracle_id": "sqli-search-record-set-oracle",
     "oracle_version": "1.0",
@@ -101,8 +101,8 @@
       "precondition": "plan_usable",
       "satisfied": false,
       "evaluated": true,
-      "reason_code": "remediation_plan_missing",
-      "detail": "No remediation plan result was supplied."
+      "reason_code": "remediation_plan_insufficient_context",
+      "detail": "The planner reported insufficient context; there is no remediation to validate."
     },
     {
       "precondition": "incident_matches_plan",
@@ -148,10 +148,10 @@
     }
   ],
   "upstream": {
-    "plan_result_status": null,
-    "plan_outcome": null,
-    "plan_schema_version": null,
-    "finding_index": null,
+    "plan_result_status": "model_declared_insufficient",
+    "plan_outcome": "insufficient_evidence",
+    "plan_schema_version": "1.0",
+    "finding_index": 0,
     "hypotheses": []
   },
   "limitations": [
@@ -170,6 +170,7 @@
     "It reflects the inputs supplied at that time; any change to the plan, scenario, attestation or scope configuration requires a new report."
   ],
   "identity": null,
+  "report_kind": "post_remediation_validation",
   "remediation_effectiveness_proven": false,
   "general_security_guarantee": false,
   "ground_truth_used": false,

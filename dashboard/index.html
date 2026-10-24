@@ -1497,4 +1497,161 @@ window.AUTOSHIELD_GNN_DATA = {"graph":{"nodes":[{"node_id":"container:autoshield
 })();
 </script>
 
+
+<script>
+/* AUTOSHIELD_REMEDIATION_VALIDATION_ARTIFACT_RENDERER */
+(() => {
+  const API = "http://127.0.0.1:8001";
+  const $ = id => document.getElementById(id);
+  const esc = value => String(value ?? "").replace(/[&<>"']/g, c =>
+    ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])
+  );
+  let activeKey = "";
+  let requestSeq = 0;
+
+  async function artifacts() {
+    const response = await fetch(API + "/api/incidents/incident_001/artifacts", {cache:"no-store"});
+    if (!response.ok) throw new Error("Artifact API returned HTTP " + response.status);
+    const payload = await response.json();
+    return payload.artifacts || {};
+  }
+
+  function pretty(value) {
+    return esc(JSON.stringify(value ?? {}, null, 2));
+  }
+
+  function badge(text, warn=false) {
+    return `<span class="status ${warn ? "warn" : ""}">${esc(text)}</span>`;
+  }
+
+  function valuesFromPlan(data) {
+    if (Array.isArray(data?.plans)) return data.plans;
+    if (data?.plan && typeof data.plan === "object") return [data];
+    if (data?.proposals || data?.outcome || data?.status) return [data];
+    return [];
+  }
+
+  function renderRemediation(data) {
+    const records = valuesFromPlan(data);
+    const cards = records.map((record, index) => {
+      const plan = record.plan && typeof record.plan === "object" ? record.plan : record;
+      const proposals = Array.isArray(plan.proposals) ? plan.proposals :
+        Array.isArray(plan.recommendations) ? plan.recommendations :
+        Array.isArray(record.proposals) ? record.proposals : [];
+      const status = record.status || plan.status || plan.outcome || "Recorded output";
+      const reason = plan.insufficient_reason || record.insufficient_reason || "";
+      const proposalCards = proposals.map((p, i) => {
+        const title = p.title || p.name || p.summary || p.recommendation || `Recommendation ${i+1}`;
+        const evidence = p.evidence_ids || p.evidence || p.incident_evidence || [];
+        const refs = p.references || p.reference_ids || p.supporting_references || [];
+        return `<article class="result" style="margin-top:10px">
+          <h3>${esc(title)}</h3>
+          <div style="display:flex;gap:7px;flex-wrap:wrap">
+            ${badge(p.status || "proposed", true)}
+            ${p.severity ? badge("Severity: " + p.severity) : ""}
+            ${p.confidence ? badge("Confidence: " + p.confidence) : ""}
+            ${p.disruption ? badge("Disruption: " + p.disruption) : ""}
+          </div>
+          ${p.affected_component || p.component ? `<p><strong>Affected component:</strong> ${esc(p.affected_component || p.component)}</p>` : ""}
+          ${p.rationale || p.description || p.reason ? `<p><strong>Rationale:</strong> ${esc(p.rationale || p.description || p.reason)}</p>` : ""}
+          ${p.proposed_change || p.change || p.recommended_action ? `<p><strong>Proposed change:</strong> ${esc(p.proposed_change || p.change || p.recommended_action)}</p>` : ""}
+          ${Array.isArray(evidence) && evidence.length ? `<p><strong>Evidence:</strong> ${evidence.map(esc).join(", ")}</p>` : ""}
+          ${Array.isArray(refs) && refs.length ? `<p><strong>Supporting references:</strong> ${refs.map(r => esc(typeof r === "string" ? r : (r.reference_id || r.id || r.title || JSON.stringify(r)))).join(", ")}</p>` : ""}
+          ${p.validation ? `<p><strong>Validation:</strong> ${esc(typeof p.validation === "string" ? p.validation : JSON.stringify(p.validation))}</p>` : ""}
+        </article>`;
+      }).join("");
+      return `<section class="result" style="margin-top:12px">
+        <h3>Plan ${index+1} · ${esc(record.incident_id || plan.incident_id || "incident_001")}</h3>
+        <p>${badge(status, !/planned|proposed|success|pass/i.test(status))} ${record.finding_index != null ? ` <span class="hint">Finding ${esc(record.finding_index)}</span>` : ""}</p>
+        ${reason ? `<p><strong>Why the planner limited its conclusion:</strong> ${esc(reason)}</p>` : ""}
+        ${proposalCards || `<p>No concrete proposals are present in this saved plan. This may be an insufficient-evidence result.</p>`}
+        ${Array.isArray(plan.unresolved_questions) && plan.unresolved_questions.length ? `<p><strong>Unresolved questions</strong></p><ul>${plan.unresolved_questions.map(q=>`<li>${esc(q)}</li>`).join("")}</ul>` : ""}
+        ${Array.isArray(plan.limitations) && plan.limitations.length ? `<p><strong>Limitations</strong></p><ul>${plan.limitations.map(q=>`<li>${esc(q)}</li>`).join("")}</ul>` : ""}
+      </section>`;
+    }).join("");
+
+    $("stageBody").innerHTML = `
+      <div class="metrics">
+        <div class="metric"><span>Artifact</span><b style="font-size:15px">remediation_plan.json</b><small>Loaded from backend</small></div>
+        <div class="metric"><span>Plan records</span><b>${records.length}</b><small>Saved plan entries</small></div>
+        <div class="metric"><span>Execution</span><b style="font-size:17px">Advisory only</b><small>No fix applied</small></div>
+      </div>
+      <div class="notice">A proposed remediation is not an applied or verified fix. Review the evidence and supporting references before taking action.</div>
+      ${cards || `<section class="result" style="margin-top:12px"><h3>Saved remediation output</h3><p>The artifact exists, but its schema did not match the summary renderer. Inspect the raw JSON below.</p></section>`}
+      <details class="result" style="margin-top:12px"><summary style="cursor:pointer;font-weight:650">View complete remediation_plan.json</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto;font:11px/1.5 ui-monospace,monospace">${pretty(data)}</pre></details>`;
+  }
+
+  function renderValidation(data) {
+    const obj = data && typeof data === "object" ? data : {};
+    const status = obj.status || obj.validation_status || obj.outcome || "unknown";
+    const mode = obj.mode || obj.execution_mode || obj.validation_mode || "not supplied";
+    const attempted = obj.attempted ?? obj.execution?.attempted ?? false;
+    const sent = obj.requests_sent ?? obj.execution?.requests_sent ?? obj.request_count ?? 0;
+    const eligible = obj.eligible ?? obj.scenario_eligible ?? obj.execution?.eligible;
+    const checks = Array.isArray(obj.checks) ? obj.checks :
+      Array.isArray(obj.results) ? obj.results :
+      Array.isArray(obj.tests) ? obj.tests :
+      Array.isArray(obj.findings) ? obj.findings : [];
+    const detail = obj.message || obj.reason || obj.detail || obj.block_reason || "";
+    const checkRows = checks.map((item, i) => `<tr>
+      <td style="padding:8px;border-bottom:1px solid var(--line)">${esc(item.name || item.test || item.id || `Check ${i+1}`)}</td>
+      <td style="padding:8px;border-bottom:1px solid var(--line)">${esc(item.status || item.result || item.outcome || "recorded")}</td>
+      <td style="padding:8px;border-bottom:1px solid var(--line)">${esc(item.message || item.detail || item.reason || "—")}</td>
+    </tr>`).join("");
+
+    $("stageBody").innerHTML = `
+      <div class="metrics">
+        <div class="metric"><span>Validation status</span><b style="font-size:18px">${esc(status)}</b><small>From validation_report.json</small></div>
+        <div class="metric"><span>Mode</span><b style="font-size:18px">${esc(mode)}</b><small>Recorded execution mode</small></div>
+        <div class="metric"><span>Requests sent</span><b>${esc(sent)}</b><small>Actual recorded count</small></div>
+      </div>
+      <div class="result">
+        <h3>Execution evidence</h3>
+        <p><strong>Attempted:</strong> ${esc(attempted)}</p>
+        <p><strong>Eligible:</strong> ${esc(eligible ?? "not supplied")}</p>
+        ${detail ? `<p><strong>Details:</strong> ${esc(detail)}</p>` : ""}
+        <p><strong>Interpretation:</strong> A dry-run or ineligible result is not a successful security test. No pass/fail claim is made unless the artifact contains actual test evidence.</p>
+      </div>
+      ${checks.length ? `<section class="result" style="margin-top:12px"><h3>Recorded checks (${checks.length})</h3><div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th style="text-align:left;padding:8px">Test</th><th style="text-align:left;padding:8px">Status</th><th style="text-align:left;padding:8px">Details</th></tr></thead><tbody>${checkRows}</tbody></table></div></section>` : ""}
+      <details class="result" style="margin-top:12px" open><summary style="cursor:pointer;font-weight:650">View complete validation_report.json</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto;font:11px/1.5 ui-monospace,monospace">${pretty(data)}</pre></details>`;
+  }
+
+  async function syncStage() {
+    const title = ($("stageTitle")?.textContent || "").toLowerCase();
+    const isRemediation = title.includes("remediat");
+    const isValidation = title.includes("validat");
+    if (!isRemediation && !isValidation) { activeKey = ""; return; }
+
+    const key = (isRemediation ? "remediation" : "validation") + "|" + title + "|" + ($("stageNum")?.textContent || "");
+    if (activeKey === key) return;
+    activeKey = key;
+    const token = ++requestSeq;
+    $("resultTitle").textContent = isRemediation ? "Actual remediation plan" : "Actual controlled-validation report";
+    $("resultBody").innerHTML = `<p>Loading ${isRemediation ? "remediation_plan.json" : "validation_report.json"} from the artifact API…</p>`;
+    $("stageBody").innerHTML = `<div class="result"><h3>Loading saved artifact…</h3><p>Reading the selected incident's actual pipeline output.</p></div>`;
+    try {
+      const all = await artifacts();
+      if (token !== requestSeq) return;
+      const name = isRemediation ? "remediation_plan.json" : "validation_report.json";
+      const data = all[name];
+      if (!data) throw new Error(name + " is not present for incident_001. Run the pipeline first.");
+      if (data._read_error) throw new Error(data._read_error);
+      if (isRemediation) renderRemediation(data); else renderValidation(data);
+      $("resultBody").innerHTML = isRemediation
+        ? "<p>Rendered from the saved remediation artifact. Suggestions are advisory and have not been applied.</p>"
+        : "<p>Rendered from the saved validation artifact. Status and request counts reflect the report; no result is inferred.</p>";
+      $("progressLabel").textContent = (isRemediation ? "Remediation artifact loaded" : "Validation artifact loaded");
+    } catch (error) {
+      if (token !== requestSeq) return;
+      $("stageBody").innerHTML = `<div class="notice">Could not load the artifact: ${esc(error.message || error)}. Check that the API is running on port 8001.</div>`;
+      $("resultBody").innerHTML = `<p>${esc(error.message || error)}</p>`;
+    }
+  }
+
+  const title = $("stageTitle");
+  if (title) new MutationObserver(syncStage).observe(title, {childList:true,subtree:true,characterData:true});
+  setTimeout(syncStage, 300);
+})();
+</script>
+
 </body></html>

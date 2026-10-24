@@ -182,6 +182,49 @@ def _hedged(text: str, start: int) -> bool:
     return _HEDGE.search(clause) is not None
 
 
+
+def _compromise_claim_negated(text: str, match: re.Match) -> bool:
+    """Recognize explicit denials without suppressing claims after a contrast."""
+    prefix = text[:match.start()]
+    contrasts = list(re.finditer(
+        r"\b(?:but|however|although|though|yet|whereas|while|instead)\b",
+        prefix,
+        re.IGNORECASE,
+    ))
+    scope_start = contrasts[-1].end() if contrasts else 0
+    scoped_text = text[scope_start:]
+    scoped_start = match.start() - scope_start
+    scoped_end = match.end() - scope_start
+
+    if _negated(scoped_text, scoped_start, scoped_end):
+        return True
+
+    scoped_prefix = scoped_text[max(0, scoped_start - 220):scoped_start]
+
+    # Explicit absence of evidence or confirmation.
+    if re.search(
+        r"\bno\s+(?:evidence|confirmation|indication|proof)\s+(?:of|that)\b"
+        r"[^.!?;:]{0,180}$",
+        scoped_prefix,
+        re.IGNORECASE,
+    ):
+        return True
+
+    # "There is no confirmed ... successful exploitation ..."
+    # Treat claims in the same denial list as negated.
+    if re.search(
+        r"\b(?:there\s+(?:is|was|are|were)\s+)?"
+        r"(?:no|not\s+(?:any|a))\s+"
+        r"(?:confirmed|demonstrated|established|verified)\b"
+        r"[^.!?;:]{0,180}$",
+        scoped_prefix,
+        re.IGNORECASE,
+    ):
+        return True
+
+    return False
+
+
 def compromise_claims(text: str) -> list[str]:
     """
     Positive claims of exploitation, data access or compromise.
@@ -193,8 +236,50 @@ def compromise_claims(text: str) -> list[str]:
         match.group(0)
         for pattern in (*_HIGH_IMPACT, *_MORE_COMPROMISE)
         for match in pattern.finditer(text)
-        if not _negated(text, match.start(), match.end()) and not _hedged(text, match.start())
+        if not _compromise_claim_negated(text, match) and not _hedged(text, match.start())
     ]
+
+
+
+def _confirmation_negated(text: str, match: re.Match) -> bool:
+    """Recognize explicit denials without suppressing later positive claims."""
+
+    # A contrast word starts a new claim scope. For example:
+    # "No vulnerability has been proven, but exploitation is confirmed."
+    # Only check negation within the scope containing this match.
+    prefix = text[:match.start()]
+    contrasts = list(re.finditer(
+        r"\b(?:but|however|although|though|yet|whereas|while|instead)\b",
+        prefix,
+        re.IGNORECASE,
+    ))
+    scope_start = contrasts[-1].start() if contrasts else 0
+    scoped_text = text[scope_start:]
+    scoped_start = match.start() - scope_start
+    scoped_prefix = scoped_text[max(0, scoped_start - 160):scoped_start]
+
+    if _negated(scoped_text, scoped_start):
+        return True
+
+    # Example: "observed activity rather than confirmed exploitation"
+    if re.search(r"\brather\s+than\s+$", scoped_prefix, re.IGNORECASE):
+        return True
+
+    # Example: "No server-side vulnerability or successful query
+    # manipulation has been proven by the evidence."
+    if (
+        match.group(0).casefold() == "has been proven"
+        and re.search(
+            r"\bno\b"
+            r"(?:(?!\b(?:but|however|although|though|yet|whereas|while|instead|rather)\b)"
+            r"[^,.;:!?]){1,120}$",
+            scoped_prefix,
+            re.IGNORECASE,
+        )
+    ):
+        return True
+
+    return False
 
 
 def confirmation_claims(text: str) -> list[str]:
@@ -203,13 +288,13 @@ def confirmation_claims(text: str) -> list[str]:
         match.group(0)
         for pattern in _CONFIRMATION
         for match in pattern.finditer(text)
-        if not _negated(text, match.start())
+        if not _confirmation_negated(text, match)
     ]
     newer = [
         match.group(0)
         for pattern in _MORE_CONFIRMATION
         for match in pattern.finditer(text)
-        if not _negated(text, match.start()) and not _hedged(text, match.start())
+        if not _confirmation_negated(text, match) and not _hedged(text, match.start())
     ]
     return older + newer
 

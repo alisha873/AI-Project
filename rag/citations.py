@@ -93,7 +93,7 @@ _HIGH_IMPACT = tuple(
 _CONFIRMATION = tuple(
     re.compile(pattern, re.IGNORECASE)
     for pattern in (
-        r"\b(?:root cause|vulnerability|sql injection|injection|exploitation|attack)\b[^.;\n]{0,40}\b(?:is|was|has been|have been|were|are)\s+confirmed\b",
+        r"\b(?:root cause|vulnerability|sql injection|injection|exploitation|attack)\b(?:(?!\b(?:but|however|although|though|yet|whereas|while|instead)\b)[^.;,\n]){0,40}\b(?:is|was|has been|have been|were|are)\s+confirmed\b",
         r"\bconfirmed\s+(?:root cause|vulnerability|sql injection|exploitation|attack|compromise)\b",
         r"\bconfirms\s+(?:that\s+)?(?:the\s+)?(?:root cause|vulnerability|attack|exploitation|sql injection)\b",
         r"\bhas\s+been\s+(?:proven|confirmed)\b",

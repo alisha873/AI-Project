@@ -127,7 +127,7 @@ STAGES = [
                     "RAG report and the remediation plan (no duplicate grounded-answer call)."},
     {"id": "validation", "label": "Controlled validation (dry run)", "kind": "script",
      "command": [sys.executable, "-m", "scripts.run_controlled_validation", "{incident_id}",
-                 "--output", "{validation_output}"],
+                 "--output", "{validation_output}", "--plan-json", "{validation_plan_input}"],
      "description": "Offline Phase 13 dry run: writes a blocked or not_validated report. No --live flag, "
                     "so zero network requests. A genuine live run is a separate, approval-gated CLI invocation."},
     {"id": "judge", "label": "Judge (offline evidence assessment)", "kind": "script",
@@ -138,6 +138,31 @@ STAGES = [
 ]
 
 # Artifact files the dashboard may return. The judge file is the Phase 14 assessment, not a fabricated demo.
+def normalize_remediation_plan_for_validation(source: Path, target: Path, incident_id: str) -> None:
+    """Write one Phase 12 result record for Phase 13 without modifying the original report."""
+    import json
+
+    report = json.loads(source.read_text(encoding="utf-8"))
+    plans = report.get("plans") if isinstance(report, dict) else None
+    if not isinstance(plans, list):
+        raise ValueError("Remediation report has no plans list")
+
+    matching = [
+        item for item in plans
+        if isinstance(item, dict) and item.get("incident_id") == incident_id
+    ]
+    if len(matching) != 1:
+        raise ValueError(
+            f"Expected exactly one remediation plan for {incident_id}; found {len(matching)}"
+        )
+
+    record = matching[0]
+    if not all(key in record for key in ("status", "plan", "validation", "finding_index")):
+        raise ValueError("Remediation plan record does not satisfy the Phase 13 input contract")
+
+    target.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+
+
 ALLOWED_ARTIFACTS = (
     "incident_reconstruction.json",
     "root_cause_analysis.json",
@@ -294,6 +319,14 @@ async def stream_run(run_id: str):
                 "validation_output": str(incident_dir / "analysis" / "validation_report.json"),
                 "judge_output": str(incident_dir / "analysis" / "judge_decision.json"),
             }
+            if stage["id"] == "validation":
+                normalized_plan = incident_dir / "analysis" / "validation_plan_input.json"
+                normalize_remediation_plan_for_validation(
+                    Path(output_map["remediation_output"]),
+                    normalized_plan,
+                    run["incident_id"],
+                )
+                output_map["validation_plan_input"] = str(normalized_plan)
             cmd = [part.format(incident_id=run["incident_id"], **output_map) for part in stage["command"]]
             # Apply the shared passage-compression setting to the two RAG-bearing stages.
             if config["max_passage_chars"] and stage["id"] in {"rag", "remediation"}:
