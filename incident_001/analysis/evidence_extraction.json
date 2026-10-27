@@ -1,0 +1,20 @@
+{
+  "incident_id": "incident_001",
+  "relevant_events": [
+    "docker-container-1",
+    "docker-container-network-1-autoshield_net",
+    "nginx-19"
+  ],
+  "relevant_configuration": [
+    "docker/containers_after_attack.json",
+    "docker/network_after_attack.json"
+  ],
+  "relevant_network_events": [
+    "nginx-19"
+  ],
+  "relevant_network_artifacts": [
+    "network/attack.pcap"
+  ],
+  "evidence_summary": "Evidence shows autoshield-api container started at 11:05 and a GET request to /api/search with a suspicious query was received by nginx. The request was logged as event nginx-19, indicating possible injection activity. The container and network configuration after the incident is available for review.",
+  "confidence": 0.9
+}

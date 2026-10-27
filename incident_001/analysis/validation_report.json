@@ -1,6 +1,6 @@
 {
   "contract_version": "1.0",
-  "validation_run_id": "VAL-incident_001-dd8685235605",
+  "validation_run_id": "VAL-incident_001-25ffaca60384",
   "incident_id": "incident_001",
   "scenario": {
     "scenario_id": "sqli-search-incident-001",
@@ -42,7 +42,33 @@
     "post_remediation_state_id": null
   },
   "remediation": {
-    "proposals": [],
+    "proposals": [
+      {
+        "proposal_id": "REM-incident_001-F0-6630c96c7ce9",
+        "priority_rank": 1,
+        "proposal_status": "proposed",
+        "executed": false,
+        "observed_evidence_ids": [
+          "application-4",
+          "nginx-19"
+        ],
+        "hypothesis_ids": [
+          "H1"
+        ],
+        "configuration_fact_ids": [
+          "CFG-3",
+          "CFG-6"
+        ],
+        "reference_ids": [
+          "cwe:CWE-89#0001",
+          "capec:CAPEC-66#0003"
+        ],
+        "reference_chunk_ids": [
+          "cwe:CWE-89#0001",
+          "capec:CAPEC-66#0003"
+        ]
+      }
+    ],
     "application": {
       "state": "unknown",
       "attestation_id": null,
@@ -53,7 +79,7 @@
     "applied_by_phase13": false
   },
   "status": "not_validated",
-  "reason_code": "remediation_plan_insufficient_context",
+  "reason_code": "scenario_not_eligible",
   "oracle": {
     "oracle_id": "sqli-search-record-set-oracle",
     "oracle_version": "1.0",
@@ -99,17 +125,17 @@
   "preconditions": [
     {
       "precondition": "plan_usable",
-      "satisfied": false,
+      "satisfied": true,
       "evaluated": true,
-      "reason_code": "remediation_plan_insufficient_context",
-      "detail": "The planner reported insufficient context; there is no remediation to validate."
+      "reason_code": null,
+      "detail": "The Phase 12 plan satisfies the plan contract; its proposals are PROPOSED, not applied."
     },
     {
       "precondition": "incident_matches_plan",
-      "satisfied": false,
-      "evaluated": false,
+      "satisfied": true,
+      "evaluated": true,
       "reason_code": null,
-      "detail": "Not evaluated: there is no usable plan."
+      "detail": "The plan is for the incident being validated."
     },
     {
       "precondition": "scenario_known",
@@ -128,9 +154,9 @@
     {
       "precondition": "remediation_application_attested",
       "satisfied": false,
-      "evaluated": false,
-      "reason_code": null,
-      "detail": "Not evaluated: there is no usable plan."
+      "evaluated": true,
+      "reason_code": "remediation_application_not_attested",
+      "detail": "No attestation that the remediation was applied was supplied; a proposal is not an applied remediation."
     },
     {
       "precondition": "scope_conditions_met",
@@ -148,11 +174,17 @@
     }
   ],
   "upstream": {
-    "plan_result_status": "model_declared_insufficient",
-    "plan_outcome": "insufficient_evidence",
+    "plan_result_status": "planned",
+    "plan_outcome": "proposals",
     "plan_schema_version": "1.0",
     "finding_index": 0,
-    "hypotheses": []
+    "hypotheses": [
+      {
+        "hypothesis_id": "H1",
+        "status": "hypothesis_not_confirmed",
+        "is_confirmed": false
+      }
+    ]
   },
   "limitations": [
     "A validation result describes only the lab state, scenario, request and conditions that were actually tested. It is not a universal security guarantee and it does not mean residual risk is zero.",

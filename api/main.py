@@ -165,6 +165,7 @@ def normalize_remediation_plan_for_validation(source: Path, target: Path, incide
 
 ALLOWED_ARTIFACTS = (
     "incident_reconstruction.json",
+    "evidence_extraction.json",
     "root_cause_analysis.json",
     "llm_incident_narrative.json",
     "rag_report.json",

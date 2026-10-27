@@ -20,8 +20,8 @@
     {
       "incident_id": "incident_001",
       "finding_index": 0,
-      "status": "model_declared_insufficient",
-      "message": "The model reported that the supplied material does not support a remediation proposal.",
+      "status": "planned",
+      "message": "The plan passed grounding validation (this does not prove that any proposal is correct or safe).",
       "error_kind": null,
       "llm": "GeminiLLMClient(gemini-3.5-flash-lite)",
       "request_sent": true,
@@ -30,21 +30,157 @@
         "schema_version": "1.0",
         "incident_id": "incident_001",
         "finding_index": 0,
-        "outcome": "insufficient_evidence",
-        "insufficient_reasons": [
+        "outcome": "proposals",
+        "insufficient_reasons": [],
+        "proposals": [
           {
-            "code": "model_declared_insufficient",
-            "message": "The incident contains only observed exploitation attempt indicators with SQL-injection-like syntax in request paths and queries (application-4, nginx-19) and an unconfirmed hypothesis (H1). There is no confirmed server-side vulnerability, successful exploitation, or query construction evidence, so concrete remediation implementation steps cannot be safely designed or targeted."
+            "title": "Review Query Construction for Potential SQL Injection",
+            "description": "Examine application source code handling search endpoints to ensure parameterization or proper neutralization of special elements is used, as referenced in CWE-89.",
+            "problem_addressed": "Potential SQL injection handling of user-controllable input in search paths.",
+            "affected_area": {
+              "state": "identified",
+              "description": "Endpoints /search and /api/search observed in application and nginx logs."
+            },
+            "observed_evidence_ids": [
+              "application-4",
+              "nginx-19"
+            ],
+            "hypothesis_ids": [
+              "H1"
+            ],
+            "configuration_fact_ids": [
+              "CFG-3",
+              "CFG-6"
+            ],
+            "reference_ids": [
+              "cwe:CWE-89#0001",
+              "capec:CAPEC-66#0003"
+            ],
+            "rationale": "The finding is hypothesis_not_confirmed. Suspicious request text is observed activity, not confirmed exploitation. Reference material from CWE-89 and CAPEC-66 indicates that applications utilizing user-controllable input without proper neutralization in SQL commands can be vulnerable to SQL injection.",
+            "reference_support_limits": "The reference passages describe CWE-89 and CAPEC-66 generally and do not establish that the specific code in this incident is vulnerable or that exploitation succeeded. The finding is hypothesis_not_confirmed.",
+            "severity": {
+              "level": "medium",
+              "rationale": "Severity is judged as medium based on typical consequences of CWE-89, though no exploitation is confirmed in this incident."
+            },
+            "expected_security_effect": "Reviewing and hardening query construction helps reduce the risk of improper neutralization of special elements used in SQL commands.",
+            "operational_side_effects": [
+              "Code modifications may require thorough testing of search functionality before deployment."
+            ],
+            "implementation_steps": [
+              {
+                "text": "Review application source code for database query construction practices.",
+                "origin": "general_practice"
+              },
+              {
+                "text": "Use parameterized queries or prepared statements for handling user-controllable input as described in CWE-89.",
+                "origin": "cited_reference"
+              }
+            ],
+            "configuration_dependent": true,
+            "disruption": "low",
+            "reversibility": "reversible",
+            "preconditions": [
+              "Human review and authorization required before modifying source code."
+            ],
+            "dependencies": [],
+            "unresolved_questions": [
+              "Does the application source code properly parameterize database queries for /search and /api/search?"
+            ],
+            "validation": {
+              "procedure": "Perform code review and run parameterized query unit tests in an authorized staging environment.",
+              "expected_result": "Queries successfully handle input safely without executing unintended SQL commands."
+            },
+            "confidence": {
+              "level": "low",
+              "rationale": "The finding is unconfirmed: suspicious requests are observed activity, not confirmed exploitation."
+            },
+            "proposal_id": "REM-incident_001-F0-6630c96c7ce9",
+            "priority_rank": 1,
+            "priority_basis": {
+              "evidence_linkage": "incident_linked",
+              "severity": "medium",
+              "disruption": "low",
+              "reversibility": "reversible",
+              "ordering_rule": "Proposals are ordered by, in turn: (1) evidence linkage, incident_linked before general_hardening; (2) severity, high before medium before low before unknown; (3) disruption, low before medium before high before unknown; (4) reversibility, reversible before partially_reversible before unknown before irreversible; (5) the order in which the model returned them."
+            },
+            "linked_hypotheses": [
+              {
+                "hypothesis_id": "H1",
+                "status": "hypothesis_not_confirmed",
+                "is_confirmed": false,
+                "basis": "inferred_hypothesis"
+              }
+            ],
+            "references": [
+              {
+                "reference_id": "cwe:CWE-89#0001",
+                "doc_id": "cwe:CWE-89",
+                "chunk_id": "cwe:CWE-89#0001",
+                "ordinal": 1,
+                "char_start": 1046,
+                "char_end": 2191,
+                "retrieval_rank": 5,
+                "source": "cwe",
+                "source_id": "CWE-89",
+                "source_version": "4.20",
+                "doc_type": "weakness",
+                "title": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+                "source_url": "https://cwe.mitre.org/data/definitions/89.html",
+                "license": "MITRE CWE Terms of Use: https://cwe.mitre.org/about/termsofuse.html. Copyright © 2006–2026, The MITRE Corporation. CWE™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+                "chunk_sha256": "af691c6957926984a2c4fd64b3a06d6e49a08f08c9a1cb35750a443eebd6ed38",
+                "document_content_sha256": "fd67057247e84d20e0e6ccdbbb60ea6d23a8956dddf356d64a8a8e8e00c02ed4",
+                "provenance": {
+                  "origin_kind": "local_file",
+                  "artifact_path": "cwec_v4.20.xml.zip",
+                  "artifact_sha256": "3976f599e5e5200219a3108bb896d06e2a88fbb293369e1883cb423a5e9d7d50",
+                  "adapter": "mitre_cwe",
+                  "adapter_version": "mitre-cwe-1",
+                  "retrieved_at_utc": "2026-10-15T22:53:27Z",
+                  "ingested_at_utc": "2026-10-15T22:53:30Z"
+                },
+                "relevance_label": "relevant",
+                "basis": "general_reference_knowledge"
+              },
+              {
+                "reference_id": "capec:CAPEC-66#0003",
+                "doc_id": "capec:CAPEC-66",
+                "chunk_id": "capec:CAPEC-66#0003",
+                "ordinal": 3,
+                "char_start": 2706,
+                "char_end": 3826,
+                "retrieval_rank": 4,
+                "source": "capec",
+                "source_id": "CAPEC-66",
+                "source_version": "3.9",
+                "doc_type": "attack_pattern",
+                "title": "SQL Injection",
+                "source_url": "https://capec.mitre.org/data/definitions/66.html",
+                "license": "MITRE CAPEC Terms of Use: https://capec.mitre.org/about/termsofuse.html. Copyright © 2007–2026, The MITRE Corporation. CAPEC™ is a trademark of The MITRE Corporation. Attribution notice: data/knowledge_sources/NOTICE.md",
+                "chunk_sha256": "9d2da357dffa7418799f607bbe6c7b85879ccc369d7c0d20c96c2eb32c3a5f79",
+                "document_content_sha256": "efd23ff3badd94d2b4d8889c3a98dfc5ffbf7770b5f0dabd454ec76d0a867b4e",
+                "provenance": {
+                  "origin_kind": "local_file",
+                  "artifact_path": "capec_v3.9.zip",
+                  "artifact_sha256": "c56527f3d64b7164fcdae73c1a7545ee6e83b1150546c07a93339b1543a3041d",
+                  "adapter": "mitre_capec",
+                  "adapter_version": "mitre-capec-1",
+                  "retrieved_at_utc": "2026-10-15T22:53:30Z",
+                  "ingested_at_utc": "2026-10-15T22:53:30Z"
+                },
+                "relevance_label": "relevant",
+                "basis": "general_reference_knowledge"
+              }
+            ],
+            "status": "proposed",
+            "executed": false,
+            "human_review_required": true
           }
         ],
-        "proposals": [],
         "unresolved_questions": [
-          "Were the queries observed in application-4 and nginx-19 processed by vulnerable database-handling code?",
-          "Did the requests result in unauthorized data access or execution of unintended SQL commands?"
+          "Were the requests observed in application-4 and nginx-19 processed by vulnerable database query logic?"
         ],
         "limitations": [
-          "Observed HTTP request patterns alone do not establish successful exploitation or vulnerability.",
-          "Hypothesis H1 remains unconfirmed."
+          "Analysis is based on observed request patterns and hypotheses; no database query logs or source code were inspected."
         ],
         "input_summary": {
           "retriever": "fts5-bm25-v1",
@@ -145,7 +281,7 @@
         "note": "Validation checks that identifiers exist and sit in the right category, that proposals are honest about missing configuration and risk, and screens some high-risk wording. It does not prove that a recommendation is correct, sufficient or safe.",
         "issues": []
       },
-      "raw_response": "{\n  \"schema_version\": \"1.0\",\n  \"incident_id\": \"incident_001\",\n  \"outcome\": \"insufficient_evidence\",\n  \"insufficient_reason\": \"The incident contains only observed exploitation attempt indicators with SQL-injection-like syntax in request paths and queries (application-4, nginx-19) and an unconfirmed hypothesis (H1). There is no confirmed server-side vulnerability, successful exploitation, or query construction evidence, so concrete remediation implementation steps cannot be safely designed or targeted.\",\n  \"proposals\": [],\n  \"unresolved_questions\": [\n    \"Were the queries observed in application-4 and nginx-19 processed by vulnerable database-handling code?\",\n    \"Did the requests result in unauthorized data access or execution of unintended SQL commands?\"\n  ],\n  \"limitations\": [\n    \"Observed HTTP request patterns alone do not establish successful exploitation or vulnerability.\",\n    \"Hypothesis H1 remains unconfirmed.\"\n  ]\n}"
+      "raw_response": "{\n  \"schema_version\": \"1.0\",\n  \"incident_id\": \"incident_001\",\n  \"outcome\": \"proposals\",\n  \"insufficient_reason\": \"\",\n  \"proposals\": [\n    {\n      \"title\": \"Review Query Construction for Potential SQL Injection\",\n      \"description\": \"Examine application source code handling search endpoints to ensure parameterization or proper neutralization of special elements is used, as referenced in CWE-89.\",\n      \"problem_addressed\": \"Potential SQL injection handling of user-controllable input in search paths.\",\n      \"affected_area\": {\n        \"state\": \"identified\",\n        \"description\": \"Endpoints /search and /api/search observed in application and nginx logs.\"\n      },\n      \"observed_evidence_ids\": [\n        \"application-4\",\n        \"nginx-19\"\n      ],\n      \"hypothesis_ids\": [\n        \"H1\"\n      ],\n      \"configuration_fact_ids\": [\n        \"CFG-3\",\n        \"CFG-6\"\n      ],\n      \"reference_ids\": [\n        \"cwe:CWE-89#0001\",\n        \"capec:CAPEC-66#0003\"\n      ],\n      \"rationale\": \"The finding is hypothesis_not_confirmed. Suspicious request text is observed activity, not confirmed exploitation. Reference material from CWE-89 and CAPEC-66 indicates that applications utilizing user-controllable input without proper neutralization in SQL commands can be vulnerable to SQL injection.\",\n      \"reference_support_limits\": \"The reference passages describe CWE-89 and CAPEC-66 generally and do not establish that the specific code in this incident is vulnerable or that exploitation succeeded. The finding is hypothesis_not_confirmed.\",\n      \"severity\": {\n        \"level\": \"medium\",\n        \"rationale\": \"Severity is judged as medium based on typical consequences of CWE-89, though no exploitation is confirmed in this incident.\"\n      },\n      \"expected_security_effect\": \"Reviewing and hardening query construction helps reduce the risk of improper neutralization of special elements used in SQL commands.\",\n      \"operational_side_effects\": [\n        \"Code modifications may require thorough testing of search functionality before deployment.\"\n      ],\n      \"implementation_steps\": [\n        {\n          \"text\": \"Review application source code for database query construction practices.\",\n          \"origin\": \"general_practice\"\n        },\n        {\n          \"text\": \"Use parameterized queries or prepared statements for handling user-controllable input as described in CWE-89.\",\n          \"origin\": \"cited_reference\"\n        }\n      ],\n      \"configuration_dependent\": true,\n      \"disruption\": \"low\",\n      \"reversibility\": \"reversible\",\n      \"preconditions\": [\n        \"Human review and authorization required before modifying source code.\"\n      ],\n      \"dependencies\": [],\n      \"unresolved_questions\": [\n        \"Does the application source code properly parameterize database queries for /search and /api/search?\"\n      ],\n      \"validation\": {\n        \"procedure\": \"Perform code review and run parameterized query unit tests in an authorized staging environment.\",\n        \"expected_result\": \"Queries successfully handle input safely without executing unintended SQL commands.\"\n      },\n      \"confidence\": {\n        \"level\": \"low\",\n        \"rationale\": \"The finding is unconfirmed: suspicious requests are observed activity, not confirmed exploitation.\"\n      }\n    }\n  ],\n  \"unresolved_questions\": [\n    \"Were the requests observed in application-4 and nginx-19 processed by vulnerable database query logic?\"\n  ],\n  \"limitations\": [\n    \"Analysis is based on observed request patterns and hypotheses; no database query logs or source code were inspected.\"\n  ]\n}"
     }
   ],
   "advisory_only": true,

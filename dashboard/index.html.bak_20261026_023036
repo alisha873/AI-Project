@@ -1,0 +1,1974 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AutoShield AI — Investigation Flow</title>
+<style>
+:root{--bg:#f5f7f8;--paper:#fff;--ink:#18252d;--muted:#687780;--line:#e1e8e9;--teal:#177d72;--teal-light:#eaf5f2;--amber:#a66d18;--amber-bg:#fff6e6;--red:#b54747;--shadow:0 8px 26px #203b4509}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button{font:inherit;cursor:pointer}.shell{min-height:100vh;display:grid;grid-template-columns:235px minmax(0,1fr)}aside{background:#fff;border-right:1px solid var(--line);padding:25px 16px;display:flex;flex-direction:column;gap:28px}.brand{display:flex;gap:11px;align-items:center;padding:0 7px}.mark{height:39px;width:39px;border-radius:12px;background:var(--teal-light);color:var(--teal);display:grid;place-items:center;font-size:22px}.brand b{font-size:15px;letter-spacing:-.3px}.brand small{display:block;color:var(--muted);font-size:11px}.label{font-size:10px;color:#8b989e;text-transform:uppercase;letter-spacing:1.3px;padding:0 10px;margin-bottom:7px}.nav{display:grid;gap:5px}.nav button{border:1px solid transparent;background:transparent;color:#61717a;text-align:left;border-radius:9px;padding:10px;display:flex;align-items:center;gap:10px}.nav button.active{background:var(--teal-light);border-color:#d7ebe5;color:var(--teal);font-weight:650}.nav button span{width:18px;text-align:center}.side-note{margin-top:auto;padding:13px;border:1px solid var(--line);background:#fafcfc;border-radius:12px;color:var(--muted);font-size:11px}.main{padding:30px clamp(18px,4vw,55px);max-width:1450px;width:100%;margin:0 auto}.top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:25px}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);font-weight:700}.h1{font-size:29px;letter-spacing:-1px;margin:5px 0}.sub{color:var(--muted);max-width:720px}.pill{display:inline-flex;align-items:center;gap:7px;border:1px solid #d7e8e4;background:#f0f8f6;color:#176e64;padding:6px 9px;border-radius:99px;font-size:10px;white-space:nowrap}.dot{width:6px;height:6px;background:#c48b2a;border-radius:50%}.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:23px;box-shadow:var(--shadow)}.flow-card{margin-bottom:18px}.flow-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px}.flow-head h2{font-size:14px;margin:0}.flow-head p{margin:3px 0 0;color:var(--muted);font-size:11px}.rail{display:grid;grid-template-columns:repeat(8,minmax(82px,1fr));gap:0;overflow-x:auto;padding-bottom:3px}.rail-step{position:relative;min-width:82px;text-align:center;padding:0 5px;cursor:pointer}.rail-step:not(:last-child):before{content:"";position:absolute;height:2px;background:#e1e8e9;left:calc(50% + 17px);right:calc(-50% + 17px);top:15px}.rail-step.done:not(:last-child):before{background:#8bc9bc}.bubble{height:32px;width:32px;border-radius:50%;display:grid;place-items:center;margin:0 auto 8px;background:#f3f6f6;border:1px solid #dce5e5;color:#7b8a90;font-size:11px;position:relative;z-index:1}.rail-step.active .bubble{background:var(--teal);border-color:var(--teal);color:#fff;box-shadow:0 0 0 4px #e7f4f1}.rail-step.done .bubble{background:#e6f4f0;border-color:#bfe2d8;color:var(--teal)}.rail-step b{display:block;font-size:10px;font-weight:600;color:#687780;line-height:1.3}.rail-step.active b{color:var(--teal)}.stage-wrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(240px,.7fr);gap:18px}.stage-number{font-size:11px;color:var(--teal);font-weight:700;letter-spacing:1px}.stage-title{font-size:24px;letter-spacing:-.7px;margin:7px 0}.stage-desc{color:var(--muted);margin:0 0 20px;max-width:680px}.result{background:#f8faf9;border:1px solid var(--line);border-radius:12px;padding:17px}.result h3{font-size:12px;margin:0 0 12px}.result p{color:var(--muted);font-size:12px;margin:8px 0}.result strong{color:var(--ink)}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}.metric{border:1px solid var(--line);border-radius:11px;padding:13px}.metric span{font-size:10px;color:var(--muted);display:block}.metric b{font-size:23px;letter-spacing:-.7px;display:block;margin-top:4px}.metric small{font-size:10px;color:var(--muted)}.status{display:inline-block;font-size:10px;border-radius:6px;padding:4px 7px;background:#edf7f4;color:#176e64}.status.warn{background:var(--amber-bg);color:var(--amber)}.status.pending{background:#f1f3f4;color:#77858c}.notice{margin-top:13px;border:1px solid #f0dfbd;background:var(--amber-bg);border-radius:10px;padding:12px;color:#80591d;font-size:11px}.actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px}.btn{border:1px solid #dce5e7;background:white;color:#35454d;border-radius:9px;padding:10px 14px;font-size:12px}.btn.primary{background:var(--teal);border-color:var(--teal);color:white;font-weight:650}.btn:disabled{opacity:.4;cursor:not-allowed}.hint{font-size:11px;color:var(--muted)}.log{display:grid;gap:11px}.log-row{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start}.log-icon{height:22px;width:22px;border-radius:7px;background:var(--teal-light);color:var(--teal);display:grid;place-items:center;font-size:11px}.log-row b{font-size:11px;display:block}.log-row small{color:var(--muted);font-size:10px}.loop{border:1px solid #e3e9ea;background:#fff;border-radius:14px;padding:17px;margin-top:18px}.loop h3{font-size:12px;margin:0 0 13px}.loop-line{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.loop-node{padding:8px 10px;border-radius:8px;background:#f6f8f8;border:1px solid var(--line);font-size:10px;color:#586a72}.loop-node.current{background:var(--teal-light);border-color:#c9e5de;color:var(--teal)}.arrow{color:#9aa8ac}.loop-note{font-size:10px;color:var(--muted);margin-top:10px}.hidden{display:none!important}.report-row{padding:11px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:150px 1fr;gap:15px;font-size:12px}.report-row:last-child{border-bottom:0}.report-row span{color:var(--muted)}.graph{width:100%;height:auto;display:block;background:#f9fbfb;border:1px solid var(--line);border-radius:12px}.graph text{font-family:inherit}.footer{font-size:10px;color:#89969b;margin-top:20px}@media(max-width:900px){.shell{grid-template-columns:1fr}aside{position:static;border-right:0;border-bottom:1px solid var(--line);padding:13px;gap:12px}.brand{padding:0}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap}.nav button span{display:none}.label,.side-note{display:none}.main{padding:22px 14px}.stage-wrap{grid-template-columns:1fr}.rail{grid-template-columns:repeat(8,92px)}.top{flex-direction:column}.metrics{grid-template-columns:repeat(3,1fr)}}@media(max-width:480px){.panel{padding:16px}.stage-title{font-size:21px}.metrics{grid-template-columns:1fr 1fr}.report-row{grid-template-columns:1fr;gap:3px}}
+
+/* AUTOSHIELD_REPORT_AND_PROGRESS_CLEANUP */
+#reportView > .report-row { display: grid; }
+#reportView #autoshield-integrated-report { display: block; }
+
+
+/* AUTOSHIELD_SINGLE_FULL_REPORT */
+#reportView > .flow-head,
+#reportView > .report-row {
+  display: none !important;
+}
+@media print {
+  body { background: white !important; }
+  body * { visibility: hidden !important; }
+  #autoshield-full-pipeline-report,
+  #autoshield-full-pipeline-report * {
+    visibility: visible !important;
+  }
+  #autoshield-full-pipeline-report {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+  #autoshield-download-report { display: none !important; }
+  .report-row { break-inside: avoid; }
+}
+
+
+/* AUTOSHIELD_HIDE_OLD_PREVIEW_CARD */
+#reportView > .flow-head,
+#reportView > .report-row {
+  display: none !important;
+}
+
+
+/* AUTOSHIELD_REPORT_VIEW_FIX */
+#reportView {
+  display: none !important;
+}
+#autoshield-full-pipeline-report {
+  display: none;
+}
+body.autoshield-report-active #autoshield-full-pipeline-report {
+  display: block;
+}
+@media print {
+  body.autoshield-report-active #autoshield-full-pipeline-report {
+    display: block !important;
+  }
+}
+
+
+/* Keep uncompleted stages neutral rather than green. */
+.rail-step.done:not(.active) .bubble {
+  background:#f3f6f6 !important;
+  border-color:#dce5e5 !important;
+  color:#7b8a90 !important;
+}
+.rail-step.done:not(.active):not(:last-child)::before {
+  background:#e1e8e9 !important;
+}
+#stepHint { display:none !important; }
+
+/* Evidence Extraction Agent */
+.extraction-panel {
+  margin-top: 14px;
+  padding: 17px;
+  background: #f8faf9;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.extraction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.extraction-header h3 {
+  font-size: 12px;
+  margin: 0;
+}
+
+.extraction-description {
+  color: var(--muted);
+  font-size: 11px;
+  margin: 6px 0 14px;
+}
+
+.extraction-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.extraction-stat {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: white;
+}
+
+.extraction-stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.extraction-stat b {
+  display: block;
+  font-size: 19px;
+  margin-top: 4px;
+}
+
+.extraction-table-wrap {
+  overflow: auto;
+  max-height: 300px;
+  margin-top: 12px;
+}
+
+.extraction-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.extraction-table th,
+.extraction-table td {
+  text-align: left;
+  padding: 9px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.extraction-table th {
+  background: #edf3f2;
+  position: sticky;
+  top: 0;
+}
+
+.extraction-empty {
+  padding: 13px;
+  border: 1px dashed #d7dfe0;
+  border-radius: 9px;
+  color: var(--muted);
+  font-size: 11px;
+  background: white;
+}
+
+@media (max-width: 480px) {
+  .extraction-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style></head><body><div class="shell"><aside><div class="brand"><div class="mark">⬡</div><div><b>AutoShield AI</b><small>Incident response workspace</small></div></div><div><div class="label">Investigation</div><nav class="nav"><button class="active" id="nav-flow"><span>↗</span>Investigation flow</button><button id="nav-report"><span>▤</span>Final report</button></nav></div></aside>
+<main class="main"><header class="top"><div><div class="eyebrow">Guided investigation</div><h1 class="h1" id="mainTitle">Move through the incident, one stage at a time.</h1><div class="sub" id="mainSub">Review the recorded evidence, graph analysis, RAG retrieval, advisory remediation, SHAP explanation and Bayesian risk experiment. Controlled validation and Judge decision remain pending.</div></div><span class="pill"><i class="dot"></i> CHECKING API</span></header>
+<div id="flowView"><section class="panel flow-card"><div class="flow-head"><div><h2>Incident response workflow</h2><p>Click a completed stage to revisit it. Use Continue to move forward.</p></div><span class="status" id="progressLabel">Ready to start</span></div><div class="rail" id="rail"></div></section>
+<section class="panel"><div class="stage-wrap"><div><div class="stage-number" id="stageNum">READY · INC-001</div><h2 class="stage-title" id="stageTitle">Start investigation</h2><p class="stage-desc" id="stageDesc">Follow controlled SQL injection scenario INC-001 through the AutoShield AI pipeline. Each step reveals the output produced at that stage.</p><div id="stageBody"><div class="metrics"><div class="metric"><span>Incident</span><b>INC-001</b><small>Controlled scenario</small></div><div class="metric"><span>Input</span><b>Evidence</b><small>Logs and artifacts</small></div><div class="metric"><span>Mode</span><b>Guided</b><small>Presentation walkthrough</small></div></div><div class="notice">The backend run has completed. Use the phase navigation to review the recorded outputs.</div></div><div class="actions"><button class="btn" id="backBtn" disabled>← Previous</button><div style="display:flex;gap:8px;align-items:center"><span class="hint" id="stepHint">Stage 0 of 8</span><button class="btn primary" id="nextBtn">Start investigation →</button></div></div></div><div><div class="result"><h3 id="resultTitle">What happens here</h3><div id="resultBody"><p><strong>Start</strong> to begin the guided flow.</p><p>At each stage, the result panel explains what is available and what remains unverified.</p></div></div><div class="loop"><h3>Full feedback loop</h3><div class="loop-line" id="miniLoop"></div><div class="loop-note">A failed validation returns to remediation. The loop is shown as workflow logic, not a claim that all modules are integrated.</div></div></div></div></section></div>
+<div id="reportView" class="panel hidden"><div class="flow-head"><div><h2>Incident report preview</h2><p>Summary of documented results and outstanding integration.</p></div><button class="btn" onclick="window.print()">Print / Save PDF</button></div><div class="report-row"><span>Incident</span><b>INC-001 · controlled SQL injection scenario</b></div><div class="report-row"><span>Evidence & graph</span><b>50 normalized events · 30 nodes · 24 edges · 50 timeline events</b></div><div class="report-row"><span>GNN evaluation</span><b>Held-out test n=12 · precision 1.000 · recall 0.7778 · F1 0.875 · accuracy 0.8333</b></div><div class="report-row"><span>Root cause</span><b>Hypothesis not confirmed. Database activity and exfiltration were not independently verified.</b></div><div class="report-row"><span>RAG & remediation</span><b>Implementation reported; output integration pending.</b></div><div class="report-row"><span>Validation & risk</span><b>Pending integration. No Judge PASS or residual-risk percentage claimed.</b></div></div>
+
+<section id="autoshield-full-pipeline-report"
+ style="margin-top:22px;border:1px solid var(--line);border-radius:12px;padding:22px;background:#fff">
+ <h2 style="margin:0 0 6px">Complete AutoShield AI Pipeline Report</h2>
+ <button id="autoshield-download-report" class="btn" onclick="window.print()" style="float:right;margin-top:-8px">Download PDF</button>
+<p style="color:var(--muted);margin:0 0 18px">
+ Incident INC-001 · Recorded outputs and evaluation results
+ </p>
+
+ <div class="report-row"><span>1. Evidence ingestion</span>
+ <b>50 normalized events and 50 timeline events recorded. Evidence sources include proxy and application logs, container metadata, network captures and configuration artifacts.</b></div>
+
+ <div class="report-row"><span>2. Graph and GNN</span>
+ <b>30 graph nodes and 24 edges. Held-out test n=12: precision 1.000, recall 0.7778, F1 0.875, accuracy 0.8333. Results are preliminary and use scenario-intent labels.</b></div>
+
+ <div class="report-row"><span>3. Incident reconstruction</span>
+ <b>Two SQL-injection-shaped requests were observed about 1 ms apart. Their relationship remains a candidate correlation. Database access and exfiltration were not independently verified.</b></div>
+
+ <div class="report-row"><span>4. LLM narrative</span>
+ <b>Narrative synthesis output is recorded. Validation checks evidence references and limits unsupported root-cause confirmation; this does not prove every generated statement is true.</b></div>
+
+ <div class="report-row"><span>5. Security knowledge / RAG</span>
+ <b>FTS5 BM25 retrieval; 10 unique CAPEC/CWE references recorded for the example incident. Retrieved material supports analysis and recommendations, not proof of exploitation.</b></div>
+
+ <div class="report-row"><span>6. Remediation planning</span>
+ <b>Remediation recommendations are advisory. A recommendation alone does not establish that a change was applied or that it was effective.</b></div>
+
+ <div class="report-row"><span>7. Penetration testing / validation</span>
+ <b>Controlled validation outcome is not established in this report. The recorded scenario observed Nginx-to-API forwarding and an HTTP response; downstream database activity remains unverified.</b></div>
+
+ <div class="report-row"><span>8. Judge Agent</span>
+ <b>Pending recorded decision. No PASS/FAIL outcome is claimed without a supporting execution artifact.</b></div>
+
+ <div class="report-row"><span>9. SHAP explainability</span>
+ <b>For scenario_011, raw GCN edge logit ≈ 40.1342 and baseline ≈ −2.9315. Largest positive contributions include HTTP feature IDs 21, 18 and 6. Reconstruction error ≈ 7.11 × 10⁻¹⁵. The logit is not a calibrated probability.</b></div>
+
+ <div class="report-row"><span>10. Bayesian Neural Network</span>
+ <b>500 posterior samples; 12 held-out test edges. Accuracy 0.8333, precision 1.000, recall 0.7778, F1 0.875, Brier score 0.0712 and MAE 0.2173. This predicts attack-edge-label proxy scores, not validated post-remediation residual risk.</b></div>
+
+ <div class="report-row"><span>11. BNN limitations</span>
+ <b>The held-out set is small (n=12). Predictive intervals and prototype risk bands are not empirically calibrated for operational residual-risk decisions.</b></div>
+
+ <div class="report-row"><span>Overall status</span>
+ <b>Evidence analysis, graph/GNN evaluation, narrative synthesis, RAG retrieval, SHAP and BNN outputs are documented. Remediation effectiveness, controlled post-remediation validation and Judge decisions must be supported by execution evidence before being marked successful.</b></div>
+</section>
+<div class="footer">AutoShield AI · BCSE306L · Local presentation prototype · Live pipeline outputs are shown where available; recorded evaluation metrics are labeled separately.</div></main></div>
+<script>
+const stages=[
+{short:'Evidence',name:'Collect & normalize evidence',desc:'The pipeline parses available logs and artifacts into a common event format while preserving source provenance.',kind:'Recorded output',body:`<div class="metrics"><div class="metric"><span>Normalized events</span><b>50</b><small>Recorded for incident_001</small></div><div class="metric"><span>Timeline events</span><b>50</b><small>Recorded reconstruction</small></div><div class="metric"><span>Evidence claims</span><b>2</b><small>Evidence-linked claims</small></div></div><div class="result"><h3>Evidence types</h3><p>Nginx access/error · application/auth logs · Docker JSON · PCAP/PCAPNG · configuration and container metadata.</p></div>`,result:`<div class="log"><div class="log-row"><div class="log-icon">✓</div><div><b>Parsing and normalization</b><small>Recorded incident output available</small></div></div><div class="log-row"><div class="log-icon">✓</div><div><b>Source provenance retained</b><small>Events can be traced to evidence inputs</small></div></div><div class="log-row"><div class="log-icon">!</div><div><b>Not a live run</b><small>Displayed counts are documented demo values</small></div></div></div>`},
+{short:'Graph + GNN',name:'Build graph & score relationships',desc:'Normalized events and infrastructure context are represented as a heterogeneous graph. The GNN scores candidate edges; this is not proof of a complete attack path.',kind:'Recorded evaluation',body:`<svg class="graph" viewBox="0 0 520 210" aria-label="Conceptual attack graph"><defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#4d9b8d"/></marker><marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#c08a34"/></marker></defs><path d="M115 90 L180 90" stroke="#4d9b8d" stroke-width="2" marker-end="url(#arr)"/><path d="M290 90 L355 90" stroke="#c08a34" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arr2)"/><rect x="15" y="65" width="100" height="50" rx="9" fill="#eaf5f2" stroke="#8dc6ba"/><rect x="180" y="65" width="110" height="50" rx="9" fill="#eaf5f2" stroke="#8dc6ba"/><rect x="355" y="65" width="150" height="50" rx="9" fill="#fff6e6" stroke="#e6c88e"/><text x="65" y="86" text-anchor="middle" font-size="12" fill="#1d5149">Client</text><text x="65" y="101" text-anchor="middle" font-size="9" fill="#54716c">request source</text><text x="235" y="86" text-anchor="middle" font-size="12" fill="#1d5149">Nginx</text><text x="235" y="101" text-anchor="middle" font-size="9" fill="#54716c">proxy evidence</text><text x="430" y="86" text-anchor="middle" font-size="12" fill="#80591d">AutoShield API</text><text x="430" y="101" text-anchor="middle" font-size="9" fill="#80591d">request observed</text><text x="148" y="78" text-anchor="middle" font-size="9" fill="#177d72">observed</text><text x="323" y="78" text-anchor="middle" font-size="9" fill="#a66d18">dependency</text><text x="260" y="165" text-anchor="middle" font-size="10" fill="#687780">30 nodes · 24 edges</text><text x="260" y="183" text-anchor="middle" font-size="9" fill="#8b989e">Conceptual excerpt, not full graph rendering</text></svg><div class="metrics"><div class="metric"><span>Precision</span><b>1.000</b><small>Held-out n=12</small></div><div class="metric"><span>Recall</span><b>.778</b><small>Preliminary</small></div><div class="metric"><span>F1</span><b>.875</b><small>Edge classification</small></div></div>`,result:`<div class="log"><div class="log-row"><div class="log-icon">✓</div><div><b>Graph assembled</b><small>30 nodes and 24 edges recorded</small></div></div><div class="log-row"><div class="log-icon">✓</div><div><b>GNN evaluation</b><small>Test set n=12; small preliminary sample</small></div></div><div class="log-row"><div class="log-icon">!</div><div><b>Path uncertainty remains</b><small>DB activity not independently observed</small></div></div></div>`},
+{short:'Reconstruct',name:'Reconstruct incident & infer root cause',desc:'Correlate timeline events, build evidence-linked claims, and present a root-cause hypothesis with explicit uncertainty.',kind:'Hypothesis · not confirmed',body:`<div class="result"><h3>Candidate event sequence</h3><p><strong>1.</strong> Nginx logs a SQL-injection-shaped request to <code>GET /api/search</code>.</p><p><strong>2.</strong> Application logs contain a similar query on <code>GET /search</code> about 1 ms apart.</p><p><strong>3.</strong> No shared request ID or independently verified same-request link is available.</p></div><div class="metrics"><div class="metric"><span>Vulnerability class</span><b style="font-size:20px">CWE-89</b><small>SQL injection</small></div><div class="metric"><span>Evidence claims</span><b>2</b><small>Linked claims</small></div><div class="metric"><span>Status</span><b style="font-size:17px;color:var(--amber)">Open</b><small>Not confirmed</small></div></div>`,result:`<div class="log"><div class="log-row"><div class="log-icon">✓</div><div><b>Candidate sequence reconstructed</b><small>Based on recorded incident outputs</small></div></div><div class="log-row"><div class="log-icon">!</div><div><b>Root cause remains a hypothesis</b><small>HTTP 200 does not prove exploitation success</small></div></div><div class="log-row"><div class="log-icon">!</div><div><b>No exfiltration claim</b><small>Database access is not independently verified</small></div></div></div>`},
+{short:'Dual-Vector RAG',name:'Retrieve supporting security knowledge',desc:'Retrieve relevant security knowledge and display the available passages and source references to support advisory remediation.',pending:true,kind:'Output integration pending',body:`<div class="placeholder"><b>Retrieved security knowledge</b><p>Expected: query, retrieved passages, source references, and relevance metadata.</p></div>`,result:`<span class="status pending">Implementation reported</span><p>Retrieved passages are available for review. Remediation remains advisory.</p><p>Review the actual retrieval output and source references before relying on a recommendation.</p>`},
+{short:'Remediate',name:'Generate a remediation plan',desc:'Use retrieved knowledge and incident context to propose a specific fix. A recommendation is not the same as an applied or verified fix.',pending:true,kind:'Output integration pending',body:`<div class="placeholder"><b>Remediation plan will appear here</b><p>Expected: affected component, proposed code/configuration change, rationale, and source links.</p></div>`,result:`<span class="status pending">Implementation reported</span><p>Planner output integration is pending.</p><p>Any suggested fix must later be verified by controlled testing.</p>`},
+{short:'Validate',name:'Run controlled security validation',desc:'Replay the controlled test against the remediated target and capture the actual response and evidence. This stage is not yet integrated.',pending:true,kind:'Pending · not executed',body:`<div class="placeholder"><b>Validation has not run from this dashboard</b><p>When connected, show the test case, execution evidence, before/after result, and failure details.</p></div>`,result:`<span class="status pending">Pending implementation</span><p>No test has been executed by this prototype.</p><p>The dashboard must not imply a fix passed without observed validation evidence.</p>`},
+{short:'Judge + SHAP',name:'Judge the result & explain model output',desc:'A Judge Agent should make a traceable PASS/FAIL decision from validation evidence. SHAP explanations should be tied to the actual model output.',pending:true,kind:'Pending · not integrated',body:`<div class="metrics"><div class="metric"><span>Judge decision</span><b style="font-size:18px">Pending</b><small>No PASS/FAIL</small></div><div class="metric"><span>SHAP</span><b style="font-size:18px">Available</b><small>Saved GCN SHAP result</small></div><div class="metric"><span>Evidence</span><b style="font-size:18px">Required</b><small>Traceable decision</small></div></div>`,result:`<span class="status pending">Awaiting modules</span><p>Saved SHAP explanation is available. Judge output remains unconnected.</p><p>A failed Judge decision should return the workflow to remediation.</p>`},
+{short:'Risk + Report',name:'Estimate residual risk & close the report',desc:'Produce a Bayesian residual-risk estimate only when the implemented estimator returns a calibrated value and uncertainty. The report summarizes evidence, decisions, and remaining unknowns.',pending:true,kind:'Partially pending',body:`<div class="placeholder"><b>Residual risk not available</b><p>Saved BNN scores and posterior intervals are available; they are not calibrated residual-risk estimates. The report can summarize recorded results and mark later stages pending.</p></div>`,result:`<div class="log"><div class="log-row"><div class="log-icon">✓</div><div><b>Documented evidence summary</b><small>Can be included in a report preview</small></div></div><div class="log-row"><div class="log-icon">…</div><div><b>Residual risk</b><small>No value should be invented</small></div></div></div>`}
+];let current=-1,visited=new Set();const rail=document.getElementById('rail');function drawRail(){rail.innerHTML=stages.map((s,i)=>`<div class="rail-step ${i===current?'active':''} ${i<current?'done':''}" data-step="${i}"><div class="bubble">${i<current?'✓':String(i+1).padStart(2,'0')}</div><b>${s.short}</b></div>`).join('');rail.querySelectorAll('[data-step]').forEach(el=>el.onclick=()=>{let i=+el.dataset.step;render(i)});const loop=document.getElementById('miniLoop');loop.innerHTML=stages.map((s,i)=>`<span class="loop-node ${i===current?'current':''}">${s.short}</span>${i<stages.length-1?'<span class="arrow">→</span>':''}`).join('')+'<span class="arrow">↺</span>';}
+function render(i){current=i;visited.add(i);const s=stages[i];document.getElementById('mainTitle').textContent='Incident INC-001';document.getElementById('mainSub').textContent='Guided investigation · stage '+(i+1)+' of '+stages.length;document.getElementById('stageNum').textContent='STAGE '+String(i+1).padStart(2,'0')+' / INC-001';document.getElementById('stageTitle').textContent=s.name;document.getElementById('stageDesc').textContent=s.desc;document.getElementById('stageBody').innerHTML=s.body;document.getElementById('resultTitle').textContent=s.kind;document.getElementById('resultBody').innerHTML=s.result;document.getElementById('progressLabel').textContent=(i+1)+' of '+stages.length+' stages';document.getElementById('stepHint').textContent='Stage '+(i+1)+' of '+stages.length;document.getElementById('backBtn').disabled=i===0;document.getElementById('backBtn').textContent='← Previous';document.getElementById('nextBtn').textContent=i===stages.length-1?'View report →':'Continue to '+stages[Math.min(i+1,stages.length-1)].short+' →';drawRail();window.scrollTo({top:0,behavior:'smooth'});}
+document.getElementById('nextBtn').onclick=()=>{if(current<0)render(0);else if(current<stages.length-1)render(current+1);else showReport()};document.getElementById('backBtn').onclick=()=>{if(current>0)render(current-1);else{current=-1;visited.clear();document.getElementById('mainTitle').textContent='Move through the incident, one stage at a time.';document.getElementById('mainSub').textContent='Review the recorded evidence, graph analysis, RAG retrieval, advisory remediation, SHAP explanation and Bayesian risk experiment. Controlled validation and Judge decision remain pending.';document.getElementById('stageNum').textContent='READY · INC-001';document.getElementById('stageTitle').textContent='Start investigation';document.getElementById('stageDesc').textContent='Follow controlled SQL injection scenario INC-001 through the AutoShield AI pipeline. Each step reveals the output produced at that stage.';document.getElementById('stageBody').innerHTML='<div class="metrics"><div class="metric"><span>Incident</span><b>INC-001</b><small>Controlled scenario</small></div><div class="metric"><span>Input</span><b>Evidence</b><small>Logs and artifacts</small></div><div class="metric"><span>Mode</span><b>Guided</b><small>Presentation walkthrough</small></div></div><div class="notice">The backend run has completed. Use the phase navigation to review the recorded outputs.</div>';document.getElementById('resultTitle').textContent='What happens here';document.getElementById('resultBody').innerHTML='<p><strong>Start</strong> to begin the guided flow.</p><p>At each stage, the result panel explains what is available and what remains unverified.</p>';document.getElementById('progressLabel').textContent='Ready to start';document.getElementById('stepHint').textContent='Stage 0 of 8';document.getElementById('backBtn').disabled=true;document.getElementById('nextBtn').textContent='Start investigation →';drawRail()}};
+function showReport(){document.body.classList.add('autoshield-report-active');document.getElementById('flowView').classList.add('hidden');document.getElementById('reportView').classList.remove('hidden');document.getElementById('nav-report').classList.add('active');document.getElementById('nav-flow').classList.remove('active');document.getElementById('mainTitle').textContent='Incident report preview';document.getElementById('mainSub').textContent='Documented results, uncertainty, and module integration status.';window.scrollTo({top:0,behavior:'smooth'})}document.getElementById('nav-flow').onclick=()=>{document.body.classList.remove('autoshield-report-active');document.getElementById('flowView').classList.remove('hidden');document.getElementById('reportView').classList.add('hidden');document.getElementById('nav-flow').classList.add('active');document.getElementById('nav-report').classList.remove('active');if(current>=0)render(current)};document.getElementById('nav-report').onclick=showReport;drawRail();
+</script>
+<script>
+(() => {
+  const API = "http://127.0.0.1:8001";
+  const btn = document.getElementById("nextBtn");
+  const back = document.getElementById("backBtn");
+  const stageBody = document.getElementById("stageBody");
+  const resultTitle = document.getElementById("resultTitle");
+  const resultBody = document.getElementById("resultBody");
+  const progress = document.getElementById("progressLabel");
+  const stageNum = document.getElementById("stageNum");
+  const title = document.getElementById("stageTitle");
+  const desc = document.getElementById("stageDesc");
+  const stepHint = document.getElementById("stepHint");
+  const rail = document.getElementById("rail");
+  const labels = ["Evidence", "Graph + GNN", "Reconstruction", "Dual-Vector RAG", "Remediate", "Validate", "Judge + SHAP", "Risk + Report"];
+  let runId = null, source = null, running = false, currentStep = -1, liveFinished = false;
+  let logs = [], states = {}, parsed = {}, artifacts = {}, streamError = null;
+
+  function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  function panel() {
+    let p = document.getElementById("liveActivity");
+    if (!p) {
+      p = document.createElement("section");
+      p.id = "liveActivity"; p.className = "result"; p.style.marginTop = "16px";
+      p.innerHTML = '<h3>Live pipeline activity <span id="liveStatus" class="status">Connecting…</span></h3><div id="liveSummary" style="color:var(--muted);margin:8px 0">Waiting for backend events.</div><pre id="liveLog" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:240px;overflow:auto;background:#f7f9fa;border:1px solid var(--line);border-radius:10px;padding:12px;font:11px/1.5 ui-monospace,monospace"></pre>';
+      stageBody.appendChild(p);
+    }
+    return p;
+  }
+  function log(s) {
+    logs.push(s); if (logs.length > 220) logs = logs.slice(-220);
+    const p=panel(), pre=p.querySelector("#liveLog"); pre.textContent=logs.join("\n"); pre.scrollTop=pre.scrollHeight;
+  }
+  function status(s,kind="") {
+    const p=panel(); const el=p.querySelector("#liveStatus");
+    el.textContent=s; el.className="status "+kind; p.querySelector("#liveSummary").textContent=s;
+  }
+  function renderRail() {
+    rail.innerHTML = labels.map((name,i) => {
+      const reviewable=i<=2 || i===5 || i===6;
+      const state=states[i] || (reviewable && liveFinished ? "available" : "pending");
+      const cls=(i===currentStep?"active ":"")+(state==="completed"||state==="available"?"done":"");
+      const symbol=state==="completed"?"✓":String(i+1).padStart(2,"0");
+      return `<div class="rail-step ${cls}" data-step="${i}" title="${esc(state)}"><div class="bubble">${symbol}</div><b>${esc(name)}</b></div>`;
+    }).join("");
+    rail.querySelectorAll("[data-step]").forEach(el => el.addEventListener("click", () => {
+      const i=Number(el.dataset.step);
+      if ((i<=2 || i===5 || i===6) && liveFinished) showStep(i);
+      else if (i===currentStep) showStep(i);
+    }));
+    progress.textContent = running ? "Pipeline running" : liveFinished ? "Results ready · guided view" : "Ready to start";
+  }
+  function metric(label,value,foot="") { return `<div class="metric"><span>${esc(label)}</span><b>${esc(value)}</b><small>${esc(foot)}</small></div>`; }
+  function showStart() {
+    currentStep=-1; document.getElementById("mainTitle").textContent="Move through the incident, one stage at a time.";
+    document.getElementById("mainSub").textContent="Run the real pipeline once, then review each result at your own pace.";
+    stageNum.textContent="READY · INC-001"; title.textContent="Start investigation";
+    desc.textContent="Start the backend run. Watch live script output, then step through the retained results.";
+    stageBody.innerHTML=`<div class="metrics">${metric("Incident","INC-001","Controlled scenario")}${metric("Mode","Live run","Then guided review")}${metric("Stages","3 executable","Remaining modules pending")}</div><div class="notice">The backend runs once. After it finishes, use Continue to review Evidence, Graph + GNN, and Reconstruction without rerunning scripts.</div>`;
+    resultTitle.textContent="What happens here"; resultBody.innerHTML="<p><strong>Start investigation</strong> launches the existing analysis and narrative scripts.</p><p>RAG retrieval results, saved SHAP explanations and Bayesian risk evaluation are available. Controlled validation and Judge decision remain pending.</p>";
+    btn.disabled=running; btn.textContent=running?"Running pipeline…":"Start investigation →"; back.disabled=true; stepHint.textContent="Ready"; renderRail();
+  }
+
+  function evidenceExtractionPanel(artifacts) {
+  const entries = Object.entries(artifacts || {});
+
+  // Only use a separately saved extraction artifact.
+  // Do not count normalized timeline events as extracted findings.
+  const matches = entries.filter(([name, value]) =>
+    /extract/i.test(name) &&
+    value &&
+    typeof value === "object"
+  );
+
+  const escapeHTML = (value) =>
+    String(value ?? "—").replace(/[&<>"']/g, ch => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[ch]);
+
+  let content = "";
+
+  if (matches.length === 0) {
+    content = `
+      <div class="extraction-empty">
+        <strong>No dedicated extraction artifact is available.</strong>
+        <p>
+          The incident analysis has produced normalized events, but the
+          dashboard API has not exposed a separate Evidence Extraction
+          Agent result. No extraction counts or findings are inferred.
+        </p>
+      </div>`;
+  } else {
+    content = matches.map(([filename, data]) => {
+      const records = Array.isArray(data)
+        ? data
+        : data.findings ??
+          data.extractions ??
+          data.extracted_items ??
+          data.entities ??
+          data.claims ??
+          data.results ??
+          [];
+
+      const rows = Array.isArray(records)
+        ? records
+        : [];
+
+      const count = rows.length;
+
+      const headers = [
+        "Finding / entity",
+        "Type",
+        "Source / evidence reference",
+        "Status"
+      ];
+
+      const tableRows = rows.map(item => {
+        if (!item || typeof item !== "object") {
+          return `<tr><td>${escapeHTML(item)}</td><td>—</td><td>—</td><td>—</td></tr>`;
+        }
+
+        const finding =
+          item.finding ??
+          item.entity ??
+          item.claim ??
+          item.name ??
+          item.text ??
+          item.description ??
+          "—";
+
+        const type =
+          item.type ??
+          item.category ??
+          item.entity_type ??
+          item.event_type ??
+          "—";
+
+        const source =
+          item.source ??
+          item.evidence_id ??
+          item.event_id ??
+          item.source_ref ??
+          item.reference ??
+          "—";
+
+        const status =
+          item.status ??
+          item.validation_status ??
+          item.interpretation_status ??
+          "—";
+
+        return `
+          <tr>
+            <td>${escapeHTML(finding)}</td>
+            <td>${escapeHTML(type)}</td>
+            <td>${escapeHTML(source)}</td>
+            <td>${escapeHTML(status)}</td>
+          </tr>`;
+      }).join("");
+
+      return `
+        <div class="extraction-stat">
+          <span>Records in artifact</span>
+          <b>${count}</b>
+        </div>
+        <p class="extraction-description">
+          Artifact: ${escapeHTML(filename)}
+        </p>
+        ${
+          count
+            ? `<div class="extraction-table-wrap">
+                <table class="extraction-table">
+                  <thead>
+                    <tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr>
+                  </thead>
+                  <tbody>${tableRows}</tbody>
+                </table>
+              </div>`
+            : `<div class="extraction-empty">
+                The artifact exists, but its record schema does not match
+                the supported extraction fields. Inspect the raw artifact
+                before interpreting it.
+                <details>
+                  <summary>View raw artifact</summary>
+                  <pre style="white-space:pre-wrap;overflow-wrap:anywhere">${escapeHTML(JSON.stringify(data, null, 2))}</pre>
+                </details>
+              </div>`
+        }`;
+    }).join("");
+  }
+
+  return `
+    <section class="extraction-panel">
+      <div class="extraction-header">
+        <h3>Evidence Extraction Agent</h3>
+        <span class="status ${matches.length ? "" : "pending"}">
+          ${matches.length ? "Artifact available" : "Artifact not exposed"}
+        </span>
+      </div>
+
+      <p class="extraction-description">
+        Extracted observations and their source references, kept distinct
+        from the complete normalized event timeline.
+      </p>
+
+      ${content}
+    </section>`;
+}
+  function eventTable(recon) {
+    const events = Array.isArray(recon?.timeline) ? recon.timeline : [];
+    const rows = events.map(e => `<tr data-search="${esc([e.timestamp,e.event_id,e.source,e.event_type,e.action,e.source_entity,e.destination_entity,e.interpretation_status].join(" ").toLowerCase())}">
+      <td>${esc((e.timestamp||"").replace("T"," ").replace("Z"," UTC"))}</td><td><code>${esc(e.event_id||"—")}</code></td>
+      <td>${esc(e.source||"—")}</td><td>${esc(e.event_type||"—")}</td><td>${esc(e.action||"—")}</td>
+      <td>${esc(e.interpretation_status||"—")}</td></tr>`).join("");
+    return `<div class="result" style="margin-top:14px"><h3>Normalized timeline events <span class="status">${events.length} loaded from reconstruction JSON</span></h3>
+      <input id="eventSearch" aria-label="Search timeline events" placeholder="Search event ID, source, type, action…" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;margin:4px 0 10px;font:inherit">
+      <div style="overflow:auto;max-height:390px"><table id="eventTable" style="width:100%;border-collapse:collapse;font-size:11px;white-space:nowrap"><thead><tr>${["Timestamp","Event ID","Source","Type","Action","Interpretation"].map(x=>`<th style="position:sticky;top:0;background:#edf3f2;text-align:left;padding:9px;border-bottom:1px solid var(--line)">${x}</th>`).join("")}</tr></thead><tbody>${rows||'<tr><td colspan="6">No timeline events available in the artifact.</td></tr>'}</tbody></table></div>
+      <p id="eventCount">${events.length} events shown. Source details reflect the stored reconstruction artifact.</p></div>`;
+  }
+  function wireEventSearch() {
+    const input=document.getElementById("eventSearch"), table=document.getElementById("eventTable");
+    if(!input||!table)return;
+    input.addEventListener("input",()=>{const q=input.value.toLowerCase().trim();let n=0;
+      table.querySelectorAll("tbody tr").forEach(tr=>{const match=(tr.dataset.search||"").includes(q);tr.style.display=match?"":"none";if(match)n++;});
+      const count=document.getElementById("eventCount");if(count)count.textContent=`${n} of ${table.querySelectorAll("tbody tr").length} events shown.`;
+    });
+  }
+  function incidentTimeline(recon, root) {
+    const timeline=Array.isArray(recon?.timeline)?recon.timeline:[];
+    const ids=new Set(["application-4","nginx-19"]);
+    const highlighted=timeline.filter(e=>ids.has(e.event_id));
+    const finding=root?.findings?.[0]||{};
+    return `<div class="result" style="margin-bottom:12px"><h3>Investigation timeline</h3>
+      ${highlighted.length?highlighted.map(e=>`<div class="log-row" style="margin:12px 0"><div class="log-icon">!</div><div><b>${esc(e.event_id)} · ${esc(e.source)} · ${esc(e.action)}</b><small>${esc(e.timestamp)} · ${esc(e.interpretation_status)} · request ID: ${esc(e.request_context?.request_id||"not available")}</small></div></div>`).join(""):'<p>Candidate request events were not found in the loaded timeline.</p>'}
+      <p><strong>Interpretation:</strong> similar SQL-injection-shaped requests are candidates for correlation; no shared request ID proves they are the same request.</p>
+      <hr style="border:0;border-top:1px solid var(--line);margin:12px 0">
+      <h3>Root-cause assessment</h3><p><strong>Status:</strong> ${esc(finding.status||"unknown")}</p><p><strong>Hypothesis:</strong> ${esc(finding.vulnerability_type||"Not specified")}</p><p><strong>Confidence recorded by analysis:</strong> ${finding.confidence==null?"not supplied":esc(finding.confidence)}</p><p>${esc(finding.rationale||"No rationale in artifact.")}</p>
+      <p><strong>Evidence still needed:</strong> ${Array.isArray(finding.evidence_needed_to_confirm)?finding.evidence_needed_to_confirm.map(esc).join(" · "):"Not specified"}</p></div>`;
+  }
+
+  async function loadJsonFile(path) {
+    try {
+      const response = await fetch(path, { cache: "no-store" });
+      if (!response.ok) return null;
+      return await response.json();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function jsonDetails(title, obj) {
+    if (!obj) return "";
+    return `<details class="result" style="margin-top:12px">
+      <summary style="cursor:pointer;font-weight:650">View ${esc(title)}</summary>
+      <pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:360px;overflow:auto;font:11px/1.5 ui-monospace,monospace">${esc(JSON.stringify(obj,null,2))}</pre>
+    </details>`;
+  }
+
+  function renderGraphSvg(graph) {
+    const nodes = Array.isArray(graph?.nodes) ? graph.nodes : [];
+    const edges = Array.isArray(graph?.edges) ? graph.edges : [];
+    if (!nodes.length) {
+      return `<div class="result"><h3>Graph visualization</h3>
+        <p>Graph nodes were not available from the selected scenario JSON.</p></div>`;
+    }
+
+    const width = 900, height = Math.max(300, Math.ceil(nodes.length / 4) * 115 + 70);
+    const positions = new Map();
+    const cols = Math.min(4, Math.max(1, nodes.length));
+    nodes.forEach((n,i) => {
+      const col = i % cols, row = Math.floor(i / cols);
+      positions.set(n.node_id, {
+        x: 115 + col * ((width - 230) / Math.max(1, cols - 1)),
+        y: 65 + row * 115
+      });
+    });
+
+    const edgeSvg = edges.map(e => {
+      const source = e.source ?? e.source_id ?? e.from ?? e.source_node;
+      const target = e.target ?? e.target_id ?? e.to ?? e.target_node;
+      const a = positions.get(typeof source === "object" ? source?.node_id : source);
+      const b = positions.get(typeof target === "object" ? target?.node_id : target);
+      if (!a || !b) return "";
+      const label = String(e.edge_type ?? e.type ?? e.relationship ?? "edge");
+      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      return `<g>
+        <line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"
+          stroke="#8ba8a3" stroke-width="2" marker-end="url(#arrow)"/>
+        <text x="${mx}" y="${my-7}" text-anchor="middle" font-size="10"
+          fill="#526873">${esc(label.slice(0,24))}</text>
+      </g>`;
+    }).join("");
+
+    const nodeSvg = nodes.map((n,i) => {
+      const pos = positions.get(n.node_id);
+      const label = String(n.name ?? n.node_id ?? `Node ${i+1}`);
+      const type = String(n.node_type ?? n.type ?? "node");
+      const x = pos.x - 78, y = pos.y - 27;
+      return `<g>
+        <rect x="${x}" y="${y}" width="156" height="54" rx="10"
+          fill="${type.toLowerCase().includes("ip") ? "#e9f5f2" : "#fff5e6"}"
+          stroke="${type.toLowerCase().includes("ip") ? "#62b9a9" : "#e7b86b"}"/>
+        <text x="${pos.x}" y="${pos.y-3}" text-anchor="middle"
+          font-size="11" font-weight="650" fill="#20333b">${esc(label.slice(0,24))}</text>
+        <text x="${pos.x}" y="${pos.y+14}" text-anchor="middle"
+          font-size="10" fill="#607580">${esc(type.slice(0,22))}</text>
+      </g>`;
+    }).join("");
+
+    return `<section class="result" style="margin-top:14px">
+      <h3>Graph visualization · scenario_011</h3>
+      <p>${nodes.length} recorded nodes · ${edges.length} recorded edges. The drawing uses endpoints found in the scenario JSON; edges with unrecognized endpoints are listed in the raw data below.</p>
+      <div style="overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fbfdfd;padding:12px">
+        <svg viewBox="0 0 ${width} ${height}" role="img"
+          aria-label="Graph of scenario 011 nodes and edges"
+          style="width:100%;min-width:650px;height:auto">
+          <defs><marker id="arrow" markerWidth="8" markerHeight="8"
+            refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 z" fill="#8ba8a3"/>
+          </marker></defs>
+          ${edgeSvg}${nodeSvg}
+        </svg>
+      </div>
+    </section>`;
+  }
+
+  async function renderGraphStage() {
+    const embedded = window.AUTOSHIELD_GNN_DATA || {};
+    const graph = embedded.graph || null;
+    const baseline = embedded.baseline || null;
+    const pathEval = embedded.pathEval || null;
+    const shap = embedded.shap || null;
+
+    const nodes = Array.isArray(graph?.nodes) ? graph.nodes : [];
+    const edges = Array.isArray(graph?.edges) ? graph.edges : [];
+    const test = baseline?.test?.metrics || {};
+    const pathMetrics = pathEval?.aggregate_metrics?.gnn_guided || {};
+
+    const nodeRows = nodes.map(n => `<tr>
+      <td>${esc(n.node_id || "—")}</td><td>${esc(n.node_type || "—")}</td>
+      <td>${esc(n.name || "—")}</td><td>${esc(n.basis || "—")}</td>
+    </tr>`).join("");
+
+    const edgeRows = edges.map(e => `<tr>
+      <td>${esc(e.source ?? e.source_id ?? e.from ?? "—")}</td>
+      <td>${esc(e.target ?? e.target_id ?? e.to ?? "—")}</td>
+      <td>${esc(e.edge_type ?? e.type ?? e.relationship ?? "—")}</td>
+    </tr>`).join("");
+
+    stageBody.innerHTML = `
+      <div class="metrics">
+        ${metric("Graph nodes",nodes.length,"Scenario JSON")}
+        ${metric("Graph edges",edges.length,"Scenario JSON")}
+        ${metric("Test F1",test.f1 == null ? "—" : Number(test.f1).toFixed(3),"Recorded GNN test · n=12")}
+      </div>
+      ${renderGraphSvg(graph)}
+      <section class="result" style="margin-top:14px">
+        <h3>Node details (${nodes.length})</h3>
+        <div style="overflow:auto;max-height:280px">
+          <table style="width:100%;border-collapse:collapse;font-size:11px">
+            <thead><tr>${["Node ID","Type","Name","Basis"].map(x=>`<th style="text-align:left;padding:8px;background:#edf3f2">${x}</th>`).join("")}</tr></thead>
+            <tbody>${nodeRows || '<tr><td colspan="4">No node records found.</td></tr>'}</tbody>
+          </table>
+        </div>
+      </section>
+      <section class="result" style="margin-top:12px">
+        <h3>Edge details (${edges.length})</h3>
+        <div style="overflow:auto;max-height:280px">
+          <table style="width:100%;border-collapse:collapse;font-size:11px">
+            <thead><tr>${["Source","Target","Relationship"].map(x=>`<th style="text-align:left;padding:8px;background:#edf3f2">${x}</th>`).join("")}</tr></thead>
+            <tbody>${edgeRows || '<tr><td colspan="3">No edge records found.</td></tr>'}</tbody>
+          </table>
+        </div>
+      </section>
+      <section class="result" style="margin-top:12px">
+        <h3>Recorded GNN evaluation</h3>
+        <p>Test split: ${esc(baseline?.test?.examples ?? "—")} examples · precision ${test.precision == null ? "—" : Number(test.precision).toFixed(3)} · recall ${test.recall == null ? "—" : Number(test.recall).toFixed(3)} · F1 ${test.f1 == null ? "—" : Number(test.f1).toFixed(3)} · accuracy ${test.accuracy == null ? "—" : Number(test.accuracy).toFixed(3)}.</p>
+        <p>Path evaluation scenarios: ${esc(pathEval?.evaluated_attack_scenarios ?? "—")} of ${esc(pathEval?.total_scenarios ?? "—")}. GNN-guided exact path match: ${pathMetrics.exact_path_match == null ? "—" : esc(pathMetrics.exact_path_match)}. These are saved evaluation results, not newly recomputed metrics for this incident.</p>
+        <p><strong>Interpretation:</strong> edge scores and candidate paths do not independently prove exploitation or a complete attack path.</p>
+      </section>
+      ${jsonDetails("scenario_011_graph.json",graph)}
+      ${jsonDetails("gnn_baseline_results.json",baseline)}
+      ${jsonDetails("gnn_path_evaluation.json",pathEval)}
+      ${jsonDetails("gnn_shap_explanation.json",shap)}
+    `;
+  }
+
+  function showStep(i) {
+    currentStep=i;
+    const shared=parsed.summary||{};
+    document.getElementById("mainTitle").textContent="Incident INC-001";
+    document.getElementById("mainSub").textContent=`Guided investigation · stage ${i+1} of 8 · run ${runId||"not started"}`;
+    stageNum.textContent=`STAGE ${String(i+1).padStart(2,"0")} / INC-001`;
+    back.disabled=false;
+    stepHint.textContent="";
+    if (i === 0) {
+  title.textContent = "Collect & normalize evidence";
+  desc.textContent =
+    "Results captured from the completed backend run. Event counts are taken from the script output.";
+
+  const recon = artifacts["incident_reconstruction.json"];
+
+  stageBody.innerHTML = `
+    <div class="metrics">
+      ${metric(
+        "Normalized events",
+        shared.normalized_events ??
+          recon?.evidence_summary?.normalized_event_count ??
+          "—",
+        "From analysis output"
+      )}
+
+      ${metric(
+        "Timeline events",
+        shared.timeline_entries ?? recon?.timeline?.length ?? "—",
+        "Stored reconstruction"
+      )}
+
+      ${metric(
+        "Evidence-linked claims",
+        shared.evidence_linked_claims ?? recon?.claims?.length ?? "—",
+        "From analysis output"
+      )}
+    </div>
+
+    <div class="result">
+      <h3>Evidence and provenance</h3>
+
+      <p>
+        Rows below are loaded from the actual reconstruction JSON.
+        Search by event ID, source, type, action, or interpretation status.
+      </p>
+
+      <p>
+        <strong>Run:</strong> ${esc(runId || "—")}
+      </p>
+
+      <p>
+        <strong>Sources present:</strong>
+        ${esc(
+          [
+            ...new Set(
+              (recon?.timeline || [])
+                .map(e => e.source)
+                .filter(Boolean)
+            )
+          ].join(", ") || "Not available"
+        )}
+      </p>
+    </div>
+
+    ${evidenceExtractionPanel(artifacts)}
+
+    ${eventTable(recon)}
+  `;
+
+  wireEventSearch();
+
+  resultTitle.textContent = "Evidence extraction status";
+  resultBody.innerHTML = `
+    <div class="log">
+      <div class="log-row">
+        <div class="log-icon">i</div>
+        <div>
+          <b>Extraction artifact status</b>
+          <small>
+            The panel displays a dedicated extraction artifact if the
+            backend exposes one. Normalized events are not counted as
+            extracted findings.
+          </small>
+        </div>
+      </div>
+    </div>
+  `;
+} else if(i===1){
+      title.textContent="Build graph & score relationships";
+      desc.textContent="Graph counts and evaluation metrics are documented project results. The current run confirms graph size; held-out GNN metrics are recorded evaluation results, not a newly run test.";
+      stageBody.innerHTML=`<div class="result"><h3>Loading graph and GNN outputs…</h3><p>Reading saved scenario graph and evaluation JSON files.</p></div>`;
+      resultTitle.textContent="";
+      resultBody.innerHTML="";
+      renderGraphStage().catch(err => {
+        stageBody.innerHTML += `<div class="result"><h3>Graph files unavailable</h3><p>${esc(err.message || err)}</p><p>Ensure the evaluation folder is served by the dashboard's web server.</p></div>`;
+      });
+    } else {
+      title.textContent="Reconstruct incident & infer root cause";
+      desc.textContent="Review the reconstruction status and root-cause uncertainty produced by the existing analysis.";
+      const recon=artifacts["incident_reconstruction.json"];
+      const root=artifacts["root_cause_analysis.json"];
+      const raw = (obj) => obj ? esc(JSON.stringify(obj,null,2)) : "Artifact not found at expected path.";
+      stageBody.innerHTML=`<div class="metrics">${metric("Timeline entries",shared.timeline_entries ?? recon?.timeline?.length ?? "—","Actual analysis output")}${metric("Evidence-linked claims",shared.evidence_linked_claims ?? recon?.claims?.length ?? "—","Actual analysis output")}${metric("Root-cause status",root?.findings?.[0]?.status ?? shared.root_cause_status ?? "unknown","Must remain unconfirmed unless evidence changes")}</div>${incidentTimeline(recon,root)}<details class="result"><summary style="cursor:pointer;font-weight:650">Inspect raw reconstruction JSON</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:300px;overflow:auto;font:11px/1.5 ui-monospace,monospace">${raw(recon)}</pre></details><details class="result" style="margin-top:12px"><summary style="cursor:pointer;font-weight:650">Inspect raw root-cause JSON</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:300px;overflow:auto;font:11px/1.5 ui-monospace,monospace">${raw(root)}</pre></details>`;
+      resultTitle.textContent="";
+      resultBody.innerHTML="";
+    }
+    btn.textContent=i<7?"Continue to "+labels[i+1]+" →":"View report →";
+    btn.disabled=!liveFinished;
+    btn.onclick=()=>{
+      if(!liveFinished) return;
+      const next=Math.min(currentStep+1,7);
+      if(next<=2) {
+        showStep(next);
+      } else if(next===7) {
+        document.getElementById("nav-report").click();
+      } else {
+        currentStep=next;
+        stageNum.textContent=`STAGE ${String(next+1).padStart(2,"0")} / INC-001`;
+        title.textContent=labels[next];
+        desc.textContent="Review the recorded outputs available for this stage.";
+        stageBody.innerHTML=`<div class="result"><h3>${esc(labels[next])}</h3><p>Review available saved outputs. Controlled validation and Judge decisions remain pending unless supported by execution evidence.</p></div>`;
+        resultTitle.textContent="";
+        resultBody.innerHTML="";
+        btn.textContent=next===6?"Continue to Risk + Report →":"Continue to "+labels[next+1]+" →";
+        btn.onclick=()=>{ if(liveFinished) { currentStep=next; showStep(Math.min(next+1,7)); } };
+        renderRail();
+      }
+      window.scrollTo({top:0,behavior:"smooth"});
+    };
+    renderRail(); window.scrollTo({top:0,behavior:"smooth"});
+  }
+  async function startRun() {
+    if(running) return;
+    running=true; liveFinished=false; logs=[]; parsed={summary:{}}; states={}; currentStep=-1;
+    btn.disabled=true; btn.textContent="Starting pipeline…";
+    showStart(); status("Creating run…");
+    try {
+      const res=await fetch(API+"/api/runs",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({incident_id:"incident_001"})});
+      if(!res.ok) throw new Error(`Start failed (${res.status}): ${await res.text()}`);
+      const run=await res.json(); runId=run.run_id; log(`Run ${runId} · incident ${run.incident_id}`);
+      source=new EventSource(API+"/api/runs/"+encodeURIComponent(runId)+"/stream");
+      source.onmessage=(msg)=>{
+        let e; try{e=JSON.parse(msg.data)}catch{return}
+        if(e.type==="run_started"){status("Running · "+e.incident_id);log("▶ Pipeline started");}
+        else if(e.type==="stage_started"){states[e.stage]="running";status("Running · "+e.label);log("\n▶ "+e.label);}
+        else if(e.type==="stage_log"){
+          if (!/Controlled validation\s*\/\s*Judge\s*\/\s*SHAP\s*\/\s*risk/i.test(e.message||"")) log("["+e.stage+"] "+e.message);
+          const m=e.message.match(/"(normalized_events|graph_nodes|graph_edges|timeline_entries|evidence_linked_claims|root_cause_status|narrative_validation_passed)"\s*:\s*(.*?)(,)?$/);
+          if(m){let v=m[2].trim().replace(/^"|"$/g,"");parsed.summary[m[1]]=v;if(["normalized_events","graph_nodes","graph_edges","timeline_entries","evidence_linked_claims"].includes(m[1]))parsed.summary[m[1]]=Number(v);}
+        } else if(e.type==="stage_completed"){states[e.stage]="completed";status("Completed · "+e.stage);log("✓ "+e.stage+" completed");}
+        else if(e.type==="stage_pending"){states[e.stage]="pending";if (!/Controlled validation\s*\/\s*Judge\s*\/\s*SHAP\s*\/\s*risk/i.test((e.label||"")+" "+(e.message||""))) log("… "+e.label+" — "+e.message);}
+        else if(e.type==="stage_failed"){states[e.stage]="failed";status("Failed · "+e.stage,"warn");log("✕ "+e.message);}
+        else if(e.type==="run_failed"){status("Run failed at "+e.stage,"warn");log("Pipeline stopped: "+e.message);finish(false);}
+        else if(e.type==="run_finished"){finish(true);}
+      };
+      source.onerror=()=>{if(running){log("Stream connection closed.");finish(false)}};
+    }catch(err){log("ERROR: "+err.message);status("Could not start","warn");finish(false);}
+  }
+  function finish(ok){
+    running=false; liveFinished=ok; if(source){source.close();source=null}
+    if (ok) {
+      fetch(API + "/api/incidents/incident_001/artifacts")
+        .then(r => r.ok ? r.json() : Promise.reject(new Error("Artifact endpoint unavailable")))
+        .then(data => { artifacts = data.artifacts || {}; log("Loaded available JSON artifacts: " + Object.keys(artifacts).join(", ")); })
+        .catch(err => log("Artifact fetch note: " + err.message));
+    }
+    status(ok?"Run complete · results ready":"Run ended · inspect logs",ok?"":"warn");
+    btn.disabled=!ok; btn.textContent=ok?"Review evidence →":"Retry investigation →";
+    btn.onclick=ok?()=>showStep(0):startRun;
+    back.disabled=false; renderRail();
+  }
+  btn.onclick=startRun;
+  back.onclick=()=>{if(currentStep>0)showStep(currentStep-1);else showStart()};
+  // The live stage renderer owns nextBtn navigation after the run completes.
+  const originalRenderRail = window.renderRail;
+  fetch(API+"/api/health").then(r=>{if(!r.ok)throw new Error();return r.json()}).then(()=>{
+    const badge=document.querySelector(".top .pill"); if(badge)badge.innerHTML='<i class="dot"></i> API CONNECTED · LIVE RUNS';
+    const note=document.querySelector(".side-note"); if(note)note.innerHTML="<b>Live pipeline enabled</b><br><br>Evidence, narrative, RAG retrieval and remediation scripts run from the backend. SHAP and Bayesian risk results are available. Controlled validation and Judge decision remain pending.";
+  }).catch(()=>{const badge=document.querySelector(".top .pill");if(badge)badge.innerHTML='<i class="dot"></i> API OFFLINE';});
+  // Existing rail click behavior is intentionally replaced by renderRail's guarded clicks.
+  window.renderRail=renderRail;
+  // Keep the live-run handlers; do not overwrite the stage navigation handlers here.
+  document.getElementById("backBtn").onclick=()=>{if(currentStep>0)showStep(currentStep-1);else showStart()};
+  showStart();
+})();
+</script>
+
+<script>
+/* AUTOSHIELD_SHAP_DASHBOARD_INTEGRATION */
+(() => {
+  const API = "http://127.0.0.1:8001";
+  const titleEl = document.getElementById("stageTitle");
+  const bodyEl = document.getElementById("stageBody");
+  if (!titleEl || !bodyEl) return;
+
+  let requestStarted = false;
+  let lastRenderedTitle = "";
+
+  const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  }[c]));
+
+  function isShapStage() {
+    const title = titleEl.textContent.toLowerCase();
+    return title.includes("judge") || title.includes("shap");
+  }
+
+  function renderUnavailable(message) {
+    const panel = document.getElementById("autoshield-shap-panel");
+    if (panel) {
+      panel.innerHTML =
+        '<h3>SHAP model explanation</h3>' +
+        '<span class="status pending">Unavailable</span>' +
+        '<p>' + escapeHtml(message) + '</p>' +
+        '<p>Generate an explanation with <code>python -m evaluation.run_gnn_shap</code>, then reload this stage.</p>';
+    }
+  }
+
+  async function loadShap() {
+    if (!isShapStage() || requestStarted) return;
+    requestStarted = true;
+
+    const card = document.createElement("section");
+    card.className = "result";
+    card.id = "autoshield-shap-panel";
+    card.style.marginTop = "14px";
+    card.innerHTML = "<h3>SHAP model explanation</h3><p>Loading saved explanation…</p>";
+    bodyEl.appendChild(card);
+
+    try {
+      const response = await fetch(API + "/api/shap");
+      if (!response.ok) {
+        let message = "API returned HTTP " + response.status;
+        try {
+          const detail = await response.json();
+          if (detail.detail) message = detail.detail;
+        } catch (_) {}
+        throw new Error(message);
+      }
+
+      const data = await response.json();
+      if (!Array.isArray(data.contributions)) {
+        throw new Error("SHAP response has an invalid contributions list.");
+      }
+
+      const edge = data.edge || {};
+      const top = data.contributions.slice(0, 10);
+      const score = Number(data.score);
+      const baseline = Number(data.baseline);
+      const reconstructionError = Math.abs(
+        score - Number(data.reconstructed_score)
+      );
+
+      const rows = top.map(item => {
+        const value = Number(item.contribution);
+        const positive = value > 1e-10;
+        const negative = value < -1e-10;
+        const color = positive ? "var(--red)" :
+                      negative ? "var(--teal)" : "var(--muted)";
+        const direction = positive ? "Raises score" :
+                          negative ? "Lowers score" : "No change";
+        return `<tr>
+          <td style="padding:8px 5px;overflow-wrap:anywhere">${escapeHtml(item.feature)}</td>
+          <td style="padding:8px 5px;text-align:right;color:${color};font-variant-numeric:tabular-nums">${value.toFixed(4)}</td>
+          <td style="padding:8px 5px;color:var(--muted)">${direction}</td>
+        </tr>`;
+      }).join("");
+
+      card.innerHTML = `
+        <h3>SHAP · GCN edge explanation</h3>
+        <p><strong>Candidate edge:</strong>
+          ${escapeHtml(edge.source)} → ${escapeHtml(edge.target)}
+          (${escapeHtml(edge.type)})</p>
+        <div class="metrics">
+          <div class="metric"><span>Raw edge logit</span>
+            <b>${Number.isFinite(score) ? score.toFixed(3) : "—"}</b>
+            <small>Not a probability</small></div>
+          <div class="metric"><span>SHAP baseline</span>
+            <b>${Number.isFinite(baseline) ? baseline.toFixed(3) : "—"}</b>
+            <small>Reference output</small></div>
+          <div class="metric"><span>Reconstruction error</span>
+            <b>${Number.isFinite(reconstructionError) ? reconstructionError.toExponential(2) : "—"}</b>
+            <small>Baseline + contributions</small></div>
+        </div>
+        <h3>Top feature contributions</h3>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:11px">
+            <thead><tr>
+              <th style="text-align:left;padding:7px 5px">Feature</th>
+              <th style="text-align:right;padding:7px 5px">Contribution</th>
+              <th style="text-align:left;padding:7px 5px">Effect</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+        <p><strong>Scenario:</strong> ${escapeHtml(data.scenario_id || "Not specified")}
+          · <strong>Dataset split:</strong> ${escapeHtml(data.dataset_split || "Not specified")}</p>
+        <div class="notice">This is a local explanation of a raw model logit. Positive contributions raise the score; negative contributions lower it. This does not prove exploitation, establish a Judge decision, or provide a calibrated risk probability.</div>
+        <p style="font-size:10px;color:var(--muted)">Feature labels are encoded HTTP-feature indices; consult graph.http_features to map indices to their definitions.</p>
+      `;
+    } catch (error) {
+      renderUnavailable(error.message || "Could not load the SHAP result.");
+    }
+  }
+
+  function syncStage() {
+    if (!isShapStage()) {
+      requestStarted = false;
+      lastRenderedTitle = "";
+      return;
+    }
+    if (lastRenderedTitle !== titleEl.textContent) {
+      lastRenderedTitle = titleEl.textContent;
+      requestStarted = false;
+    }
+    loadShap();
+  }
+
+  new MutationObserver(syncStage).observe(titleEl, {
+    childList: true, subtree: true, characterData: true
+  });
+  new MutationObserver(syncStage).observe(bodyEl, {
+    childList: true, subtree: false
+  });
+  syncStage();
+})();
+</script>
+
+
+<script>
+/* AUTOSHIELD_SHAP_RAIL_FIX */
+(() => {
+  const rail = document.getElementById("rail");
+  if (!rail) return;
+
+  rail.addEventListener("click", event => {
+    const step = event.target.closest("[data-step]");
+    if (!step || Number(step.dataset.step) !== 6) return;
+
+    event.preventDefault();
+    const title = document.getElementById("stageTitle");
+    const desc = document.getElementById("stageDesc");
+    const num = document.getElementById("stageNum");
+    const body = document.getElementById("stageBody");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultBody = document.getElementById("resultBody");
+    const hint = document.getElementById("stepHint");
+    const progress = document.getElementById("progressLabel");
+
+    document.getElementById("flowView").classList.remove("hidden");
+    document.getElementById("reportView").classList.add("hidden");
+    document.getElementById("nav-flow").classList.add("active");
+    document.getElementById("nav-report").classList.remove("active");
+
+    num.textContent = "STAGE 07 / INC-001";
+    title.textContent = "Judge the result & explain model output";
+    desc.textContent = "View the saved GCN SHAP explanation. Judge PASS/FAIL remains unconnected.";
+    body.innerHTML = `
+      <div class="metrics">
+        <div class="metric"><span>Judge decision</span><b style="font-size:18px">Pending</b><small>Not integrated</small></div>
+        <div class="metric"><span>SHAP explanation</span><b style="font-size:18px">Available</b><small>Saved test-split result</small></div>
+        <div class="metric"><span>Validation</span><b style="font-size:18px">Pending</b><small>Not executed here</small></div>
+      </div>
+      <p>The explanation below is loaded from the saved model output, not recalculated for this incident.</p>
+    `;
+    resultTitle.textContent = "Judge pending · SHAP available";
+    resultBody.innerHTML = `
+      <p>Loading the saved SHAP explanation from the API…</p>
+      <p>If it does not load, check that the API is running on port 8001.</p>
+    `;
+    hint.textContent = "Stage 7 of 8";
+    progress.textContent = "SHAP explanation available · Judge pending";
+    document.getElementById("backBtn").disabled = false;
+    document.getElementById("nextBtn").textContent = "Continue to Risk + Report →";
+    window.scrollTo({top: 0, behavior: "smooth"});
+  });
+})();
+</script>
+
+
+<script>
+/* AUTOSHIELD_BNN_RISK_PANEL */
+(function () {
+  const titleEl = document.getElementById("stageTitle");
+  const bodyEl = document.getElementById("stageBody");
+  if (!titleEl || !bodyEl) return;
+
+  const apiBase = "http://127.0.0.1:8001";
+  let requestToken = 0;
+
+  function isRiskStage() {
+    const title = (titleEl.textContent || "").toLowerCase();
+    return title.includes("risk") || title.includes("report");
+  }
+
+  function addPanel() {
+    if (!isRiskStage()) {
+      const old = document.getElementById("autoshield-bnn-panel");
+      if (old) old.remove();
+      return;
+    }
+
+    if (document.getElementById("autoshield-bnn-panel")) return;
+
+    const panel = document.createElement("section");
+    panel.id = "autoshield-bnn-panel";
+    panel.className = "result";
+    panel.style.marginTop = "16px";
+    panel.innerHTML =
+      "<h3>Bayesian Neural Network · Phase 16</h3>" +
+      "<p>Loading saved BNN experiment results…</p>";
+    bodyEl.appendChild(panel);
+
+    const token = ++requestToken;
+    fetch(apiBase + "/api/bnn-risk")
+      .then(function (response) {
+        if (!response.ok) throw new Error("API returned HTTP " + response.status);
+        return response.json();
+      })
+      .then(function (payload) {
+        if (token !== requestToken || !panel.isConnected) return;
+
+        if (!payload.available || !payload.result) {
+          panel.innerHTML =
+            "<h3>Bayesian Neural Network · Phase 16</h3>" +
+            "<p>Saved results are unavailable. Run " +
+            "<code>python -m evaluation.run_bnn_risk</code> first.</p>";
+          return;
+        }
+
+        const r = payload.result;
+        const b = r.bayesian_model || {};
+        const m = b.test_metrics || {};
+        const predictions = b.predictions || [];
+        const training = r.training || {};
+
+        const esc = function (v) {
+          return String(v == null ? "—" : v).replace(/[&<>"']/g, function (c) {
+            return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+          });
+        };
+        const pct = function (v) {
+          return Number.isFinite(Number(v)) ? (100 * Number(v)).toFixed(1) + "%" : "—";
+        };
+
+        let rows = predictions.map(function (x) {
+          const interval = x.bayesian_90_percent_interval || [];
+          return "<tr>" +
+            "<td>" + esc(x.scenario_id) + "</td>" +
+            "<td>" + pct(x.bayesian_mean_probability) + "</td>" +
+            "<td>" + esc(interval.length === 2 ?
+              pct(interval[0]) + "–" + pct(interval[1]) : "—") + "</td>" +
+            "<td>" + esc(x.proxy_risk_band) + "</td>" +
+            "</tr>";
+        }).join("");
+
+        panel.innerHTML =
+          "<h3>Bayesian Neural Network · Phase 16</h3>" +
+          '<div class="metrics">' +
+            '<div class="metric"><span>Mean test accuracy</span><b>' + pct(m.accuracy) +
+              '</b><small>Held-out labelled edges</small></div>' +
+            '<div class="metric"><span>Brier score</span><b>' +
+              esc(Number.isFinite(Number(m.brier_score)) ? Number(m.brier_score).toFixed(4) : "—") +
+              '</b><small>Lower is better</small></div>' +
+            '<div class="metric"><span>Posterior samples</span><b>' +
+              esc(training.posterior_samples_at_test) +
+              '</b><small>Weight samples per prediction</small></div>' +
+          '</div>' +
+          '<p><strong>Method:</strong> ' + esc(r.method) + '</p>' +
+          '<p><strong>Test edges:</strong> ' + esc(training.test_edges) +
+          ' · <strong>Training epochs:</strong> ' + esc(training.epochs_run) + '</p>' +
+          '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">' +
+            '<thead><tr><th style="text-align:left;padding:8px">Scenario</th>' +
+            '<th style="text-align:left;padding:8px">Mean score</th>' +
+            '<th style="text-align:left;padding:8px">90% interval</th>' +
+            '<th style="text-align:left;padding:8px">Proxy band</th></tr></thead>' +
+            '<tbody>' + rows + '</tbody></table></div>' +
+          '<div class="notice"><strong>Prototype only:</strong> scores estimate positive attack-edge-label likelihood, ' +
+          'not validated post-remediation residual risk. Judge status remains pending; ' +
+          'uncertainty intervals have not been established as calibrated.</div>';
+      })
+      .catch(function (error) {
+        if (token !== requestToken || !panel.isConnected) return;
+        panel.innerHTML =
+          "<h3>Bayesian Neural Network · Phase 16</h3>" +
+          "<p>Could not load saved results: " + String(error.message || error) +
+          ". Check that the API is running on port 8001.</p>";
+      });
+  }
+
+  const observer = new MutationObserver(addPanel);
+  observer.observe(titleEl, {childList:true, subtree:true, characterData:true});
+  observer.observe(bodyEl, {childList:true, subtree:true});
+  addPanel();
+})();
+</script>
+
+
+<script>
+/* AUTOSHIELD_STAGE_NAVIGATION_FIX */
+(() => {
+  const $ = id => document.getElementById(id);
+  const labels = [
+    "Evidence", "Graph + GNN", "Reconstruction", "Dual-Vector RAG",
+    "Remediate", "Validate", "Judge + SHAP", "Risk + Report"
+  ];
+
+  function openStage(i) {
+    $("flowView").classList.remove("hidden");
+    $("reportView").classList.add("hidden");
+    $("nav-flow").classList.add("active");
+    $("nav-report").classList.remove("active");
+
+    $("mainTitle").textContent = "Incident INC-001";
+    $("mainSub").textContent = `Guided investigation · stage ${i + 1} of 8`;
+    $("stageNum").textContent = `STAGE ${String(i + 1).padStart(2, "0")} / INC-001`;
+    $("stageTitle").textContent = labels[i];
+    $("stepHint").textContent = `Stage ${i + 1} of 8`;
+    $("progressLabel").textContent = `${i + 1} of 8 stages`;
+
+    if (i === 3) {
+      $("stageDesc").textContent =
+        "Dual-Vector RAG retrieves supporting security knowledge. The current dashboard does not expose the live retrieval payload in this stage.";
+      $("stageBody").innerHTML = `
+        <div class="result">
+          <h3>Dual-Vector RAG</h3>
+          <p>The recorded project run reported retrieval of 10 passages using FTS5/BM25, including CAPEC/CWE knowledge.</p>
+          <p><strong>Integration status:</strong> The actual per-query retrieval payload is not connected to this stage yet.</p>
+          <p>Do not treat this summary as a fresh retrieval or as proof that remediation was applied.</p>
+        </div>`;
+      $("resultTitle").textContent = "Retrieval status";
+      $("resultBody").innerHTML =
+        "<p>Recorded retrieval results exist, but live passage-level evidence is not wired into this panel.</p>";
+    } else if (i === 7) {
+      $("stageDesc").textContent =
+        "Review the saved Bayesian risk experiment and its uncertainty. This is a proxy prediction, not calibrated post-remediation residual risk.";
+      $("stageBody").innerHTML = `
+        <div class="result">
+          <h3>Risk + Report</h3>
+          <p>The saved BNN experiment predicts attack-edge labels on a small held-out test set.</p>
+          <p>The estimates are not validated residual-risk probabilities, and validation/Judge remain pending.</p>
+        </div>`;
+      $("resultTitle").textContent = "Bayesian risk results";
+      $("resultBody").innerHTML =
+        "<p>The BNN panel below should load the saved experiment from the local API.</p>";
+    } else {
+      $("stageDesc").textContent =
+        "This stage remains available in the existing guided workflow.";
+      $("stageBody").innerHTML =
+        `<div class="result"><h3>${labels[i]}</h3><p>Use the existing workflow for this stage. No unverified execution result is implied.</p></div>`;
+      $("resultTitle").textContent = "Stage status";
+      $("resultBody").innerHTML =
+        "<p>Validation and Judge decisions remain pending unless backed by actual evidence.</p>";
+    }
+
+    $("backBtn").disabled = i === 0;
+    $("nextBtn").disabled = false;
+    $("nextBtn").textContent =
+      i === 6 ? "Continue to Risk + Report →" :
+      i === 7 ? "View report →" :
+      `Continue to ${labels[i + 1]} →`;
+
+    document.querySelectorAll("#rail [data-step]").forEach(el => {
+      const n = Number(el.dataset.step);
+      el.classList.toggle("active", n === i);
+    });
+
+    window.scrollTo({top: 0, behavior: "smooth"});
+  }
+
+  // Capture navigation before the older handlers can misroute these stages.
+  $("rail").addEventListener("click", event => {
+    const step = event.target.closest("[data-step]");
+    if (!step) return;
+    const i = Number(step.dataset.step);
+    if (i === 3 || i === 7) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      openStage(i);
+    }
+  }, true);
+
+  $("nextBtn").addEventListener("click", event => {
+    const title = ($("stageTitle").textContent || "").toLowerCase();
+    if (title.includes("judge") || title.includes("shap")) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      openStage(7);
+    } else if (title.includes("risk") || title.includes("report")) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      $("nav-report").click();
+    }
+  }, true);
+
+  $("backBtn").addEventListener("click", event => {
+    const title = ($("stageTitle").textContent || "").toLowerCase();
+    if (title.includes("risk") || title.includes("report")) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      openStage(6);
+    }
+  }, true);
+})();
+</script>
+
+
+<script>
+/* AUTOSHIELD_REAL_RAG_AND_REPORT_INTEGRATION */
+(() => {
+  const API = "http://127.0.0.1:8001";
+  const $ = id => document.getElementById(id);
+  const esc = value => String(value ?? "").replace(/[&<>"']/g, c =>
+    ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])
+  );
+  let lastRagRender = null;
+
+  async function loadArtifacts() {
+    const response = await fetch(API + "/api/incidents/incident_001/artifacts");
+    if (!response.ok) throw new Error("Artifact API returned HTTP " + response.status);
+    const data = await response.json();
+    return data.artifacts || {};
+  }
+
+  function renderRag(rag) {
+    const body = $("stageBody");
+    if (!body) return;
+
+    const contexts = Array.isArray(rag.contexts) ? rag.contexts : [];
+    const refs = contexts.flatMap(c => Array.isArray(c.references) ? c.references : []);
+    const evidence = contexts.flatMap(c => Array.isArray(c.observed_evidence) ? c.observed_evidence : []);
+    const hypotheses = contexts.flatMap(c => Array.isArray(c.hypotheses) ? c.hypotheses : []);
+    const uniqueRefs = [...new Map(refs.map(r => [
+      r.reference_id || r.chunk_id || r.source_url || r.title, r
+    ])).values()];
+
+    const referenceHtml = uniqueRefs.length ? uniqueRefs.map(r => `
+      <article class="result" style="margin-top:10px">
+        <h3>${esc(r.title || r.doc_id || r.source_id || "Retrieved reference")}</h3>
+        <p><strong>Source:</strong> ${esc(r.source || "Knowledge base")} ·
+           <strong>ID:</strong> ${esc(r.source_id || r.doc_id || "Not supplied")}</p>
+        <p><strong>Rank:</strong> ${esc(r.document_rank ?? "—")} ·
+           <strong>Retrieval score:</strong> ${Number.isFinite(Number(r.chunk_score)) ? Number(r.chunk_score).toFixed(3) : "Not supplied"}</p>
+        <p>${esc(String(r.text || "").slice(0, 900))}${String(r.text || "").length > 900 ? "…" : ""}</p>
+        ${r.source_url ? `<p><a href="${esc(r.source_url)}" target="_blank" rel="noopener noreferrer">Open source reference</a></p>` : ""}
+        <p><small>Reference ID: ${esc(r.reference_id || r.chunk_id || "Not supplied")}</small></p>
+      </article>`).join("") :
+      "<p>No reference entries were found in the saved RAG artifact.</p>";
+
+    const evidenceHtml = evidence.length ? evidence.map(e => `
+      <li><strong>${esc(e.evidence_id || "Evidence")}</strong> —
+      ${esc(e.claim_statements?.join(" ") || e.event?.action || "Observed evidence")}
+      <br><small>Basis: ${esc(e.basis || "Not supplied")} ·
+      Status: ${esc(e.event?.interpretation_status || "Not supplied")}</small></li>
+    `).join("") : "<li>No observed evidence entries recorded.</li>";
+
+    const hypothesisHtml = hypotheses.length ? hypotheses.map(h => `
+      <li><strong>${esc(h.vulnerability_type || h.hypothesis_id || "Hypothesis")}</strong> —
+      ${esc(h.status || "Status not supplied")}
+      <p>${esc(h.rationale || "")}</p>
+      <p><strong>Evidence needed:</strong> ${esc((h.evidence_needed_to_confirm || []).join("; ") || "Not specified")}</p></li>
+    `).join("") : "<li>No hypothesis entries recorded.</li>";
+
+    body.innerHTML = `
+      <div class="metrics">
+        <div class="metric"><span>Retrieval method</span><b style="font-size:16px">${esc(rag.production_retriever || "Recorded")}</b><small>From saved artifact</small></div>
+        <div class="metric"><span>Retrieved references</span><b>${uniqueRefs.length}</b><small>Deduplicated references</small></div>
+        <div class="metric"><span>Observed evidence</span><b>${evidence.length}</b><small>Saved evidence entries</small></div>
+      </div>
+      <div class="result">
+        <h3>Actual retrieval query</h3>
+        <p style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(contexts.map(c => c.query_text || c.backend_query || "").filter(Boolean).join("\n\n") || "No query recorded")}</p>
+        <p><strong>Retrieval status:</strong> ${esc(contexts.map(c => c.retrieval_status || "unknown").join(", ") || "Not supplied")}</p>
+        <p><strong>Generation requested:</strong> ${esc(rag.generation_requested ?? "Not supplied")}</p>
+      </div>
+      <div class="result" style="margin-top:12px">
+        <h3>Retrieved source references</h3>${referenceHtml}
+      </div>
+      <div class="result" style="margin-top:12px">
+        <h3>Evidence and claims</h3><ul>${evidenceHtml}</ul>
+      </div>
+      <div class="result" style="margin-top:12px">
+        <h3>Hypothesis and evidence gaps</h3><ul>${hypothesisHtml}</ul>
+        <p><strong>Interpretation:</strong> retrieval supports investigation; it does not prove successful exploitation or database access.</p>
+      </div>`;
+  }
+
+  async function updateReport() {
+    const report = $("reportView");
+    if (!report || report.dataset.realIntegration === "done") return;
+
+    try {
+      const artifacts = await loadArtifacts();
+      const rag = artifacts["rag_report.json"];
+      const bnnResponse = await fetch(API + "/api/bnn-risk");
+      if (!bnnResponse.ok) throw new Error("BNN API returned HTTP " + bnnResponse.status);
+      const bnnData = await bnnResponse.json();
+      const result = bnnData.result || {};
+      const bayes = result.bayesian_model || {};
+      const m = bayes.test_metrics || {};
+      const train = result.training || {};
+      const predictions = bayes.predictions || [];
+      const shapAvailable = true; // Existing /api/shap endpoint and saved SHAP artifact are present.
+      const ragRefs = (rag?.contexts || []).flatMap(c => c.references || []);
+      const uniqueRefs = [...new Map(ragRefs.map(r => [
+        r.reference_id || r.chunk_id || r.source_url || r.title, r
+      ])).values()];
+
+      const rows = [
+        ["Dual-Vector RAG", `${esc(rag?.production_retriever || "Not specified")} · ${uniqueRefs.length} saved unique references · ${rag?.generation_requested ? "generation requested" : "retrieval artifact available"}.`],
+        ["SHAP explanation", shapAvailable ? "Available · saved GCN edge explanation; Judge decision remains pending." : "Unavailable"],
+        ["Bayesian risk experiment", `Variational Bayesian neural network · ${esc(train.posterior_samples_at_test ?? "—")} posterior samples · ${esc(train.test_edges ?? m.n ?? "—")} test edges · ${esc(train.epochs_run ?? "—")} training epochs.`],
+        ["BNN held-out metrics", `Accuracy ${Number.isFinite(m.accuracy) ? (m.accuracy * 100).toFixed(1) + "%" : "—"} · Precision ${Number.isFinite(m.precision) ? m.precision.toFixed(3) : "—"} · Recall ${Number.isFinite(m.recall) ? m.recall.toFixed(3) : "—"} · F1 ${Number.isFinite(m.f1) ? m.f1.toFixed(3) : "—"} · Brier ${Number.isFinite(m.brier_score) ? m.brier_score.toFixed(4) : "—"} · MAE ${Number.isFinite(m.mae) ? m.mae.toFixed(4) : "—"}.`],
+        ["BNN prediction output", `${predictions.length} held-out predictions with posterior uncertainty intervals and prototype LOW/MEDIUM/HIGH bands. These are attack-edge-label proxy scores, not validated post-remediation residual risk.`],
+        ["Validation and Judge", "Pending · no controlled post-remediation validation result or Judge PASS/FAIL is claimed."],
+        ["Limitations", "Small test set (n=12); uncertainty intervals and prototype bands are not calibrated for operational residual-risk decisions."]
+      ];
+
+      const existing = report.querySelector("#autoshield-integrated-report");
+      if (existing) existing.remove();
+
+      const section = document.createElement("section");
+      section.id = "autoshield-integrated-report";
+      section.className = "result";
+      section.style.marginTop = "16px";
+      section.innerHTML = "<h3>Completed implementation and evaluation</h3>" +
+        rows.map(([label, value]) => `<div class="report-row"><span>${label}</span><b>${value}</b></div>`).join("");
+      report.appendChild(section);
+      report.dataset.realIntegration = "done";
+    } catch (error) {
+      console.error("AutoShield report integration:", error);
+    }
+  }
+
+  async function sync() {
+    const title = ($("stageTitle")?.textContent || "").toLowerCase();
+    if (title.includes("dual-vector rag")) {
+      if (lastRagRender === title + "|" + $("stageNum")?.textContent) return;
+      lastRagRender = title + "|" + $("stageNum")?.textContent;
+      try {
+        $("resultTitle").textContent = "Live artifact-backed retrieval";
+        $("resultBody").innerHTML = "<p>Loading the saved RAG report from the incident artifact API…</p>";
+        const artifacts = await loadArtifacts();
+        const rag = artifacts["rag_report.json"];
+        if (!rag) throw new Error("rag_report.json is not present in the artifact response");
+        renderRag(rag);
+        $("resultBody").innerHTML = "<p>Retrieved passages, source metadata, observed evidence, and hypotheses are rendered from the saved RAG artifact.</p>";
+        $("progressLabel").textContent = "RAG artifact loaded · saved production retriever";
+      } catch (error) {
+        $("stageBody").insertAdjacentHTML("beforeend",
+          `<div class="notice">Could not load RAG artifact: ${esc(error.message)}. Check the API and incident artifact path.</div>`);
+      }
+    }
+
+    const reportVisible = $("reportView") && !$("reportView").classList.contains("hidden");
+    const stageTitle = ($("stageTitle")?.textContent || "").toLowerCase();
+    if (reportVisible || stageTitle.includes("risk") || stageTitle.includes("report")) {
+      await updateReport();
+    }
+  }
+
+  const title = $("stageTitle");
+  const body = $("stageBody");
+  if (title) new MutationObserver(sync).observe(title, {childList:true,subtree:true,characterData:true});
+  if (body) new MutationObserver(sync).observe(body, {childList:true,subtree:true});
+  $("nav-report")?.addEventListener("click", () => setTimeout(updateReport, 0));
+  setTimeout(sync, 250);
+})();
+</script>
+
+
+<script>
+/* AUTOSHIELD_ALL_STAGE_NAVIGATION_FIX */
+(() => {
+  const rail = document.getElementById("rail");
+  if (!rail) return;
+
+  // The existing guided renderer owns the stage content and updates the
+  // current stage, visited set, Continue button, and other UI elements.
+  rail.addEventListener("click", event => {
+    const item = event.target.closest("[data-step]");
+    if (!item) return;
+
+    const index = Number(item.dataset.step);
+    if (!Number.isInteger(index) || index < 0 || index > 7) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    document.getElementById("flowView").classList.remove("hidden");
+    document.getElementById("reportView").classList.add("hidden");
+    document.getElementById("nav-flow").classList.add("active");
+    document.getElementById("nav-report").classList.remove("active");
+
+    if (typeof render === "function") {
+      render(index);
+    } else {
+      console.error("Stage renderer is unavailable.");
+    }
+  }, true);
+
+  // Wrap drawRail so the progress line and numbered stages consistently
+  // reflect progress up to the current stage, including when jumping ahead.
+  if (typeof drawRail === "function" && !drawRail.__progressWrapped) {
+    const originalDrawRail = drawRail;
+    const wrappedDrawRail = function () {
+      originalDrawRail();
+
+      const title = document.getElementById("stageNum")?.textContent || "";
+      const match = title.match(/STAGE\s+(\d+)/i);
+      const current = match ? Number(match[1]) - 1 : -1;
+
+      rail.querySelectorAll("[data-step]").forEach(el => {
+        const index = Number(el.dataset.step);
+        const completed = current >= 0 && index < current;
+        el.classList.toggle("done", completed);
+        el.classList.toggle("active", index === current);
+        const bubble = el.querySelector(".bubble");
+        if (bubble) {
+          bubble.textContent = completed
+            ? "✓"
+            : String(index + 1).padStart(2, "0");
+        }
+      });
+    };
+    wrappedDrawRail.__progressWrapped = true;
+    drawRail = wrappedDrawRail;
+  }
+})();
+</script>
+
+
+<script>
+/* AUTOSHIELD_REPORT_CONSOLIDATION_V2 */
+(() => {
+  function consolidateReport() {
+    const report = document.getElementById('reportView');
+    if (!report || report.dataset.consolidated === 'yes') return;
+
+    const heading = report.querySelector('.flow-head');
+    const rows = [...report.querySelectorAll(':scope > .report-row')];
+    const existing = report.querySelector('#autoshield-integrated-report');
+
+    // Create one shared card for both the summary and evaluation information.
+    const card = document.createElement('div');
+    card.id = 'autoshield-integrated-report';
+    card.className = 'result';
+    card.style.marginTop = '18px';
+    card.style.padding = '18px';
+
+    const title = document.createElement('h3');
+    title.textContent = 'Incident summary, evaluation and module status';
+    card.appendChild(title);
+
+    rows.forEach(row => card.appendChild(row));
+
+    if (existing) {
+      // Move its contents into the same card rather than keeping a second box.
+      const children = [...existing.children];
+      children.forEach(child => card.appendChild(child));
+      existing.remove();
+    }
+
+    if (rows.length || existing) {
+      if (heading) heading.insertAdjacentElement('afterend', card);
+      else report.appendChild(card);
+    }
+    report.dataset.consolidated = 'yes';
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', consolidateReport, {once:true});
+  } else {
+    consolidateReport();
+  }
+})();
+</script>
+
+<script>
+/* AUTOSHIELD_EVIDENCE_STATUS_CARD_FIX */
+(() => {
+  const title = document.getElementById("resultTitle");
+  if (!title) return;
+  const update = () => {
+    const card = title.closest(".result");
+    if (!card) return;
+    card.style.display =
+      title.textContent.trim() === "Evidence stage status" ? "none" : "";
+  };
+  new MutationObserver(update).observe(title, {
+    childList:true, subtree:true, characterData:true
+  });
+  update();
+})();
+</script>
+
+<script>
+/* AUTOSHIELD_GRAPH_RECONSTRUCTION_ARTIFACTS_V1 */
+(() => {
+  const API = "http://127.0.0.1:8001";
+  const $ = id => document.getElementById(id);
+  const esc = v => String(v ?? "").replace(/[&<>"']/g, c =>
+    ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])
+  );
+  let lastTitle = "";
+  let artifactCache = null;
+
+  async function getArtifacts() {
+    if (artifactCache) return artifactCache;
+    const res = await fetch(API + "/api/incidents/incident_001/artifacts");
+    if (!res.ok) throw new Error("Artifact API returned HTTP " + res.status);
+    const data = await res.json();
+    artifactCache = data.artifacts || {};
+    return artifactCache;
+  }
+
+  function rawJson(title, obj) {
+    return `<details class="result" style="margin-top:12px">
+      <summary style="cursor:pointer;font-weight:650">View ${esc(title)}</summary>
+      <pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:360px;overflow:auto;background:#f7f9fa;padding:12px;border-radius:8px;font:11px/1.5 ui-monospace,monospace">${esc(JSON.stringify(obj ?? null, null, 2))}</pre>
+    </details>`;
+  }
+
+  function getEdges(recon) {
+    for (const key of ["graph_relationships", "relationships", "edges"]) {
+      if (Array.isArray(recon?.[key]) && recon[key].length) return recon[key];
+    }
+    if (Array.isArray(recon?.graph?.edges)) return recon.graph.edges;
+    return [];
+  }
+
+  function edgeEnds(e) {
+    const source = e.source ?? e.source_id ?? e.from ?? e.src ?? e.source_entity;
+    const target = e.target ?? e.target_id ?? e.to ?? e.dst ?? e.destination_entity;
+    return [source, target].filter(v => v !== undefined && v !== null).map(String);
+  }
+
+  function makeGraph(recon) {
+    const edges = getEdges(recon);
+    const pairs = edges.map(edgeEnds).filter(p => p.length === 2);
+    const names = [...new Set(pairs.flat())].slice(0, 18);
+    if (!pairs.length || !names.length) {
+      return `<div class="result" style="margin-top:12px">
+        <h3>Graph visualization</h3>
+        <p>The reconstruction artifact does not expose edge endpoints in a recognized format. The raw JSON below is available for inspection; no graph relationships have been invented.</p>
+      </div>`;
+    }
+
+    const w = 720, h = Math.max(240, Math.ceil(names.length / 4) * 100);
+    const pos = {};
+    names.forEach((name, i) => {
+      const col = i % 4, row = Math.floor(i / 4);
+      pos[name] = {x: 90 + col * 180, y: 55 + row * 95};
+    });
+    const lines = pairs.filter(p => pos[p[0]] && pos[p[1]]).map(([a,b]) =>
+      `<line x1="${pos[a].x}" y1="${pos[a].y}" x2="${pos[b].x}" y2="${pos[b].y}" stroke="#7b9d98" stroke-width="2" />`
+    ).join("");
+    const nodes = names.map(name => {
+      const q = pos[name], label = name.length > 22 ? name.slice(0, 19) + "…" : name;
+      return `<g><rect x="${q.x-68}" y="${q.y-22}" width="136" height="44" rx="9" fill="#eaf5f2" stroke="#8dc6ba"/>
+        <text x="${q.x}" y="${q.y+4}" text-anchor="middle" font-size="11" fill="#1d5149">${esc(label)}</text>
+        <title>${esc(name)}</title></g>`;
+    }).join("");
+    return `<div class="result" style="margin-top:12px">
+      <h3>Graph from saved artifact</h3>
+      <p>${names.length} displayed entities · ${pairs.length} relationships with recognized endpoints. This is a view of recorded artifact data, not proof of a complete attack path.</p>
+      <div style="overflow:auto"><svg viewBox="0 0 ${w} ${h}" style="width:100%;min-width:520px;max-height:520px" role="img" aria-label="Graph from reconstruction artifact">${lines}${nodes}</svg></div>
+    </div>`;
+  }
+
+  async function update() {
+    const title = ($("stageTitle")?.textContent || "").toLowerCase();
+    if (!title || title === lastTitle) return;
+    if (!title.includes("graph") && !title.includes("reconstruct")) return;
+    lastTitle = title;
+
+    try {
+      const artifacts = await getArtifacts();
+      const recon = artifacts["incident_reconstruction.json"];
+      const root = artifacts["root_cause_analysis.json"];
+      const body = $("stageBody");
+      if (!body) return;
+
+      // Hide the first right-side result card on these stages, leaving the feedback loop.
+      const rightColumn = document.querySelector(".stage-wrap > div:nth-child(2)");
+      const statusCard = rightColumn?.querySelector(".result");
+      if (statusCard) statusCard.style.display = "none";
+
+      if (title.includes("graph")) {
+        const existing = $("autoshield-artifact-graph");
+        if (existing) existing.remove();
+        const section = document.createElement("section");
+        section.id = "autoshield-artifact-graph";
+        section.innerHTML =
+          makeGraph(recon) +
+          rawJson("scenario_011_graph.json", window.AUTOSHIELD_GNN_DATA?.graph) +
+          rawJson("gnn_baseline_results.json", window.AUTOSHIELD_GNN_DATA?.baseline) +
+          rawJson("gnn_path_evaluation.json", window.AUTOSHIELD_GNN_DATA?.pathEval);
+        body.appendChild(section);
+      } else {
+        // Remove the hypothesis/status box from the right; restore both JSON artifacts in the main content.
+        const existing = $("autoshield-reconstruction-json");
+        if (existing) existing.remove();
+        const section = document.createElement("section");
+        section.id = "autoshield-reconstruction-json";
+        section.innerHTML =
+          rawJson("incident_reconstruction.json", recon) +
+          rawJson("root_cause_analysis.json", root);
+        body.appendChild(section);
+      }
+    } catch (e) {
+      const body = $("stageBody");
+      if (body && !body.querySelector(".autoshield-artifact-error")) {
+        body.insertAdjacentHTML("beforeend",
+          `<div class="notice autoshield-artifact-error">Could not load graph/reconstruction artifacts: ${esc(e.message)}. Check that the API is running.</div>`);
+      }
+    }
+  }
+
+  const title = $("stageTitle");
+  if (title) new MutationObserver(update).observe(title, {
+    childList:true, subtree:true, characterData:true
+  });
+  $("nextBtn")?.addEventListener("click", () => setTimeout(update, 80), true);
+  $("backBtn")?.addEventListener("click", () => setTimeout(update, 80), true);
+})();
+</script>
+
+
+<script>
+/* AUTOSHIELD_EMBEDDED_GNN_DATA */
+window.AUTOSHIELD_GNN_DATA = {"graph":{"nodes":[{"node_id":"container:autoshield-api","node_type":"container","name":"autoshield-api","attributes":{"docker_id":"b71b5355ee7ea2a33320bc37cb03265c4cb95c1cd43259f4e9187d5894547f47","image":"docker-autoshield-api","status":"running"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"container:autoshield-juice-shop","node_type":"container","name":"autoshield-juice-shop","attributes":{"docker_id":"2c62cd8ebd4c98757e82558bbc8f901637d760febc1e837bee89cfee89c2465b","image":"bkimminich/juice-shop:v19.0.0","status":"running"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"container:autoshield-linux-admin","node_type":"container","name":"autoshield-linux-admin","attributes":{"docker_id":"9efbf0c1081781fbe43e269f50830ff92528192cc52bf9204d1621286d306ba0","image":"docker-linux-admin","status":"running"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"container:autoshield-nginx","node_type":"container","name":"autoshield-nginx","attributes":{"docker_id":"a25bab9fbf6a97a10586039894bbf24935537a8b4c2841d74469f0f465e8e4b5","image":"nginx:1.27-alpine","status":"running"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"container:autoshield-postgres","node_type":"container","name":"autoshield-postgres","attributes":{"docker_id":"774375e97fe92c49ad9670826c737fc660da6e8c00fe8888e96357b28712579e","image":"postgres:16-alpine","status":"running"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"container:autoshield-redis","node_type":"container","name":"autoshield-redis","attributes":{"docker_id":"2923269430ba33230b5cb8a8f7b6f9db2b33b4ce3fbf6c1eaf2a50fd5865b94e","image":"redis:7-alpine","status":"running"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"ip:172.19.0.2","node_type":"ip","name":"172.19.0.2","attributes":{"address":"172.19.0.2"},"evidence_ids":[],"source_artifacts":["docker/network_after_attack.json"],"basis":"configured"},{"node_id":"ip:172.19.0.3","node_type":"ip","name":"172.19.0.3","attributes":{"address":"172.19.0.3"},"evidence_ids":[],"source_artifacts":["docker/network_after_attack.json"],"basis":"configured"},{"node_id":"ip:172.19.0.4","node_type":"ip","name":"172.19.0.4","attributes":{"address":"172.19.0.4"},"evidence_ids":[],"source_artifacts":["docker/network_after_attack.json"],"basis":"configured"},{"node_id":"ip:172.19.0.5","node_type":"ip","name":"172.19.0.5","attributes":{"address":"172.19.0.5"},"evidence_ids":[],"source_artifacts":["docker/network_after_attack.json"],"basis":"configured"},{"node_id":"ip:172.19.0.6","node_type":"ip","name":"172.19.0.6","attributes":{"address":"172.19.0.6"},"evidence_ids":["nginx-10"],"source_artifacts":["docker/network_after_attack.json","normalized/events.jsonl"],"basis":"observed"},{"node_id":"ip:172.19.0.7","node_type":"ip","name":"172.19.0.7","attributes":{"address":"172.19.0.7"},"evidence_ids":[],"source_artifacts":["docker/network_after_attack.json"],"basis":"configured"},{"node_id":"ip:192.168.65.1","node_type":"ip","name":"192.168.65.1","attributes":{"address":"192.168.65.1"},"evidence_ids":["nginx-10"],"source_artifacts":["normalized/events.jsonl"],"basis":"observed"},{"node_id":"port:172.19.0.6:8000","node_type":"port","name":"8000","attributes":{"ip":"172.19.0.6","port":8000},"evidence_ids":["nginx-10"],"source_artifacts":["normalized/events.jsonl"],"basis":"observed"},{"node_id":"process:autoshield-api:uvicorn","node_type":"process","name":"uvicorn","attributes":{"executable":"uvicorn","args":["app.main:app","--host","0.0.0.0","--port","8000"],"container":"autoshield-api"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"process:autoshield-juice-shop:node","node_type":"process","name":"node","attributes":{"executable":"/nodejs/bin/node","args":["/juice-shop/build/app.js"],"container":"autoshield-juice-shop"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"process:autoshield-linux-admin:start.sh","node_type":"process","name":"start.sh","attributes":{"executable":"/start.sh","args":[],"container":"autoshield-linux-admin"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"process:autoshield-nginx:docker-entrypoint.sh","node_type":"process","name":"docker-entrypoint.sh","attributes":{"executable":"/docker-entrypoint.sh","args":["nginx","-g","daemon off;"],"container":"autoshield-nginx"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"process:autoshield-postgres:docker-entrypoint.sh","node_type":"process","name":"docker-entrypoint.sh","attributes":{"executable":"docker-entrypoint.sh","args":["postgres"],"container":"autoshield-postgres"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"process:autoshield-redis:docker-entrypoint.sh","node_type":"process","name":"docker-entrypoint.sh","attributes":{"executable":"docker-entrypoint.sh","args":["redis-server","--appendonly","yes"],"container":"autoshield-redis"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"service:api","node_type":"service","name":"api","attributes":{"container":"autoshield-api","image":"docker-autoshield-api","exposed_ports":["8000/tcp"]},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"service:juice-shop","node_type":"service","name":"juice-shop","attributes":{"container":"autoshield-juice-shop","image":"bkimminich/juice-shop:v19.0.0","exposed_ports":["3000/tcp"]},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"service:linux-admin","node_type":"service","name":"linux-admin","attributes":{"container":"autoshield-linux-admin","image":"docker-linux-admin","exposed_ports":["22/tcp"]},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"service:nginx","node_type":"service","name":"nginx","attributes":{"container":"autoshield-nginx","image":"nginx:1.27-alpine","exposed_ports":["80/tcp"]},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"service:postgres","node_type":"service","name":"postgres","attributes":{"container":"autoshield-postgres","image":"postgres:16-alpine","exposed_ports":["5432/tcp"]},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"node_id":"service:redis","node_type":"service","name":"redis","attributes":{"container":"autoshield-redis","image":"redis:7-alpine","exposed_ports":["6379/tcp"]},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"}],"edges":[{"source":"container:autoshield-api","target":"ip:172.19.0.6","edge_type":"connects_to","attributes":{"network_id":"1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1","network_name":"autoshield_net","relationship_basis":"docker_network_membership"},"evidence_ids":["docker-container-network-0-autoshield_net","docker-network-0-b71b5355ee7e"],"source_artifacts":["docker/network_after_attack.json","normalized/events.jsonl"],"basis":"configured"},{"source":"container:autoshield-api","target":"process:autoshield-api:uvicorn","edge_type":"executes","attributes":{"relationship_basis":"configured_startup"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"source":"container:autoshield-api","target":"service:api","edge_type":"hosts","attributes":{"relationship_basis":"container_service_configuration"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"source":"container:autoshield-juice-shop","target":"ip:172.19.0.2","edge_type":"connects_to","attributes":{"network_id":"1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1","network_name":"autoshield_net","relationship_basis":"docker_network_membership"},"evidence_ids":["docker-container-network-1-autoshield_net","docker-network-0-2c62cd8ebd4c"],"source_artifacts":["docker/network_after_attack.json","normalized/events.jsonl"],"basis":"configured"},{"source":"container:autoshield-juice-shop","target":"process:autoshield-juice-shop:node","edge_type":"executes","attributes":{"relationship_basis":"configured_startup"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"source":"container:autoshield-juice-shop","target":"service:juice-shop","edge_type":"hosts","attributes":{"relationship_basis":"container_service_configuration"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"source":"container:autoshield-linux-admin","target":"ip:172.19.0.5","edge_type":"connects_to","attributes":{"network_id":"1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1","network_name":"autoshield_net","relationship_basis":"docker_network_membership"},"evidence_ids":["docker-container-network-2-autoshield_net","docker-network-0-9efbf0c10817"],"source_artifacts":["docker/network_after_attack.json","normalized/events.jsonl"],"basis":"configured"},{"source":"container:autoshield-linux-admin","target":"process:autoshield-linux-admin:start.sh","edge_type":"executes","attributes":{"relationship_basis":"configured_startup"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"source":"container:autoshield-linux-admin","target":"service:linux-admin","edge_type":"hosts","attributes":{"relationship_basis":"container_service_configuration"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"source":"container:autoshield-nginx","target":"ip:172.19.0.7","edge_type":"connects_to","attributes":{"network_id":"1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1","network_name":"autoshield_net","relationship_basis":"docker_network_membership"},"evidence_ids":["docker-container-network-3-autoshield_net","docker-network-0-a25bab9fbf6a"],"source_artifacts":["docker/network_after_attack.json","normalized/events.jsonl"],"basis":"configured"},{"source":"container:autoshield-nginx","target":"process:autoshield-nginx:docker-entrypoint.sh","edge_type":"executes","attributes":{"relationship_basis":"configured_startup"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"source":"container:autoshield-nginx","target":"service:nginx","edge_type":"hosts","attributes":{"relationship_basis":"container_service_configuration"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"source":"container:autoshield-postgres","target":"ip:172.19.0.3","edge_type":"connects_to","attributes":{"network_id":"1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1","network_name":"autoshield_net","relationship_basis":"docker_network_membership"},"evidence_ids":["docker-container-network-4-autoshield_net","docker-network-0-774375e97fe9"],"source_artifacts":["docker/network_after_attack.json","normalized/events.jsonl"],"basis":"configured"},{"source":"container:autoshield-postgres","target":"process:autoshield-postgres:docker-entrypoint.sh","edge_type":"executes","attributes":{"relationship_basis":"configured_startup"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"source":"container:autoshield-postgres","target":"service:postgres","edge_type":"hosts","attributes":{"relationship_basis":"container_service_configuration"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"source":"container:autoshield-redis","target":"ip:172.19.0.4","edge_type":"connects_to","attributes":{"network_id":"1afb7eff377400d166e909e32a56be04e17acdfdd254b2b67156d480bf32c4f1","network_name":"autoshield_net","relationship_basis":"docker_network_membership"},"evidence_ids":["docker-container-network-5-autoshield_net","docker-network-0-2923269430ba"],"source_artifacts":["docker/network_after_attack.json","normalized/events.jsonl"],"basis":"configured"},{"source":"container:autoshield-redis","target":"process:autoshield-redis:docker-entrypoint.sh","edge_type":"executes","attributes":{"relationship_basis":"configured_startup"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"source":"container:autoshield-redis","target":"service:redis","edge_type":"hosts","attributes":{"relationship_basis":"container_service_configuration"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"source":"ip:192.168.65.1","target":"ip:172.19.0.6","edge_type":"accesses","attributes":{"method":"GET","path":"/api/search","query":"message=%27%20UNION%20SELECT%20NULL--","status":500,"upstream":"172.19.0.6:8000","relationship_basis":"observed_http_request"},"evidence_ids":["nginx-10"],"source_artifacts":["normalized/events.jsonl"],"basis":"observed"},{"source":"service:api","target":"service:postgres","edge_type":"depends_on","attributes":{"configuration_key":"POSTGRES_HOST","configured_host":"postgres","relationship_basis":"container_environment"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"source":"service:api","target":"service:redis","edge_type":"depends_on","attributes":{"configuration_key":"REDIS_HOST","configured_host":"redis","relationship_basis":"container_environment"},"evidence_ids":[],"source_artifacts":["docker/containers_after_attack.json"],"basis":"configured"},{"source":"service:nginx","target":"service:api","edge_type":"forwards","attributes":{"upstream":"172.19.0.6:8000","upstream_port":8000,"query":"message=%27%20UNION%20SELECT%20NULL--","method":"GET","path":"/api/search","relationship_basis":"observed_http_upstream"},"evidence_ids":["nginx-10"],"source_artifacts":["normalized/events.jsonl"],"basis":"observed"}],"attack_path":[]},"baseline":{"experiment":"initial_gnn_edge_scorer_baseline","seed":7,"epochs":50,"learning_rate":0.01,"scenario_count":36,"labeled_example_count":36,"train_examples":12,"validation":{"metrics":{"precision":1.0,"recall":1.0,"f1":1.0,"accuracy":1.0},"final_loss":0.0014944365248084068,"examples":12},"test":{"metrics":{"precision":1.0,"recall":0.7777777777777778,"f1":0.8750000000000001,"accuracy":0.8333333333333334},"examples":12,"predictions":[{"probability":1.0,"predicted":1,"actual":1},{"probability":1.0,"predicted":1,"actual":1},{"probability":0.0,"predicted":0,"actual":1},{"probability":0.0,"predicted":0,"actual":0},{"probability":1.0,"predicted":1,"actual":1},{"probability":1.0,"predicted":1,"actual":1},{"probability":0.0,"predicted":0,"actual":1},{"probability":0.0,"predicted":0,"actual":0},{"probability":1.0,"predicted":1,"actual":1},{"probability":1.0,"predicted":1,"actual":1},{"probability":1.0,"predicted":1,"actual":1},{"probability":0.0,"predicted":0,"actual":0}]},"final_train_loss":1.0681187490035882e-07,"note":"Preliminary results from a very small dataset; not evidence of generalization to unseen environments."},"pathEval":{"experiment":"gnn_guided_attack_path_ranking","model_weights":{"gcn":"/Users/alishar/Desktop/autoshield/evaluation/results/models/attack_graph_gcn.pt","edge_scorer":"/Users/alishar/Desktop/autoshield/evaluation/results/models/edge_scorer.pt"},"evaluated_attack_scenarios":18,"total_scenarios":24,"aggregate_metrics":{"deterministic":{"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":1,"graph_valid":1},"gnn_guided":{"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":1,"graph_valid":1}},"results":[{"scenario_id":"scenario_015","split":"train","status":"evaluated","expected_path":["service:nginx","service:api"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:api"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:api"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_016","split":"train","status":"evaluated","expected_path":["service:nginx","service:juice-shop"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:juice-shop"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:juice-shop"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_017","split":"train","status":"evaluated","expected_path":["service:nginx","service:juice-shop"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:juice-shop"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:juice-shop"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_018","split":"train","status":"no_expected_attack_path","note":"Benign or path-unspecified scenario; excluded from path metrics."},{"scenario_id":"scenario_019","split":"train","status":"evaluated","expected_path":["service:nginx","service:api"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:api"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:api"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_020","split":"train","status":"evaluated","expected_path":["service:nginx","service:juice-shop"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:juice-shop"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:juice-shop"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_021","split":"train","status":"evaluated","expected_path":["service:nginx","service:juice-shop"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:juice-shop"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:juice-shop"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_022","split":"train","status":"no_expected_attack_path","note":"Benign or path-unspecified scenario; excluded from path metrics."},{"scenario_id":"scenario_023","split":"validation","status":"evaluated","expected_path":["service:nginx","service:api"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:api"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:api"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_024","split":"validation","status":"evaluated","expected_path":["service:nginx","service:juice-shop"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:juice-shop"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:juice-shop"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_025","split":"validation","status":"evaluated","expected_path":["service:nginx","service:juice-shop"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:juice-shop"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:juice-shop"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_026","split":"validation","status":"no_expected_attack_path","note":"Benign or path-unspecified scenario; excluded from path metrics."},{"scenario_id":"scenario_027","split":"validation","status":"evaluated","expected_path":["service:nginx","service:api"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:api"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:api"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_028","split":"validation","status":"evaluated","expected_path":["service:nginx","service:juice-shop"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:juice-shop"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:juice-shop"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_029","split":"validation","status":"evaluated","expected_path":["service:nginx","service:juice-shop"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:juice-shop"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:juice-shop"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_030","split":"validation","status":"no_expected_attack_path","note":"Benign or path-unspecified scenario; excluded from path metrics."},{"scenario_id":"scenario_031","split":"test","status":"evaluated","expected_path":["service:nginx","service:api"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:api"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:api"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_032","split":"test","status":"evaluated","expected_path":["service:nginx","service:juice-shop"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:juice-shop"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:juice-shop"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_033","split":"test","status":"evaluated","expected_path":["service:nginx","service:juice-shop"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:juice-shop"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:juice-shop"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_034","split":"test","status":"no_expected_attack_path","note":"Benign or path-unspecified scenario; excluded from path metrics."},{"scenario_id":"scenario_035","split":"test","status":"evaluated","expected_path":["service:nginx","service:api"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:api"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:api"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_036","split":"test","status":"evaluated","expected_path":["service:nginx","service:juice-shop"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:juice-shop"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:juice-shop"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_037","split":"test","status":"evaluated","expected_path":["service:nginx","service:juice-shop"],"unmapped_ground_truth_labels":["attacker"],"mapping_coverage":1.0,"deterministic":{"predicted_path":["service:nginx","service:juice-shop"],"ranking_score":1.0,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true},"gnn_guided":{"predicted_path":["service:nginx","service:juice-shop"],"mean_edge_score":0.7536025643348694,"node_precision":1.0,"node_recall":1.0,"transition_precision":1.0,"transition_recall":1.0,"exact_path_match":true,"graph_valid":true}},{"scenario_id":"scenario_038","split":"test","status":"no_expected_attack_path","note":"Benign or path-unspecified scenario; excluded from path metrics."}],"limitations":["This is a preliminary path-ranking experiment, not proof of attack execution.","The ingress service is assumed to be service:nginx when resolvable.","The mean edge score is not a calibrated path probability.","The current edge scorer may not generalize across scenarios with near-identical graph structure.","Ground-truth mapping and missing entities affect measured coverage.","Test results should be interpreted cautiously with a small dataset."]},"shap":{"method":"SHAP","edge":{"source":"ip:192.168.65.1","target":"ip:172.19.0.6","type":"accesses"},"output_type":"raw_edge_logit","score":40.13420867919922,"baseline":-2.9314929103851317,"contributions":[{"feature":"source_http_feature_21","contribution":12.194199964982621,"direction":"increases_edge_logit"},{"feature":"source_http_feature_18","contribution":10.455460873145393,"direction":"increases_edge_logit"},{"feature":"source_http_feature_6","contribution":9.26803254423773,"direction":"increases_edge_logit"},{"feature":"target_http_feature_21","contribution":5.009213622633147,"direction":"increases_edge_logit"},{"feature":"target_http_feature_6","contribution":4.909705577540925,"direction":"increases_edge_logit"},{"feature":"source_http_feature_17","contribution":4.027384140408216,"direction":"increases_edge_logit"},{"feature":"source_http_feature_0","contribution":-3.876219638572897,"direction":"decreases_edge_logit"},{"feature":"target_http_feature_0","contribution":-3.322931599652066,"direction":"decreases_edge_logit"},{"feature":"target_http_feature_18","contribution":3.2012696040246422,"direction":"increases_edge_logit"},{"feature":"source_http_feature_22","contribution":0.6709561183917171,"direction":"increases_edge_logit"},{"feature":"target_http_feature_15","contribution":-0.4044976356976174,"direction":"decreases_edge_logit"},{"feature":"target_http_feature_17","contribution":0.3683689668599302,"direction":"increases_edge_logit"},{"feature":"source_http_feature_15","contribution":0.3187851781661016,"direction":"increases_edge_logit"},{"feature":"target_http_feature_22","contribution":0.2459738731165139,"direction":"increases_edge_logit"},{"feature":"source_http_feature_1","contribution":0.0,"direction":"no_change"},{"feature":"source_http_feature_2","contribution":0.0,"direction":"no_change"},{"feature":"source_http_feature_3","contribution":0.0,"direction":"no_change"},{"feature":"source_http_feature_4","contribution":0.0,"direction":"no_change"},{"feature":"source_http_feature_5","contribution":0.0,"direction":"no_change"},{"feature":"source_http_feature_7","contribution":0.0,"direction":"no_change"},{"feature":"source_http_feature_8","contribution":0.0,"direction":"no_change"},{"feature":"source_http_feature_9","contribution":0.0,"direction":"no_change"},{"feature":"source_http_feature_10","contribution":0.0,"direction":"no_change"},{"feature":"source_http_feature_11","contribution":0.0,"direction":"no_change"},{"feature":"source_http_feature_12","contribution":0.0,"direction":"no_change"},{"feature":"source_http_feature_13","contribution":0.0,"direction":"no_change"},{"feature":"source_http_feature_14","contribution":0.0,"direction":"no_change"},{"feature":"source_http_feature_16","contribution":0.0,"direction":"no_change"},{"feature":"source_http_feature_19","contribution":0.0,"direction":"no_change"},{"feature":"source_http_feature_20","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_1","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_2","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_3","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_4","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_5","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_7","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_8","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_9","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_10","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_11","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_12","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_13","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_14","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_16","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_19","contribution":0.0,"direction":"no_change"},{"feature":"target_http_feature_20","contribution":0.0,"direction":"no_change"}],"reconstructed_score":40.134208679199226,"interpretation":"Local explanation of endpoint HTTP features for this candidate edge, with graph topology, node types, provenance and edge type held fixed. This is not proof of exploitation.","scenario_id":"scenario_011","dataset_split":"test","evaluation_label":1,"evaluation_label_note":"Scenario assessment label for evaluation only; not model input.","checkpoint_files":["evaluation/results/models/attack_graph_gcn.pt","evaluation/results/models/edge_scorer.pt"],"dataset_note":"Preliminary scenario-based evaluation. The raw edge logit is not a calibrated probability and does not prove exploitation."}};
+</script>
+
+<script>
+/* AUTOSHIELD_CONTINUE_CAPTURE_FIX */
+(() => {
+  const next = document.getElementById("nextBtn");
+  if (!next) return;
+
+  next.addEventListener("click", event => {
+    const label = (next.textContent || "").trim();
+    if (!/^Continue to |^View report/.test(label)) return;
+
+    // The run is complete when Continue navigation is offered.
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    const steps = [...document.querySelectorAll("#rail [data-step]")];
+    if (!steps.length) {
+      console.error("Continue navigation: no stage rail found.");
+      return;
+    }
+
+    const activeIndex = steps.findIndex(el => el.classList.contains("active"));
+    const currentIndex = activeIndex >= 0 ? activeIndex : 0;
+    const nextIndex = currentIndex + 1;
+
+    if (/^View report/.test(label) || nextIndex >= steps.length) {
+      document.getElementById("nav-report")?.click();
+      return;
+    }
+
+    steps[nextIndex].click();
+  }, true);
+})();
+</script>
+
+
+<script>
+/* AUTOSHIELD_REAL_GRAPH_RENDERER_V2 */
+(function () {
+  const graphData = window.AUTOSHIELD_GNN_DATA;
+  if (!graphData || !graphData.graph || !Array.isArray(graphData.graph.nodes)) {
+    console.error("AutoShield: embedded scenario graph is unavailable.");
+    return;
+  }
+
+  const graph = graphData.graph;
+  const nodes = graph.nodes;
+  const edges = Array.isArray(graph.edges) ? graph.edges : [];
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  }[c]));
+
+  const width = 1120, cols = 4, cellW = 270, cellH = 125;
+  const rows = Math.ceil(nodes.length / cols);
+  const height = Math.max(350, rows * cellH + 50);
+  const pos = new Map();
+
+  nodes.forEach((n, i) => pos.set(n.node_id, {
+    x: 140 + (i % cols) * cellW,
+    y: 55 + Math.floor(i / cols) * cellH
+  }));
+
+  const edgeSvg = edges.map((e, i) => {
+    const a = pos.get(e.source), b = pos.get(e.target);
+    if (!a || !b) return "";
+    const x1 = a.x, y1 = a.y + 22, x2 = b.x, y2 = b.y - 22;
+    const observed = e.basis === "observed" ||
+      (Array.isArray(e.evidence_ids) && e.evidence_ids.length > 0);
+    return `<g>
+      <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+        stroke="${observed ? "#318779" : "#9aaab2"}"
+        stroke-width="${observed ? 2.5 : 1.5}"
+        opacity=".8" marker-end="url(#realGraphArrow)"/>
+      <title>${esc(e.source)} → ${esc(e.target)} (${esc(e.edge_type || "related")})</title>
+    </g>`;
+  }).join("");
+
+  const nodeSvg = nodes.map(n => {
+    const q = pos.get(n.node_id);
+    const observed = n.basis === "observed" ||
+      (Array.isArray(n.evidence_ids) && n.evidence_ids.length > 0);
+    const label = n.name || n.node_id;
+    const short = label.length > 27 ? label.slice(0, 24) + "…" : label;
+    return `<g>
+      <rect x="${q.x-105}" y="${q.y-23}" width="210" height="48" rx="9"
+        fill="${observed ? "#e8f5f1" : "#f4f7f8"}"
+        stroke="${observed ? "#65ad9f" : "#b9c7cd"}"/>
+      <text x="${q.x}" y="${q.y-4}" text-anchor="middle"
+        font-size="12" font-weight="650" fill="#20323b">${esc(short)}</text>
+      <text x="${q.x}" y="${q.y+12}" text-anchor="middle"
+        font-size="10" fill="#526b76">${esc(n.node_type || "node")} · ${esc(n.basis || "unspecified")}</text>
+      <title>${esc(n.node_id)}&#10;Evidence: ${esc((n.evidence_ids || []).join(", ") || "none listed")}</title>
+    </g>`;
+  }).join("");
+
+  const graphHtml = `
+    <section class="result" style="margin-top:12px">
+      <h3>Scenario 011 · Recorded infrastructure graph</h3>
+      <p>${nodes.length} nodes · ${edges.length} edges. Solid teal relationships indicate observed evidence or listed evidence IDs; gray relationships are recorded configuration relationships. This is not a confirmed attack path.</p>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin:8px 0 12px;font-size:12px;color:#526b76">
+        <span>🟢 Evidence-linked / observed</span><span>⚪ Configured relationship</span>
+      </div>
+      <div style="overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fbfdfd;padding:12px">
+        <svg viewBox="0 0 ${width} ${height}" role="img"
+          aria-label="Scenario 011 graph with recorded nodes and edges"
+          style="width:100%;min-width:780px;height:auto">
+          <defs><marker id="realGraphArrow" markerWidth="7" markerHeight="7"
+            refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 z" fill="#82979f"/>
+          </marker></defs>
+          ${edgeSvg}${nodeSvg}
+        </svg>
+      </div>
+      <p style="font-size:12px;color:#607580;margin-top:10px">
+        ${edges.filter(e => !pos.has(e.source) || !pos.has(e.target)).length}
+        edges have endpoints missing from the node list. The scenario's recorded attack_path contains
+        ${(graph.attack_path || []).length} entries.
+      </p>
+    </section>`;
+
+  // Update the older guided-stage definition that is currently displayed.
+  try {
+    stages[1].body = graphHtml + `
+      <section class="result" style="margin-top:12px">
+        <h3>Recorded GNN evaluation</h3>
+        <p>Saved evaluation metrics are shown separately from this scenario's graph; they are not a newly computed incident-specific score.</p>
+        <p>Precision: ${Number(graphData.baseline?.test?.metrics?.precision ?? 0).toFixed(3)}
+        · Recall: ${Number(graphData.baseline?.test?.metrics?.recall ?? 0).toFixed(3)}
+        · F1: ${Number(graphData.baseline?.test?.metrics?.f1 ?? 0).toFixed(3)}</p>
+        <p>Path evaluation: ${esc(graphData.pathEval?.evaluated_attack_scenarios ?? "—")} of
+        ${esc(graphData.pathEval?.total_scenarios ?? "—")} scenarios evaluated.</p>
+      </section>`;
+  } catch (e) {
+    console.error("AutoShield: could not update guided Graph + GNN stage", e);
+  }
+
+  function cleanGraphStage() {
+    const title = document.getElementById("stageTitle");
+    const body = document.getElementById("stageBody");
+    if (!title || !body) return;
+    if ((title.textContent || "").toLowerCase().includes("build graph")) {
+      const old = document.getElementById("autoshield-artifact-graph");
+      if (old) old.remove();
+      if (!body.querySelector('[aria-label="Scenario 011 graph with recorded nodes and edges"]')) {
+        body.insertAdjacentHTML("afterbegin", graphHtml);
+      }
+    }
+  }
+
+  const body = document.getElementById("stageBody");
+  if (body) {
+    new MutationObserver(cleanGraphStage).observe(body, {childList:true, subtree:false});
+  }
+
+  // Refresh if Graph + GNN is already on screen.
+  cleanGraphStage();
+  console.log("AutoShield real graph renderer ready:", nodes.length, "nodes,", edges.length, "edges");
+})();
+</script>
+
+
+<script>
+/* AUTOSHIELD_REMEDIATION_VALIDATION_ARTIFACT_RENDERER */
+(() => {
+  const API = "http://127.0.0.1:8001";
+  const $ = id => document.getElementById(id);
+  const esc = value => String(value ?? "").replace(/[&<>"']/g, c =>
+    ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])
+  );
+  let activeKey = "";
+  let requestSeq = 0;
+
+  async function artifacts() {
+    const response = await fetch(API + "/api/incidents/incident_001/artifacts", {cache:"no-store"});
+    if (!response.ok) throw new Error("Artifact API returned HTTP " + response.status);
+    const payload = await response.json();
+    return payload.artifacts || {};
+  }
+
+  function pretty(value) {
+    return esc(JSON.stringify(value ?? {}, null, 2));
+  }
+
+  function badge(text, warn=false) {
+    return `<span class="status ${warn ? "warn" : ""}">${esc(text)}</span>`;
+  }
+
+  function valuesFromPlan(data) {
+    if (Array.isArray(data?.plans)) return data.plans;
+    if (data?.plan && typeof data.plan === "object") return [data];
+    if (data?.proposals || data?.outcome || data?.status) return [data];
+    return [];
+  }
+
+  function renderRemediation(data) {
+    const records = valuesFromPlan(data);
+    const cards = records.map((record, index) => {
+      const plan = record.plan && typeof record.plan === "object" ? record.plan : record;
+      const proposals = Array.isArray(plan.proposals) ? plan.proposals :
+        Array.isArray(plan.recommendations) ? plan.recommendations :
+        Array.isArray(record.proposals) ? record.proposals : [];
+      const status = record.status || plan.status || plan.outcome || "Recorded output";
+      const reason = plan.insufficient_reason || record.insufficient_reason || "";
+      const proposalCards = proposals.map((p, i) => {
+        const title = p.title || p.name || p.summary || p.recommendation || `Recommendation ${i+1}`;
+        const evidence = p.evidence_ids || p.evidence || p.incident_evidence || [];
+        const refs = p.references || p.reference_ids || p.supporting_references || [];
+        return `<article class="result" style="margin-top:10px">
+          <h3>${esc(title)}</h3>
+          <div style="display:flex;gap:7px;flex-wrap:wrap">
+            ${badge(p.status || "proposed", true)}
+            ${p.severity ? badge("Severity: " + p.severity) : ""}
+            ${p.confidence ? badge("Confidence: " + p.confidence) : ""}
+            ${p.disruption ? badge("Disruption: " + p.disruption) : ""}
+          </div>
+          ${p.affected_component || p.component ? `<p><strong>Affected component:</strong> ${esc(p.affected_component || p.component)}</p>` : ""}
+          ${p.rationale || p.description || p.reason ? `<p><strong>Rationale:</strong> ${esc(p.rationale || p.description || p.reason)}</p>` : ""}
+          ${p.proposed_change || p.change || p.recommended_action ? `<p><strong>Proposed change:</strong> ${esc(p.proposed_change || p.change || p.recommended_action)}</p>` : ""}
+          ${Array.isArray(evidence) && evidence.length ? `<p><strong>Evidence:</strong> ${evidence.map(esc).join(", ")}</p>` : ""}
+          ${Array.isArray(refs) && refs.length ? `<p><strong>Supporting references:</strong> ${refs.map(r => esc(typeof r === "string" ? r : (r.reference_id || r.id || r.title || JSON.stringify(r)))).join(", ")}</p>` : ""}
+          ${p.validation ? `<p><strong>Validation:</strong> ${esc(typeof p.validation === "string" ? p.validation : JSON.stringify(p.validation))}</p>` : ""}
+        </article>`;
+      }).join("");
+      return `<section class="result" style="margin-top:12px">
+        <h3>Plan ${index+1} · ${esc(record.incident_id || plan.incident_id || "incident_001")}</h3>
+        <p>${badge(status, !/planned|proposed|success|pass/i.test(status))} ${record.finding_index != null ? ` <span class="hint">Finding ${esc(record.finding_index)}</span>` : ""}</p>
+        ${reason ? `<p><strong>Why the planner limited its conclusion:</strong> ${esc(reason)}</p>` : ""}
+        ${proposalCards || `<p>No concrete proposals are present in this saved plan. This may be an insufficient-evidence result.</p>`}
+        ${Array.isArray(plan.unresolved_questions) && plan.unresolved_questions.length ? `<p><strong>Unresolved questions</strong></p><ul>${plan.unresolved_questions.map(q=>`<li>${esc(q)}</li>`).join("")}</ul>` : ""}
+        ${Array.isArray(plan.limitations) && plan.limitations.length ? `<p><strong>Limitations</strong></p><ul>${plan.limitations.map(q=>`<li>${esc(q)}</li>`).join("")}</ul>` : ""}
+      </section>`;
+    }).join("");
+
+    $("stageBody").innerHTML = `
+      <div class="metrics">
+        <div class="metric"><span>Artifact</span><b style="font-size:15px">remediation_plan.json</b><small>Loaded from backend</small></div>
+        <div class="metric"><span>Plan records</span><b>${records.length}</b><small>Saved plan entries</small></div>
+        <div class="metric"><span>Execution</span><b style="font-size:17px">Advisory only</b><small>No fix applied</small></div>
+      </div>
+      <div class="notice">A proposed remediation is not an applied or verified fix. Review the evidence and supporting references before taking action.</div>
+      ${cards || `<section class="result" style="margin-top:12px"><h3>Saved remediation output</h3><p>The artifact exists, but its schema did not match the summary renderer. Inspect the raw JSON below.</p></section>`}
+      <details class="result" style="margin-top:12px"><summary style="cursor:pointer;font-weight:650">View complete remediation_plan.json</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto;font:11px/1.5 ui-monospace,monospace">${pretty(data)}</pre></details>`;
+  }
+
+  function renderValidation(data) {
+    const obj = data && typeof data === "object" ? data : {};
+    const status = obj.status || obj.validation_status || obj.outcome || "unknown";
+    const mode = obj.mode || obj.execution_mode || obj.validation_mode || "not supplied";
+    const attempted = obj.attempted ?? obj.execution?.attempted ?? false;
+    const sent = obj.requests_sent ?? obj.execution?.requests_sent ?? obj.request_count ?? 0;
+    const eligible = obj.eligible ?? obj.scenario_eligible ?? obj.execution?.eligible;
+    const checks = Array.isArray(obj.checks) ? obj.checks :
+      Array.isArray(obj.results) ? obj.results :
+      Array.isArray(obj.tests) ? obj.tests :
+      Array.isArray(obj.findings) ? obj.findings : [];
+    const detail = obj.message || obj.reason || obj.detail || obj.block_reason || "";
+    const checkRows = checks.map((item, i) => `<tr>
+      <td style="padding:8px;border-bottom:1px solid var(--line)">${esc(item.name || item.test || item.id || `Check ${i+1}`)}</td>
+      <td style="padding:8px;border-bottom:1px solid var(--line)">${esc(item.status || item.result || item.outcome || "recorded")}</td>
+      <td style="padding:8px;border-bottom:1px solid var(--line)">${esc(item.message || item.detail || item.reason || "—")}</td>
+    </tr>`).join("");
+
+    $("stageBody").innerHTML = `
+      <div class="metrics">
+        <div class="metric"><span>Validation status</span><b style="font-size:18px">${esc(status)}</b><small>From validation_report.json</small></div>
+        <div class="metric"><span>Mode</span><b style="font-size:18px">${esc(mode)}</b><small>Recorded execution mode</small></div>
+        <div class="metric"><span>Requests sent</span><b>${esc(sent)}</b><small>Actual recorded count</small></div>
+      </div>
+      <div class="result">
+        <h3>Execution evidence</h3>
+        <p><strong>Attempted:</strong> ${esc(attempted)}</p>
+        <p><strong>Eligible:</strong> ${esc(eligible ?? "not supplied")}</p>
+        ${detail ? `<p><strong>Details:</strong> ${esc(detail)}</p>` : ""}
+        <p><strong>Interpretation:</strong> A dry-run or ineligible result is not a successful security test. No pass/fail claim is made unless the artifact contains actual test evidence.</p>
+      </div>
+      ${checks.length ? `<section class="result" style="margin-top:12px"><h3>Recorded checks (${checks.length})</h3><div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th style="text-align:left;padding:8px">Test</th><th style="text-align:left;padding:8px">Status</th><th style="text-align:left;padding:8px">Details</th></tr></thead><tbody>${checkRows}</tbody></table></div></section>` : ""}
+      <details class="result" style="margin-top:12px" open><summary style="cursor:pointer;font-weight:650">View complete validation_report.json</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto;font:11px/1.5 ui-monospace,monospace">${pretty(data)}</pre></details>`;
+  }
+
+  async function syncStage() {
+    const title = ($("stageTitle")?.textContent || "").toLowerCase();
+    const isRemediation = title.includes("remediat");
+    const isValidation = title.includes("validat");
+    if (!isRemediation && !isValidation) { activeKey = ""; return; }
+
+    const key = (isRemediation ? "remediation" : "validation") + "|" + title + "|" + ($("stageNum")?.textContent || "");
+    if (activeKey === key) return;
+    activeKey = key;
+    const token = ++requestSeq;
+    $("resultTitle").textContent = isRemediation ? "Actual remediation plan" : "Actual controlled-validation report";
+    $("resultBody").innerHTML = `<p>Loading ${isRemediation ? "remediation_plan.json" : "validation_report.json"} from the artifact API…</p>`;
+    $("stageBody").innerHTML = `<div class="result"><h3>Loading saved artifact…</h3><p>Reading the selected incident's actual pipeline output.</p></div>`;
+    try {
+      const all = await artifacts();
+      if (token !== requestSeq) return;
+      const name = isRemediation ? "remediation_plan.json" : "validation_report.json";
+      const data = all[name];
+      if (!data) throw new Error(name + " is not present for incident_001. Run the pipeline first.");
+      if (data._read_error) throw new Error(data._read_error);
+      if (isRemediation) renderRemediation(data); else renderValidation(data);
+      $("resultBody").innerHTML = isRemediation
+        ? "<p>Rendered from the saved remediation artifact. Suggestions are advisory and have not been applied.</p>"
+        : "<p>Rendered from the saved validation artifact. Status and request counts reflect the report; no result is inferred.</p>";
+      $("progressLabel").textContent = (isRemediation ? "Remediation artifact loaded" : "Validation artifact loaded");
+    } catch (error) {
+      if (token !== requestSeq) return;
+      $("stageBody").innerHTML = `<div class="notice">Could not load the artifact: ${esc(error.message || error)}. Check that the API is running on port 8001.</div>`;
+      $("resultBody").innerHTML = `<p>${esc(error.message || error)}</p>`;
+    }
+  }
+
+  const title = $("stageTitle");
+  if (title) new MutationObserver(syncStage).observe(title, {childList:true,subtree:true,characterData:true});
+  setTimeout(syncStage, 300);
+})();
+</script>
+
+</body></html>

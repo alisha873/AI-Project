@@ -1,5 +1,5 @@
 {
-  "assessed_at_utc": "2026-10-24T17:06:06Z",
+  "assessed_at_utc": "2026-10-26T04:30:52Z",
   "caller_confidence_ignored": false,
   "caller_confidence_rejected": false,
   "claim": "No claim was assessed.",
@@ -29,6 +29,62 @@
       "role": "oracle_condition",
       "source": "validation_report.oracle.conditions",
       "used_as": "context"
+    },
+    {
+      "evidence_id": "REM-incident_001-F0-6630c96c7ce9",
+      "exclusion_reason": "proposal_is_not_execution",
+      "role": "proposal",
+      "source": "validation_report.remediation.proposals",
+      "used_as": "excluded"
+    },
+    {
+      "evidence_id": "application-4",
+      "exclusion_reason": "incident_evidence_is_not_a_validation_observation",
+      "role": "observed_incident_evidence",
+      "source": "phase12.observed_evidence",
+      "used_as": "excluded"
+    },
+    {
+      "evidence_id": "nginx-19",
+      "exclusion_reason": "incident_evidence_is_not_a_validation_observation",
+      "role": "observed_incident_evidence",
+      "source": "phase12.observed_evidence",
+      "used_as": "excluded"
+    },
+    {
+      "evidence_id": "H1",
+      "exclusion_reason": "hypothesis_is_not_observed_evidence",
+      "role": "hypothesis",
+      "source": "phase12.hypothesis",
+      "used_as": "excluded"
+    },
+    {
+      "evidence_id": "CFG-3",
+      "exclusion_reason": "configuration_is_not_observed_evidence",
+      "role": "configuration",
+      "source": "phase12.configuration",
+      "used_as": "excluded"
+    },
+    {
+      "evidence_id": "CFG-6",
+      "exclusion_reason": "configuration_is_not_observed_evidence",
+      "role": "configuration",
+      "source": "phase12.configuration",
+      "used_as": "excluded"
+    },
+    {
+      "evidence_id": "cwe:CWE-89#0001",
+      "exclusion_reason": "reference_is_not_observed_evidence",
+      "role": "reference",
+      "source": "phase12.reference",
+      "used_as": "excluded"
+    },
+    {
+      "evidence_id": "capec:CAPEC-66#0003",
+      "exclusion_reason": "reference_is_not_observed_evidence",
+      "role": "reference",
+      "source": "phase12.reference",
+      "used_as": "excluded"
     }
   ],
   "evidence_provenance": "dry_run",
@@ -47,7 +103,7 @@
   "live_evidence": false,
   "llm_used": false,
   "missing_evidence": [
-    "The planner did not have enough context to produce a plan."
+    "The scenario is not eligible for execution."
   ],
   "network_used": false,
   "not_usable_reasons": [
@@ -59,7 +115,7 @@
     "legacy_report_without_identity_provenance",
     "report_not_issued_by_runner"
   ],
-  "rationale": "The planner did not have enough context to produce a plan. Upstream plan status: model_declared_insufficient. Proposed remediation was not executed, and no check was assessed.",
+  "rationale": "The scenario is not eligible for execution. Upstream plan status: planned. Proposed remediation was not executed, and no check was assessed.",
   "reason_codes": [
     "validation_not_performed"
   ],
@@ -81,10 +137,10 @@
     "The oracle looks at returned records only; it does not detect error-based, blind or second-order injection.",
     "The definition was extracted by an AI assistant and has had no human review."
   ],
-  "upstream_plan_status": "model_declared_insufficient",
-  "upstream_reason_code": "remediation_plan_insufficient_context",
+  "upstream_plan_status": "planned",
+  "upstream_reason_code": "scenario_not_eligible",
   "upstream_status": "not_validated",
   "usable_as_post_remediation_evidence": false,
   "usable_as_pre_remediation_observation": false,
-  "validation_run_id": "VAL-incident_001-dd8685235605"
+  "validation_run_id": "VAL-incident_001-25ffaca60384"
 }

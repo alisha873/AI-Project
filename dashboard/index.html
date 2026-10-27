@@ -68,6 +68,102 @@ body.autoshield-report-active #autoshield-full-pipeline-report {
   background:#e1e8e9 !important;
 }
 #stepHint { display:none !important; }
+
+/* Evidence Extraction Agent */
+.extraction-panel {
+  margin-top: 14px;
+  padding: 17px;
+  background: #f8faf9;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.extraction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.extraction-header h3 {
+  font-size: 12px;
+  margin: 0;
+}
+
+.extraction-description {
+  color: var(--muted);
+  font-size: 11px;
+  margin: 6px 0 14px;
+}
+
+.extraction-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.extraction-stat {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: white;
+}
+
+.extraction-stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.extraction-stat b {
+  display: block;
+  font-size: 19px;
+  margin-top: 4px;
+}
+
+.extraction-table-wrap {
+  overflow: auto;
+  max-height: 300px;
+  margin-top: 12px;
+}
+
+.extraction-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.extraction-table th,
+.extraction-table td {
+  text-align: left;
+  padding: 9px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.extraction-table th {
+  background: #edf3f2;
+  position: sticky;
+  top: 0;
+}
+
+.extraction-empty {
+  padding: 13px;
+  border: 1px dashed #d7dfe0;
+  border-radius: 9px;
+  color: var(--muted);
+  font-size: 11px;
+  background: white;
+}
+
+@media (max-width: 480px) {
+  .extraction-grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style></head><body><div class="shell"><aside><div class="brand"><div class="mark">⬡</div><div><b>AutoShield AI</b><small>Incident response workspace</small></div></div><div><div class="label">Investigation</div><nav class="nav"><button class="active" id="nav-flow"><span>↗</span>Investigation flow</button><button id="nav-report"><span>▤</span>Final report</button></nav></div></aside>
 <main class="main"><header class="top"><div><div class="eyebrow">Guided investigation</div><h1 class="h1" id="mainTitle">Move through the incident, one stage at a time.</h1><div class="sub" id="mainSub">Review the recorded evidence, graph analysis, RAG retrieval, advisory remediation, SHAP explanation and Bayesian risk experiment. Controlled validation and Judge decision remain pending.</div></div><span class="pill"><i class="dot"></i> CHECKING API</span></header>
 <div id="flowView"><section class="panel flow-card"><div class="flow-head"><div><h2>Incident response workflow</h2><p>Click a completed stage to revisit it. Use Continue to move forward.</p></div><span class="status" id="progressLabel">Ready to start</span></div><div class="rail" id="rail"></div></section>
@@ -196,7 +292,79 @@ function showReport(){document.body.classList.add('autoshield-report-active');do
     resultTitle.textContent="What happens here"; resultBody.innerHTML="<p><strong>Start investigation</strong> launches the existing analysis and narrative scripts.</p><p>RAG retrieval results, saved SHAP explanations and Bayesian risk evaluation are available. Controlled validation and Judge decision remain pending.</p>";
     btn.disabled=running; btn.textContent=running?"Running pipeline…":"Start investigation →"; back.disabled=true; stepHint.textContent="Ready"; renderRail();
   }
-  function eventTable(recon) {
+
+  
+// EXTRACTION_PANEL_V2
+function evidenceExtractionPanel(artifacts) {
+  const data = artifacts?.["evidence_extraction.json"];
+  const esc = (value) => String(value ?? "—").replace(/[&<>"']/g, ch => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;",
+    '"': "&quot;", "'": "&#39;"
+  })[ch]);
+
+  if (!data || typeof data !== "object") {
+    return `
+      <section class="extraction-panel">
+        <div class="extraction-header">
+          <h3>Evidence Extraction Agent</h3>
+          <span class="status pending">Artifact not exposed</span>
+        </div>
+        <div class="extraction-empty">
+          No dedicated extraction artifact was returned by the API.
+        </div>
+      </section>`;
+  }
+
+  const events = Array.isArray(data.relevant_events) ? data.relevant_events : [];
+  const networkEvents = Array.isArray(data.relevant_network_events)
+    ? data.relevant_network_events : [];
+  const configs = Array.isArray(data.relevant_configuration)
+    ? data.relevant_configuration : [];
+  const networkArtifacts = Array.isArray(data.relevant_network_artifacts)
+    ? data.relevant_network_artifacts : [];
+
+  const list = (title, values) => `
+    <h4>${esc(title)}</h4>
+    ${values.length
+      ? `<ul>${values.map(v => `<li><code>${esc(v)}</code></li>`).join("")}</ul>`
+      : `<p class="extraction-description">None selected</p>`}`;
+
+  return `
+    <section class="extraction-panel">
+      <div class="extraction-header">
+        <h3>Evidence Extraction Agent</h3>
+        <span class="status">Saved extraction</span>
+      </div>
+      <p class="extraction-description">
+        Selected evidence references from the validated extraction artifact.
+        These are distinct from the full normalized timeline.
+      </p>
+      <div class="extraction-grid">
+        <div class="extraction-stat">
+          <span>Relevant events</span><b>${events.length}</b>
+        </div>
+        <div class="extraction-stat">
+          <span>Configuration artifacts</span><b>${configs.length}</b>
+        </div>
+        <div class="extraction-stat">
+          <span>Network artifacts</span><b>${networkArtifacts.length}</b>
+        </div>
+      </div>
+      <p><strong>Incident:</strong> ${esc(data.incident_id)}</p>
+      <p><strong>Selection confidence:</strong> ${esc(data.confidence)}</p>
+      <div class="extraction-empty">
+        <strong>Evidence summary</strong>
+        <p>${esc(data.evidence_summary)}</p>
+      </div>
+      ${list("Relevant event IDs", events)}
+      ${list("Relevant network event IDs", networkEvents)}
+      ${list("Relevant configuration artifacts", configs)}
+      ${list("Relevant network artifacts", networkArtifacts)}
+    </section>`;
+}
+
+
+function eventTable(recon) {
     const events = Array.isArray(recon?.timeline) ? recon.timeline : [];
     const rows = events.map(e => `<tr data-search="${esc([e.timestamp,e.event_id,e.source,e.event_type,e.action,e.source_entity,e.destination_entity,e.interpretation_status].join(" ").toLowerCase())}">
       <td>${esc((e.timestamp||"").replace("T"," ").replace("Z"," UTC"))}</td><td><code>${esc(e.event_id||"—")}</code></td>
@@ -362,11 +530,20 @@ function showReport(){document.body.classList.add('autoshield-report-active');do
           </table>
         </div>
       </section>
+      <!-- AUTOSHIELD_GNN_BASELINE_COMPARISON_V1 -->
       <section class="result" style="margin-top:12px">
-        <h3>Recorded GNN evaluation</h3>
-        <p>Test split: ${esc(baseline?.test?.examples ?? "—")} examples · precision ${test.precision == null ? "—" : Number(test.precision).toFixed(3)} · recall ${test.recall == null ? "—" : Number(test.recall).toFixed(3)} · F1 ${test.f1 == null ? "—" : Number(test.f1).toFixed(3)} · accuracy ${test.accuracy == null ? "—" : Number(test.accuracy).toFixed(3)}.</p>
-        <p>Path evaluation scenarios: ${esc(pathEval?.evaluated_attack_scenarios ?? "—")} of ${esc(pathEval?.total_scenarios ?? "—")}. GNN-guided exact path match: ${pathMetrics.exact_path_match == null ? "—" : esc(pathMetrics.exact_path_match)}. These are saved evaluation results, not newly recomputed metrics for this incident.</p>
-        <p><strong>Interpretation:</strong> edge scores and candidate paths do not independently prove exploitation or a complete attack path.</p>
+        <h3>GNN vs baseline — recorded evaluation</h3>
+        <p>
+          Metrics below come from the saved evaluation artifact. They describe
+          the evaluation split, not a newly computed score for this incident.
+        </p>
+        <div id="autoshield-model-comparison"></div>
+        <p>
+          <strong>Interpretation:</strong> the higher F1 score is the better
+          balance of precision and recall on this evaluation split. Accuracy
+          alone can be misleading when classes are imbalanced. Edge scores do
+          not independently prove exploitation or a complete attack path.
+        </p>
       </section>
       ${jsonDetails("scenario_011_graph.json",graph)}
       ${jsonDetails("gnn_baseline_results.json",baseline)}
@@ -374,6 +551,139 @@ function showReport(){document.body.classList.add('autoshield-report-active');do
       ${jsonDetails("gnn_shap_explanation.json",shap)}
     `;
   }
+
+
+  function renderGnnBaselineComparison(baseline, test, esc) {
+    const root = document.getElementById("autoshield-model-comparison");
+    if (!root) return;
+
+    const predictions = baseline?.test?.predictions;
+    const gnnMetrics = test || baseline?.test?.metrics || {};
+
+    const fmt = value =>
+      Number.isFinite(Number(value)) && value !== null && value !== ""
+        ? (Number(value) * 100).toFixed(2) + "%"
+        : "—";
+
+    let base = {};
+    let baselineLabel = "Majority-class baseline";
+    let caveat = "";
+
+    if (Array.isArray(predictions) && predictions.length > 0) {
+      const actual = predictions.map(p => Number(p.actual));
+      const valid = actual.every(v => v === 0 || v === 1);
+
+      if (valid) {
+        const positives = actual.filter(v => v === 1).length;
+        const negatives = actual.length - positives;
+        const majority = positives >= negatives ? 1 : 0;
+        const predicted = actual.map(() => majority);
+
+        let tp = 0, fp = 0, fn = 0, tn = 0;
+        for (let i = 0; i < actual.length; i++) {
+          if (actual[i] === 1 && predicted[i] === 1) tp++;
+          else if (actual[i] === 0 && predicted[i] === 1) fp++;
+          else if (actual[i] === 1 && predicted[i] === 0) fn++;
+          else tn++;
+        }
+
+        base = {
+          accuracy: (tp + tn) / actual.length,
+          precision: tp + fp ? tp / (tp + fp) : 0,
+          recall: tp + fn ? tp / (tp + fn) : 0,
+          f1: (tp + fp && tp + fn)
+            ? (2 * tp) / (2 * tp + fp + fn)
+            : 0
+        };
+
+        caveat = `Calculated from ${actual.length} saved test labels by predicting the majority class (${majority}) for every example.`;
+      } else {
+        baselineLabel = "Majority baseline unavailable";
+        caveat = "The saved test labels are not valid binary labels.";
+      }
+    } else {
+      baselineLabel = "Majority baseline unavailable";
+      caveat = "The saved artifact has no test predictions from which to calculate a baseline.";
+    }
+
+    const rows = [
+      ["Accuracy", "accuracy"],
+      ["Precision", "precision"],
+      ["Recall", "recall"],
+      ["F1 score", "f1"]
+    ];
+
+    const has = v => v !== undefined && v !== null &&
+      v !== "" && Number.isFinite(Number(v));
+
+    const scoreRows = rows.map(([label, key]) => {
+      const g = gnnMetrics[key];
+      const b = base[key];
+      const gWins = has(g) && has(b) && Number(g) > Number(b);
+      const bWins = has(g) && has(b) && Number(b) > Number(g);
+
+      return `<tr>
+        <td style="padding:9px;border-bottom:1px solid #e4eceb">${label}</td>
+        <td style="padding:9px;text-align:center;border-bottom:1px solid #e4eceb;${gWins ? "font-weight:700;background:#e8f5f1" : ""}">${fmt(g)}${gWins ? " ✓" : ""}</td>
+        <td style="padding:9px;text-align:center;border-bottom:1px solid #e4eceb;${bWins ? "font-weight:700;background:#fff4df" : ""}">${fmt(b)}${bWins ? " ✓" : ""}</td>
+      </tr>`;
+    }).join("");
+
+    let winner = "F1 comparison unavailable";
+    let explanation = "Both models need valid F1 scores for a comparison.";
+
+    if (has(gnnMetrics.f1) && has(base.f1)) {
+      if (Number(gnnMetrics.f1) > Number(base.f1)) {
+        winner = "GNN has the higher F1";
+        explanation = `GNN F1: ${fmt(gnnMetrics.f1)} · baseline F1: ${fmt(base.f1)}.`;
+      } else if (Number(gnnMetrics.f1) < Number(base.f1)) {
+        winner = "Baseline has the higher F1";
+        explanation = `GNN F1: ${fmt(gnnMetrics.f1)} · baseline F1: ${fmt(base.f1)}.`;
+      } else {
+        winner = "F1 scores are tied";
+        explanation = `Both models have F1 ${fmt(gnnMetrics.f1)}.`;
+      }
+    }
+
+    root.innerHTML = `
+      <div style="padding:12px;margin:10px 0;border:1px solid #dce9e6;border-radius:10px">
+        <strong>${esc(winner)}</strong>
+        <p style="margin:6px 0 0;color:#607580">${esc(explanation)}</p>
+      </div>
+      <div style="overflow:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead><tr>
+            <th style="padding:9px;text-align:left;background:#edf3f2">Metric</th>
+            <th style="padding:9px;text-align:center;background:#edf3f2">GNN</th>
+            <th style="padding:9px;text-align:center;background:#edf3f2">${esc(baselineLabel)}</th>
+          </tr></thead>
+          <tbody>${scoreRows}</tbody>
+        </table>
+      </div>
+      <p style="margin-top:10px;color:#607580;font-size:12px">${esc(caveat)}</p>
+      <p style="color:#607580;font-size:12px">
+        These are recorded test-set metrics, not a newly computed score for this incident.
+        The test set is small, and its edge labels have not been independently validated as successful attack transitions.
+      </p>
+    `;
+  }
+
+  const gnnComparisonObserver = new MutationObserver(() => {
+    const root = document.getElementById("autoshield-model-comparison");
+    if (root && !root.dataset.rendered) {
+      const b = window.__autoshieldGnnBaseline;
+      const t = window.__autoshieldGnnTest;
+      if (b && t) {
+        renderGnnBaselineComparison(b, t, value =>
+          String(value ?? "").replace(/[&<>"']/g, c =>
+            ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])
+          )
+        );
+        root.dataset.rendered = "true";
+      }
+    }
+  });
+  gnnComparisonObserver.observe(document.body, {childList:true, subtree:true});
 
   function showStep(i) {
     currentStep=i;
@@ -383,15 +693,86 @@ function showReport(){document.body.classList.add('autoshield-report-active');do
     stageNum.textContent=`STAGE ${String(i+1).padStart(2,"0")} / INC-001`;
     back.disabled=false;
     stepHint.textContent="";
-    if(i===0){
-      title.textContent="Collect & normalize evidence";
-      desc.textContent="Results captured from the completed backend run. Event counts are taken from the script output.";
-      const recon=artifacts["incident_reconstruction.json"];
-      stageBody.innerHTML=`<div class="metrics">${metric("Normalized events",shared.normalized_events ?? recon?.evidence_summary?.normalized_event_count ?? "—","From analysis output")}${metric("Timeline events",shared.timeline_entries ?? recon?.timeline?.length ?? "—","Stored reconstruction")}${metric("Evidence-linked claims",shared.evidence_linked_claims ?? recon?.claims?.length ?? "—","From analysis output")}</div><div class="result"><h3>Evidence and provenance</h3><p>Rows below are loaded from the actual reconstruction JSON. Search by event ID, source, type, action, or interpretation status.</p><p><strong>Run:</strong> ${esc(runId||"—")}</p><p><strong>Sources present:</strong> ${esc([...new Set((recon?.timeline||[]).map(e=>e.source).filter(Boolean))].join(", ")||"Not available")}</p></div>${eventTable(recon)}`;
-      wireEventSearch();
-      resultTitle.textContent="";
-      resultBody.innerHTML="";
-    } else if(i===1){
+    if (i === 0) {
+  title.textContent = "Collect & normalize evidence";
+  desc.textContent =
+    "Results captured from the completed backend run. Event counts are taken from the script output.";
+
+  const recon = artifacts["incident_reconstruction.json"];
+
+  stageBody.innerHTML = `
+    <div class="metrics">
+      ${metric(
+        "Normalized events",
+        shared.normalized_events ??
+          recon?.evidence_summary?.normalized_event_count ??
+          "—",
+        "From analysis output"
+      )}
+
+      ${metric(
+        "Timeline events",
+        shared.timeline_entries ?? recon?.timeline?.length ?? "—",
+        "Stored reconstruction"
+      )}
+
+      ${metric(
+        "Evidence-linked claims",
+        shared.evidence_linked_claims ?? recon?.claims?.length ?? "—",
+        "From analysis output"
+      )}
+    </div>
+
+    <div class="result">
+      <h3>Evidence and provenance</h3>
+
+      <p>
+        Rows below are loaded from the actual reconstruction JSON.
+        Search by event ID, source, type, action, or interpretation status.
+      </p>
+
+      <p>
+        <strong>Run:</strong> ${esc(runId || "—")}
+      </p>
+
+      <p>
+        <strong>Sources present:</strong>
+        ${esc(
+          [
+            ...new Set(
+              (recon?.timeline || [])
+                .map(e => e.source)
+                .filter(Boolean)
+            )
+          ].join(", ") || "Not available"
+        )}
+      </p>
+    </div>
+
+    ${evidenceExtractionPanel(artifacts)}
+
+    ${eventTable(recon)}
+  `;
+
+  wireEventSearch();
+
+  resultTitle.textContent = "Evidence extraction status";
+  resultBody.innerHTML = `
+    <div class="log">
+      <div class="log-row">
+        <div class="log-icon">i</div>
+        <div>
+          <b>Extraction artifact status</b>
+          <small>
+            The panel displays a dedicated extraction artifact if the
+            backend exposes one. Normalized events are not counted as
+            extracted findings.
+          </small>
+        </div>
+      </div>
+    </div>
+  `;
+} else if(i===1){
       title.textContent="Build graph & score relationships";
       desc.textContent="Graph counts and evaluation metrics are documented project results. The current run confirms graph size; held-out GNN metrics are recorded evaluation results, not a newly run test.";
       stageBody.innerHTML=`<div class="result"><h3>Loading graph and GNN outputs…</h3><p>Reading saved scenario graph and evaluation JSON files.</p></div>`;
@@ -1457,20 +1838,89 @@ window.AUTOSHIELD_GNN_DATA = {"graph":{"nodes":[{"node_id":"container:autoshield
       </p>
     </section>`;
 
-  // Update the older guided-stage definition that is currently displayed.
+
+  // Share the saved metrics with the guided-stage comparison panel.
+  window.__autoshieldGnnBaseline = graphData.baseline;
+  window.__autoshieldGnnTest =
+    graphData.baseline?.test?.metrics ?? graphData.baseline?.test ?? null;
+
+  // Update the guided Graph + GNN stage with the actual recorded comparison.
   try {
+    const saved = graphData.baseline || {};
+    const predictions = saved.test?.predictions || [];
+    const labels = predictions.map(p => Number(p.actual));
+    const valid = labels.length > 0 &&
+      labels.every(v => v === 0 || v === 1);
+    const gm = saved.test?.metrics || {};
+    let bm = null;
+
+    if (valid) {
+      const positives = labels.filter(v => v === 1).length;
+      const negatives = labels.length - positives;
+      const majority = positives >= negatives ? 1 : 0;
+      let tp = 0, fp = 0, fn = 0, tn = 0;
+
+      for (const actual of labels) {
+        if (actual === 1 && majority === 1) tp++;
+        else if (actual === 0 && majority === 1) fp++;
+        else if (actual === 1 && majority === 0) fn++;
+        else tn++;
+      }
+
+      bm = {
+        accuracy: (tp + tn) / labels.length,
+        precision: tp + fp ? tp / (tp + fp) : 0,
+        recall: tp + fn ? tp / (tp + fn) : 0,
+        f1: (2 * tp + fp + fn) ? 2 * tp / (2 * tp + fp + fn) : 0
+      };
+    }
+
+    const fmt = v => Number.isFinite(Number(v)) && v != null && v !== ""
+      ? (Number(v) * 100).toFixed(2) + "%" : "—";
+
+    const rows = [["Accuracy", "accuracy"], ["Precision", "precision"],
+      ["Recall", "recall"], ["F1 score", "f1"]];
+
+    const comparisonRows = rows.map(([label, key]) => {
+      const g = gm[key], b = bm?.[key];
+      const gWins = bm && g != null && Number.isFinite(Number(g)) && Number(g) > b;
+      const bWins = bm && g != null && Number.isFinite(Number(g)) && b > Number(g);
+      return `<tr>
+        <td style="padding:9px;border-bottom:1px solid #e4eceb">${label}</td>
+        <td style="padding:9px;text-align:center;border-bottom:1px solid #e4eceb;${gWins ? "font-weight:700;background:#e8f5f1" : ""}">${fmt(g)}${gWins ? " ✓" : ""}</td>
+        <td style="padding:9px;text-align:center;border-bottom:1px solid #e4eceb;${bWins ? "font-weight:700;background:#fff4df" : ""}">${fmt(b)}${bWins ? " ✓" : ""}</td>
+      </tr>`;
+    }).join("");
+
+    const winner = bm && Number.isFinite(Number(gm.f1))
+      ? Number(gm.f1) > bm.f1 ? "GNN has the higher F1"
+        : Number(gm.f1) < bm.f1 ? "Majority baseline has the higher F1"
+        : "F1 scores are tied"
+      : "F1 comparison unavailable";
+
     stages[1].body = graphHtml + `
       <section class="result" style="margin-top:12px">
-        <h3>Recorded GNN evaluation</h3>
-        <p>Saved evaluation metrics are shown separately from this scenario's graph; they are not a newly computed incident-specific score.</p>
-        <p>Precision: ${Number(graphData.baseline?.test?.metrics?.precision ?? 0).toFixed(3)}
-        · Recall: ${Number(graphData.baseline?.test?.metrics?.recall ?? 0).toFixed(3)}
-        · F1: ${Number(graphData.baseline?.test?.metrics?.f1 ?? 0).toFixed(3)}</p>
-        <p>Path evaluation: ${esc(graphData.pathEval?.evaluated_attack_scenarios ?? "—")} of
-        ${esc(graphData.pathEval?.total_scenarios ?? "—")} scenarios evaluated.</p>
+        <h3>GNN vs majority-class baseline</h3>
+        <p><strong>${winner}</strong></p>
+        <div style="overflow:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead><tr>
+              <th style="padding:9px;text-align:left;background:#edf3f2">Metric</th>
+              <th style="padding:9px;text-align:center;background:#edf3f2">GNN</th>
+              <th style="padding:9px;text-align:center;background:#edf3f2">Majority baseline</th>
+            </tr></thead>
+            <tbody>${comparisonRows}</tbody>
+          </table>
+        </div>
+        <p style="font-size:12px;color:#607580">
+          ${labels.length} saved test examples. The baseline predicts the majority
+          class for every example. These are recorded evaluation metrics, not
+          incident-specific predictions. The test set is small, and labels have
+          not been independently validated as successful attack transitions.
+        </p>
       </section>`;
   } catch (e) {
-    console.error("AutoShield: could not update guided Graph + GNN stage", e);
+    console.error("AutoShield: could not render guided GNN comparison", e);
   }
 
   function cleanGraphStage() {

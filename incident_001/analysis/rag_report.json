@@ -841,13 +841,13 @@
         "incident_id": "incident_001",
         "observed_evidence": [
           {
-            "statement": "Event application-4 shows an HTTP GET request to /search with query message=%27%20OR%20%271%27%3D%271 and status 200.",
+            "statement": "Event application-4 is an HTTP GET request to /search with status 200 and query message=%27%20OR%20%271%27%3D%271 from source entity 172.19.0.7.",
             "evidence_ids": [
               "application-4"
             ]
           },
           {
-            "statement": "Event nginx-19 shows an HTTP GET request to /api/search with query message=%27%20OR%20%271%27%3D%271, status 200, upstream 172.19.0.6:8000, and upstream_status 200.",
+            "statement": "Event nginx-19 is an HTTP GET request to /api/search with upstream 172.19.0.6:8000, status 200, upstream status 200, and query message=%27%20OR%20%271%27%3D%271 from source entity 192.168.65.1 to destination entity 172.19.0.6.",
             "evidence_ids": [
               "nginx-19"
             ]
@@ -856,7 +856,7 @@
         "hypotheses": [
           {
             "hypothesis_id": "H1",
-            "statement": "One or more normalized events contain SQL-injection-like request syntax, which supports an injection-attempt hypothesis but does not establish vulnerable server-side query construction, successful exploitation, or database access.",
+            "statement": "One or more normalized events contain SQL-injection-like request syntax, supporting an injection-attempt hypothesis but does not establish vulnerable server-side query construction, successful exploitation, or database access.",
             "status": "hypothesis_only",
             "evidence_ids": [
               "application-4",
@@ -871,19 +871,19 @@
         ],
         "reference_guidance": [
           {
-            "statement": "Blind SQL Injection results from insufficient mitigation for SQL Injection, where an adversary constructs input strings probing the target through simple Boolean SQL expressions to determine if the syntax and structure of the injection was successful based on whether the query was executed or not.",
+            "statement": "Blind SQL Injection results from insufficient mitigation for SQL Injection, where an adversary constructs input strings probing the target through simple Boolean SQL expressions to determine if the query was executed or not without relying on error messages.",
             "reference_ids": [
               "capec:CAPEC-7#0000"
             ]
           },
           {
-            "statement": "SQL Injection attack patterns involve experimenting with vulnerabilities by adding logic to queries, such as using a single quote or expressions like ' OR 1=1; --, to syntactically complete a hypothesized query.",
+            "statement": "SQL Injection attack patterns involve experimenting with vulnerabilities by hypothesizing what the underlying query looks like and iteratively adding logic such as single quotes or OR conditions to extract, modify, or delete information in a database.",
             "reference_ids": [
               "capec:CAPEC-66#0003"
             ]
           },
           {
-            "statement": "Improper neutralization of special elements used in an SQL command can lead to common consequences such as unauthorized code or commands execution, reading application data, bypassing protection mechanisms, or gaining privileges.",
+            "statement": "Improper neutralization of special elements used in an SQL command can lead to common consequences such as unauthorized code or command execution, reading application data, bypassing protection mechanisms, or gaining privileges.",
             "reference_ids": [
               "cwe:CWE-89#0001"
             ]
@@ -933,8 +933,8 @@
         ],
         "evidence_gaps": [
           "Application source code or query-construction evidence showing unsafe SQL handling.",
-          "Correlated application or database logs demonstrating whether the query was executed.",
-          "Request-to-response payload evidence tied to the specific request identifiers."
+          "Correlated application or database logs demonstrating that the constructed query was executed.",
+          "Request-to-response evidence tied to the same event or request identifier showing the actual output or error behavior."
         ],
         "limitations": [
           "A request pattern alone does not prove successful exploitation or unsafe query construction."
@@ -945,7 +945,7 @@
         "issues": [],
         "note": "Validation checks that citations exist, belong to this context and sit in the right category, and screens a few high-risk statement patterns. It does not prove that a statement is entailed by its citations or that a passage is relevant."
       },
-      "raw_response": "{\n  \"schema_version\": \"1.0\",\n  \"incident_id\": \"incident_001\",\n  \"observed_evidence\": [\n    {\n      \"statement\": \"Event application-4 shows an HTTP GET request to /search with query message=%27%20OR%20%271%27%3D%271 and status 200.\",\n      \"evidence_ids\": [\n        \"application-4\"\n      ]\n    },\n    {\n      \"statement\": \"Event nginx-19 shows an HTTP GET request to /api/search with query message=%27%20OR%20%271%27%3D%271, status 200, upstream 172.19.0.6:8000, and upstream_status 200.\",\n      \"evidence_ids\": [\n        \"nginx-19\"\n      ]\n    }\n  ],\n  \"hypotheses\": [\n    {\n      \"hypothesis_id\": \"H1\",\n      \"statement\": \"One or more normalized events contain SQL-injection-like request syntax, which supports an injection-attempt hypothesis but does not establish vulnerable server-side query construction, successful exploitation, or database access.\",\n      \"status\": \"hypothesis_only\",\n      \"evidence_ids\": [\n        \"application-4\",\n        \"nginx-19\"\n      ],\n      \"reference_ids\": [\n        \"capec:CAPEC-7#0000\",\n        \"capec:CAPEC-66#0003\",\n        \"cwe:CWE-89#0001\"\n      ]\n    }\n  ],\n  \"reference_guidance\": [\n    {\n      \"statement\": \"Blind SQL Injection results from insufficient mitigation for SQL Injection, where an adversary constructs input strings probing the target through simple Boolean SQL expressions to determine if the syntax and structure of the injection was successful based on whether the query was executed or not.\",\n      \"reference_ids\": [\n        \"capec:CAPEC-7#0000\"\n      ]\n    },\n    {\n      \"statement\": \"SQL Injection attack patterns involve experimenting with vulnerabilities by adding logic to queries, such as using a single quote or expressions like ' OR 1=1; --, to syntactically complete a hypothesized query.\",\n      \"reference_ids\": [\n        \"capec:CAPEC-66#0003\"\n      ]\n    },\n    {\n      \"statement\": \"Improper neutralization of special elements used in an SQL command can lead to common consequences such as unauthorized code or commands execution, reading application data, bypassing protection mechanisms, or gaining privileges.\",\n      \"reference_ids\": [\n        \"cwe:CWE-89#0001\"\n      ]\n    }\n  ],\n  \"reference_relevance\": [\n    {\n      \"reference_id\": \"capec:CAPEC-108#0002\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"capec:CAPEC-7#0000\",\n      \"assessment\": \"relevant\"\n    },\n    {\n      \"reference_id\": \"capec:CAPEC-664#0002\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"capec:CAPEC-66#0003\",\n      \"assessment\": \"relevant\"\n    },\n    {\n      \"reference_id\": \"cwe:CWE-89#0001\",\n      \"assessment\": \"relevant\"\n    },\n    {\n      \"reference_id\": \"capec:CAPEC-248#0000\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"cwe:CWE-79#0002\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"cwe:CWE-20#0021\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"cwe:CWE-918#0002\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"cwe:CWE-862#0009\",\n      \"assessment\": \"not_relevant\"\n    }\n  ],\n  \"evidence_gaps\": [\n    \"Application source code or query-construction evidence showing unsafe SQL handling.\",\n    \"Correlated application or database logs demonstrating whether the query was executed.\",\n    \"Request-to-response payload evidence tied to the specific request identifiers.\"\n  ],\n  \"limitations\": [\n    \"A request pattern alone does not prove successful exploitation or unsafe query construction.\"\n  ]\n}",
+      "raw_response": "{\n  \"schema_version\": \"1.0\",\n  \"incident_id\": \"incident_001\",\n  \"observed_evidence\": [\n    {\n      \"statement\": \"Event application-4 is an HTTP GET request to /search with status 200 and query message=%27%20OR%20%271%27%3D%271 from source entity 172.19.0.7.\",\n      \"evidence_ids\": [\n        \"application-4\"\n      ]\n    },\n    {\n      \"statement\": \"Event nginx-19 is an HTTP GET request to /api/search with upstream 172.19.0.6:8000, status 200, upstream status 200, and query message=%27%20OR%20%271%27%3D%271 from source entity 192.168.65.1 to destination entity 172.19.0.6.\",\n      \"evidence_ids\": [\n        \"nginx-19\"\n      ]\n    }\n  ],\n  \"hypotheses\": [\n    {\n      \"hypothesis_id\": \"H1\",\n      \"statement\": \"One or more normalized events contain SQL-injection-like request syntax, supporting an injection-attempt hypothesis but does not establish vulnerable server-side query construction, successful exploitation, or database access.\",\n      \"status\": \"hypothesis_only\",\n      \"evidence_ids\": [\n        \"application-4\",\n        \"nginx-19\"\n      ],\n      \"reference_ids\": [\n        \"capec:CAPEC-7#0000\",\n        \"capec:CAPEC-66#0003\",\n        \"cwe:CWE-89#0001\"\n      ]\n    }\n  ],\n  \"reference_guidance\": [\n    {\n      \"statement\": \"Blind SQL Injection results from insufficient mitigation for SQL Injection, where an adversary constructs input strings probing the target through simple Boolean SQL expressions to determine if the query was executed or not without relying on error messages.\",\n      \"reference_ids\": [\n        \"capec:CAPEC-7#0000\"\n      ]\n    },\n    {\n      \"statement\": \"SQL Injection attack patterns involve experimenting with vulnerabilities by hypothesizing what the underlying query looks like and iteratively adding logic such as single quotes or OR conditions to extract, modify, or delete information in a database.\",\n      \"reference_ids\": [\n        \"capec:CAPEC-66#0003\"\n      ]\n    },\n    {\n      \"statement\": \"Improper neutralization of special elements used in an SQL command can lead to common consequences such as unauthorized code or command execution, reading application data, bypassing protection mechanisms, or gaining privileges.\",\n      \"reference_ids\": [\n        \"cwe:CWE-89#0001\"\n      ]\n    }\n  ],\n  \"reference_relevance\": [\n    {\n      \"reference_id\": \"capec:CAPEC-108#0002\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"capec:CAPEC-7#0000\",\n      \"assessment\": \"relevant\"\n    },\n    {\n      \"reference_id\": \"capec:CAPEC-664#0002\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"capec:CAPEC-66#0003\",\n      \"assessment\": \"relevant\"\n    },\n    {\n      \"reference_id\": \"cwe:CWE-89#0001\",\n      \"assessment\": \"relevant\"\n    },\n    {\n      \"reference_id\": \"capec:CAPEC-248#0000\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"cwe:CWE-79#0002\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"cwe:CWE-20#0021\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"cwe:CWE-918#0002\",\n      \"assessment\": \"not_relevant\"\n    },\n    {\n      \"reference_id\": \"cwe:CWE-862#0009\",\n      \"assessment\": \"not_relevant\"\n    }\n  ],\n  \"evidence_gaps\": [\n    \"Application source code or query-construction evidence showing unsafe SQL handling.\",\n    \"Correlated application or database logs demonstrating that the constructed query was executed.\",\n    \"Request-to-response evidence tied to the same event or request identifier showing the actual output or error behavior.\"\n  ],\n  \"limitations\": [\n    \"A request pattern alone does not prove successful exploitation or unsafe query construction.\"\n  ]\n}",
       "llm": "GeminiLLMClient(gemini-3.5-flash-lite)",
       "request_sent": true
     }
